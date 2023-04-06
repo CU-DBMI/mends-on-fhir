@@ -1,0 +1,220 @@
+#!/usr/bin/env bash
+#set -x
+set -e
+set -u
+set -o pipefail
+set -o noclobber
+shopt -s  nullglob
+
+# stack overflow #59895
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+    DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+    SOURCE="$(readlink "$SOURCE")"
+    [[$SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+
+# if environment hasn't been activated, activate dev by default for this script
+if [ -z "${MENDS_PATH_ORIGINAL-}" ]; then
+    echo Activating environment for this script
+    source <(${DIR}/../env-setup.sh)
+fi
+
+# check if initial setup is needed
+# if [ ! -d "$MENDS_INPUT_ROOT" ]; then
+#     # TODO: figure out why calling mends-setup from here doesn't work as expected
+#     mends-setup
+# fi
+
+MENDS_INPUT_SOURCE=mends
+MENDS_INPUT_FORMAT=python-name-array
+MENDS_INPUT_SIZE=_default
+MENDS_MAIN=mends-no_phi.wstl
+MENDS_TEST_MOD=false
+
+# example command: bin/mends-output --source mends --format python-name-array --size small
+
+# then try to change the target code to Male before running the test.
+
+# example command: bin/mends-output --source synthea --format name-array --size small --test
+
+while :;
+do
+    #if $1 is unset or at the end of the args
+    [ -z "${1:-}" ] && echo applying default options && break
+
+    case $1 in
+
+        --help) 
+            usage
+            exit
+        ;;
+
+        --test) 
+            MENDS_TEST_MOD=true
+        ;;
+
+        --source)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_SOURCE=$2
+                shift
+            else
+                printf 'ERROR: "--source" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --format)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_FORMAT=$2
+                shift
+            else
+                printf 'ERROR: "--format" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --size)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_SIZE=$2
+                shift
+            else
+                printf 'ERROR: "--size" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --main)
+            if [ -n "$2" ]
+            then
+                MENDS_MAIN=$2
+                shift
+            else
+                printf 'ERROR: "--main" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        *)
+            echo "in default case with $1";
+            exit 1
+        ;;
+    esac
+    shift 
+done
+
+
+MENDS_MAPPING_FILE="${MENDS_ROOT}/whistle-config/mapping-file/${MENDS_MAIN}"
+MENDS_MAPPING_LIB="${MENDS_ROOT}/whistle-config/mapping-lib"
+MENDS_CONCEPT_MAP="${MENDS_ROOT}/whistle-config/concept-map"
+MENDS_INPUT_DIR="${MENDS_INPUT_ROOT}/${MENDS_INPUT_SOURCE}/${MENDS_INPUT_FORMAT}/${MENDS_INPUT_SIZE}"
+
+MENDS_OUTPUT_DIR="${MENDS_OUTPUT_ROOT}/${MENDS_INPUT_SOURCE}/${MENDS_INPUT_FORMAT}/${MENDS_INPUT_SIZE}"
+MENDS_OUTPUT_DIR_TEST="${MENDS_OUTPUT_DIR}-test-$(date +%y.%m.%d_%H.%M.%S)"
+MENDS_OUTPUT_DIR_EFFECTIVE="${MENDS_OUTPUT_DIR}"
+
+if [ "${MENDS_TEST_MOD}" = "true" ]
+then
+    MENDS_OUTPUT_DIR_EFFECTIVE="${MENDS_OUTPUT_DIR_TEST}"
+fi
+
+if [ ! -f "${MENDS_MAPPING_FILE}"  ];
+then
+    echo Mapping file does not exist: ${MENDS_MAPPING_FILE}
+    exit 1
+fi
+
+if [ ! -d "${MENDS_MAPPING_LIB}"  ];
+then
+    echo Mapping library directory does not exist: ${MENDS_MAPPING_LIB}
+    exit 1
+fi
+
+if [ ! -d "${MENDS_CONCEPT_MAP}"  ];
+then
+    echo Concept map directory does not exist: ${MENDS_CONCEPT_MAP}
+    exit 1
+fi
+
+if [ ! -d "${MENDS_INPUT_DIR}"  ];
+then
+    echo Input directory does not exist: ${MENDS_INPUT_DIR}
+    exit 1
+fi
+
+mkdir -p "${MENDS_OUTPUT_DIR_EFFECTIVE}"
+rm -f "${MENDS_OUTPUT_DIR_EFFECTIVE}"/*.json
+
+for inputFile in "${MENDS_INPUT_DIR}"/*.json
+do
+    echo processing file $inputFile
+    whistle-main \
+    -input_file_spec="${inputFile}" \
+    -mapping_file_spec="${MENDS_MAPPING_FILE}" \
+    -lib_dir_spec="${MENDS_MAPPING_LIB}" \
+    -harmonize_code_dir_spec="${MENDS_CONCEPT_MAP}" \
+    -output_dir="${MENDS_OUTPUT_DIR_EFFECTIVE}"
+done
+
+if [ "${MENDS_TEST_MOD}" = "true" ]
+then
+
+    TEST_OUTPUT=${MENDS_OUTPUT_DIR_EFFECTIVE}/_test-output.txt
+
+    echo =================================== | tee -a "${TEST_OUTPUT}"
+    echo Testing results                     | tee -a "${TEST_OUTPUT}"
+    echo =================================== | tee -a "${TEST_OUTPUT}"
+
+    echo | tee -a "${TEST_OUTPUT}"
+
+    echo Files in the non-test output directory but not in this test\'s output directory: | tee -a "${TEST_OUTPUT}"
+    for file in "${MENDS_OUTPUT_DIR}"/*
+    do
+        FILE_NAME=$(basename "${file}")
+        [ "${FILE_NAME:0:1}" = "_" ] && continue
+        if [ ! -f  "${MENDS_OUTPUT_DIR_EFFECTIVE}/${FILE_NAME}" ]; then
+            echo Expected output file ${FILE_NAME} is missing | tee -a "${TEST_OUTPUT}"
+        fi
+    done
+
+    echo | tee -a "${TEST_OUTPUT}"
+
+    echo Files in this test\'s output directory but not in the non-test output directory: | tee -a "${TEST_OUTPUT}"
+    for file in "${MENDS_OUTPUT_DIR_EFFECTIVE}"/*
+    do
+        FILE_NAME=$(basename "${file}")
+        [ "${FILE_NAME:0:1}" = "_" ] && continue
+        if [ ! -f  "${MENDS_OUTPUT_DIR}/${FILE_NAME}" ]; then
+            echo Unexpected output file ${FILE_NAME} | tee -a "${TEST_OUTPUT}"
+        fi
+    done
+
+    echo | tee -a "${TEST_OUTPUT}"
+
+    echo Diffs doing from the time-stamped files generated during this test run | tee -a "${TEST_OUTPUT}"
+    echo to the non-test output files from the last non-test run: | tee -a "${TEST_OUTPUT}"
+    echo | tee -a "${TEST_OUTPUT}"
+
+    for file in "${MENDS_OUTPUT_DIR_EFFECTIVE}"/*
+    do
+        FILE_NAME=$(basename "${file}")
+        [ "${FILE_NAME:0:1}" = "_" ] && continue
+        TO_FILE="${MENDS_OUTPUT_DIR}/${FILE_NAME}"
+        FROM_FILE="${MENDS_OUTPUT_DIR_EFFECTIVE}/${FILE_NAME}"
+        if [ -f  "${FROM_FILE}" ]; then
+            echo For: ${FILE_NAME}  | tee -a "${TEST_OUTPUT}"
+            mends-jd "${FROM_FILE}"  "${TO_FILE}" | tee -a "${TEST_OUTPUT}"
+        fi
+        echo | tee -a "${TEST_OUTPUT}"
+    done
+
+    echo | tee -a "${TEST_OUTPUT}"
+    echo Diff done! | tee -a "${TEST_OUTPUT}"
+    
+fi
+
+

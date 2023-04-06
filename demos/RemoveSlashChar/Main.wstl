@@ -1,0 +1,5 @@
+$this: RemoveSlash()
+
+def RemoveSlash(){
+    Units: "mg\/dL"
+}

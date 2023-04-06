@@ -1,0 +1,15 @@
+_skip,,,,.group.element.code,.group.element.display,.group.element.target.code,.group.element.target.display,.group.target,.group.targetVersion
+y,https://www.census.gov/topics/population/race/about.html,,,,,,,,
+y,nrows,race_source_concept_id,source_concpet_name,race_concept_id,standard_concept_name,,,,
+,365948,3000003698,OTHER,0,No matching concept,UNK,Unknown,http://terminology.hl7.org/CodeSystem/v3-NullFlavor,2.0.0
+,788,38003574,Asian Indian,38003574,Asian Indian,2028-9,Asian,urn:oid:2.16.840.1.113883.6.238,4.0.0
+,316,38003579,Chinese,38003579,Chinese,2028-9,Asian,urn:oid:2.16.840.1.113883.6.238,4.0.0
+,221,38003581,Filipino,38003581,Filipino,2028-9,Asian,urn:oid:2.16.840.1.113883.6.238,4.0.0
+,126,38003584,Japanese,38003584,Japanese,2028-9,Asian,urn:oid:2.16.840.1.113883.6.238,4.0.0
+,202,38003585,Korean,38003585,Korean,2028-9,Asian,urn:oid:2.16.840.1.113883.6.238,4.0.0
+,145,38003592,Vietnamese,38003592,Vietnamese,2028-9,Asian,urn:oid:2.16.840.1.113883.6.238,4.0.0
+,2606,38003613,Other Pacific Islander,38003613,Other Pacific Islander,2076-8,Native Hawaiian or Other Pacific Islander,urn:oid:2.16.840.1.113883.6.238,4.0.0
+,215001,8516,Black or African American,8516,Black or African American,2054-5,Black or African American,urn:oid:2.16.840.1.113883.6.238,4.0.0
+,2645211,3000003705,White or Caucasian,8527,White,2106-3,White,urn:oid:2.16.840.1.113883.6.238,4.0.0
+,5964,3000003697,Native Hawaiian and Other Pacific Islander,8557,Native Hawaiian or Other Pacific Islander,2076-8,Native Hawaiian or Other Pacific Islander,urn:oid:2.16.840.1.113883.6.238,4.0.0
+,15179,8657,American Indian or Alaska Native,8657,American Indian or Alaska Native,1002-5,American Indian or Alaska Native,urn:oid:2.16.840.1.113883.6.238,4.0.0

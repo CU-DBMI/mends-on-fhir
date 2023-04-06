@@ -1,0 +1,210 @@
+#!/usr/bin/env bash
+#set -x
+set -e
+set -u
+set -o pipefail
+set -o noclobber
+#shopt -s  nullglob
+
+# stack overflow #59895
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+    DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+    SOURCE="$(readlink "$SOURCE")"
+    [[$SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+
+# if environment hasn't been activated, activate dev by default for this script
+if [ -z "${MENDS_PATH_ORIGINAL-}" ]; then
+    echo Activating environment for this script
+    source <(${DIR}/../env-setup.sh)
+fi
+
+# Setting up and activating Python virtual environment for the Python tooling
+if [ -d ${MENDS_ROOT}/omop-config/.venv/lib64/python3.?/site-packages/pybigquery ]; then
+    source "${MENDS_ROOT}/omop-config/.venv/bin/activate"
+else
+    echo ====================================================================
+    echo Need temporary internet access to set up Python virtual environment and dependencies
+    echo ====================================================================
+
+    if [ ! -d "${MENDS_ROOT}/omop-config/.venv" ]; then
+        python3 -m venv "${MENDS_ROOT}/omop-config/.venv"
+    fi
+    source "${MENDS_ROOT}/omop-config/.venv/bin/activate"
+    pip3 install --upgrade pip
+    pip3 install -r "${MENDS_ROOT}/omop-config/requirements.txt"
+fi
+
+
+
+MENDS_INPUT_SOURCE=mends
+MENDS_INPUT_FORMAT=python-name-array
+MENDS_INPUT_SIZE=small
+MENDS_INPUT_CHUNK_SIZE=100
+MENDS_INPUT_ROWS=500
+MENDS_INPUT_SQL_FILE=
+MENDS_INPUT_DB=bigquery
+MENDS_INPUT_DB_ARGS=hdcdmmends/mends
+
+
+#MENDS_TEST_MOD=false
+
+# example command: bin/mends-input --source mends --format python-name-array --size small \
+#   --chunk-size 100 --rows 500 --sql-file MENDS_queries_condition_occurrence.sql --db bigquery \
+#   --dbargs "hdcdmmends/mends" --dir ../input/some-source/some-format/some-size
+
+while :;
+do
+    #if $1 is unset or at the end of the args
+    [ -z "${1:-}" ] &&  break
+
+    GIVEN_OPTIONS=yes
+
+    case $1 in
+
+        --help) 
+            usage
+            exit
+        ;;
+
+        --source)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_SOURCE=$2
+                shift
+            else
+                printf 'ERROR: "--source" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --format)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_FORMAT=$2
+                shift
+            else
+                printf 'ERROR: "--format" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --size)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_SIZE=$2
+                shift
+            else
+                printf 'ERROR: "--size" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --chunk-size)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_CHUNK_SIZE=$2
+                shift
+            else
+                printf 'ERROR: "--chunk-size" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --rows)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_ROWS=$2
+                shift
+            else
+                printf 'ERROR: "--rows" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --sql-file)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_SQL_FILE=$2
+                shift
+            else
+                printf 'ERROR: "--sql-file" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --db)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_DB=$2
+                shift
+            else
+                printf 'ERROR: "--db" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --dbargs)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_DB_ARGS=$2
+                shift
+            else
+                printf 'ERROR: "--dbargs" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+        --dir)
+            if [ -n "$2" ]
+            then
+                MENDS_INPUT_DIR=$2
+                shift
+            else
+                printf 'ERROR: "--dir" requires a non-empty argument.\n' >&2
+                exit 1
+            fi
+        ;;
+
+# TODO:Shahim to add a clean option.
+        *)
+            echo "In default options case with $1";
+            exit 1
+        ;;
+    esac
+    shift 
+done
+
+if [ -z "${MENDS_INPUT_DIR:-}" ]; then
+    MENDS_INPUT_DIR="${MENDS_ROOT}/../input/${MENDS_INPUT_SOURCE}/${MENDS_INPUT_FORMAT}/${MENDS_INPUT_SIZE}"
+fi
+
+
+if [ -z "${MENDS_INPUT_SQL_FILE:-}" ]
+then
+    echo SQL file not provided, exiting
+    exit 1
+fi
+
+if [ ! -f "${MENDS_INPUT_SQL_FILE}"  ];
+then
+    echo SQL file does not exist: ${MENDS_INPUT_SQL_FILE}
+    exit 1
+fi
+
+mkdir -p "${MENDS_INPUT_DIR}"
+
+MENDS_INPUT_SQL_FILE="$(realpath ${MENDS_INPUT_SQL_FILE})"
+MENDS_INPUT_DIR="$(realpath ${MENDS_INPUT_DIR})"
+
+set -x
+${DIR}/mends-input.py \
+    --chunksize $MENDS_INPUT_CHUNK_SIZE \
+    --rows $MENDS_INPUT_ROWS \
+    --sqlfile="$MENDS_INPUT_SQL_FILE" \
+    --database "$MENDS_INPUT_DB" \
+    --dbargs "$MENDS_INPUT_DB_ARGS" \
+    --localdir "$MENDS_INPUT_DIR"
+

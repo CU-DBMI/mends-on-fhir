@@ -1,0 +1,9 @@
+# This keeps the env file from being merged in from other branch
+# so each branch can have it's own environment values.
+#
+# After cloning this repo, run:
+# git config merge.ours.driver true
+#
+
+
+env merge=ours

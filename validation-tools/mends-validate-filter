@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#set -x
+#set -e  # do not exit on errors
+set -u
+set -o pipefail
+#set -o noclobber
+shopt -s  nullglob
+
+# stack overflow #59895
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+    DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+    SOURCE="$(readlink "$SOURCE")"
+    [[$SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+
+DATE=$(date +%y.%m.%d_%H.%M.%S)
+FILTER_FILE="${DIR}/mends-validate-filtered_${DATE}.txt"
+
+grep -E -f "${DIR}/mends-validate-filter-include.txt" "${DIR}/mends-validate-log_latest.txt" \
+    | grep -E -v -f "${DIR}/mends-validate-filter-exclude.txt" > "$FILTER_FILE" 2>&1
+
+cp "$FILTER_FILE" "${DIR}/mends-validate-filtered_latest.txt"
+

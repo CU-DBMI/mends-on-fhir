@@ -1,0 +1,11 @@
+# Run: pip3 install -r requirements.txt to install listed dependencies
+# For now, versionless
+
+pandas
+google
+google-cloud
+google-cloud-bigquery
+google-cloud-storage
+google-api-python-client
+flask-sqlalchemy
+pybigquery

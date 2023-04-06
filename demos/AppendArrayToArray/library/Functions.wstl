@@ -1,0 +1,6 @@
+def GetArray(){
+  var otherArray[]: "2"
+  var otherArray[]: "3"
+  
+  $this: otherArray
+}

@@ -1,0 +1,11 @@
+{
+  "oneParamNoArg": {
+    "oneArg": "value"
+  },
+  "oneParamOneArg": {
+    "oneArg": "value"
+  },
+  "oneParamTwoArg": {
+    "oneArg": "value"
+  }
+}
