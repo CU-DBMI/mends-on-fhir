@@ -22,6 +22,7 @@ export UID_GID
 
 docker compose \
   -f compose-demo.yaml \
+  --env-file .env-demo \
   --profile pre \
   --profile demo-1 \
   down

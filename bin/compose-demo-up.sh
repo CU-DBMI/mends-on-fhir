@@ -20,9 +20,14 @@ cd "$DIR"/..
 UID_GID="$(id -u):$(id -g)"
 export UID_GID
 
-docker compose -f compose-demo.yaml pull
 docker compose \
   -f compose-demo.yaml \
+  --env-file ./.env-demo \
+  pull
+
+docker compose \
+  -f compose-demo.yaml \
+  --env-file ./.env-demo \
   --profile pre \
   --profile demo-1 \
   up \

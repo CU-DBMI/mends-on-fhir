@@ -21,6 +21,6 @@ services:
         required: false # This is triggering a (false?) warning. See: https://github.com/docker/compose/issues/10851
     volumes:
       - type: bind
-        source: demos/compose-demo-1
+        source: ${MOF_SOURCE_DIR:?err}
         target: /whistle
 

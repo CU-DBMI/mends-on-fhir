@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#set -x
+set -x
 set -e
 set -u
 set -o pipefail
@@ -16,12 +16,14 @@ done
 DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 
 cd "$DIR"/..
+
 UID_GID="$(id -u):$(id -g)"
 export UID_GID
 
 docker compose \
   -f compose-demo.yaml \
-  --env-file .env-local \
+  --env-file .env-local-demo \
   --profile pre \
   --profile demo-1 \
-  down
+  up \
+  --force-recreate
