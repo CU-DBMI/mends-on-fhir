@@ -11,10 +11,17 @@ SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do
     DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
     SOURCE="$(readlink "$SOURCE")"
-    [[$SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
 DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 
 cd "$DIR"/..
 
-docker compose -f compose-demo.yaml down
+UID_GID="$(id -u):$(id -g)"
+export UID_GID
+
+docker compose \
+  -f compose-demo.yaml \
+  --profile pre \
+  --profile demo-1 \
+  down
