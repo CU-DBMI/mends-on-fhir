@@ -1,0 +1,12 @@
+name: mends-on-fhir
+
+services:
+  demo-1:
+    image: ${MOF_IMAGE:?err}
+    command: convert
+    user: ${UID_GID:?err}
+    volumes:
+      - type: bind
+        source: demos/compose-demo-1
+        target: /whistle
+
