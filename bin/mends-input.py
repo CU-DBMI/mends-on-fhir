@@ -176,7 +176,7 @@ def process_sql_to_json():
     clparse.add_argument('--sqlfile',required=True, default=None, help='Name of local file with SQL statements')
     clparse.add_argument('--rows',required=False, type=int, default=-1, help='Max number of row to extract. Default = extract all row')
     clparse.add_argument('--chunksize',required=False, type=int, default=1, help='Max number of elements per JSON object. Default = 1 object per file')
-    clparse.add_argument('--database', required=True, type=str.lower, choices =["mssql","oracle", "postgres","bigquery"], help='Specify DBMS: one of MSSQL, Oracle, Postgres, or BigQuery (only BQ currently supported)')
+    clparse.add_argument('--database', required=True, type=str.lower, choices =["mssql","oracle", "postgres","postgresql","pg","bigquery"], help='Specify DBMS: one of MSSQL, Oracle, Postgres, or BigQuery (only BQ currently supported)')
     clparse.add_argument('--dbargs', required=True,help='database/schema (Bigquery: "project/dataset)')
     clparse.add_argument('--rmdir', required=False, default=False, help='remove *.fhir files from localdir and/or gcsdir if provided. Does not process subdirs', action='store_true')
     clparse.add_argument('--rmkey', required=False, default=False, help='remove *.fhir for all JSON key declared ent in sqlfile. Does not process subdirs', action='store_true')
@@ -199,6 +199,8 @@ def process_sql_to_json():
 
     if dbms == 'bigquery':
         db_url = "bigquery://" + database + "/" + schema
+    elif (dbms == "postgres" or dbms == "postgresql" or dbms == "pg"):
+        db_url  = 'postgresql+psycopg2://postgres:synthea@10.43.112.34/' + database + '?options=-csearch_path%3D' + schema
     else:
         print("Error: Should never be here")
         exit()
