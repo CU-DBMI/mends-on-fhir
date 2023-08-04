@@ -1,0 +1,1 @@
+This folder holds example input file sets to use with the tooling.  The empty sub folders you notice after cloning are meant to be submodules that you can update as needed to pull in the examples you want to work with. See the `/.gitmodules` file for additional details.
