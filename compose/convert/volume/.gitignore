@@ -1,2 +1,5 @@
 *
 !.gitignore
+!output
+output/*
+!output/.keep
