@@ -2,6 +2,8 @@ services:
   convert:
     build:
       context: convert/build
+      args:
+        CONVERT_IMAGE: ${CONVERT_IMAGE}
     user: ${UID_GID}
     command: [ "convert" ]
     volumes:

@@ -1,1 +1,3 @@
-FROM sessaid/whistle:latest
+ARG CONVERT_IMAGE
+
+FROM ${CONVERT_IMAGE}
