@@ -1,0 +1,1 @@
+FROM sessaid/whistle:latest

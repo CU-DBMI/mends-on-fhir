@@ -14,11 +14,8 @@ while [ -h "$SOURCE" ]; do
     [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
 DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
-
+. "${DIR}"/.init
 cd "$DIR"/..
-
-UID_GID="$(id -u):$(id -g)"
-export UID_GID
 
 docker compose \
   -f hapi.yaml \

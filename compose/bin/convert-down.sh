@@ -18,5 +18,5 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 cd "$DIR"/..
 
 docker compose \
-  -f hapi.yaml \
+  -f convert.yaml \
   down

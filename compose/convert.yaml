@@ -1,0 +1,26 @@
+services:
+  convert:
+    build:
+      context: convert/build
+    user: ${UID_GID}
+    command: [ "convert" ]
+    volumes:
+      - type: bind
+        source: convert/volume
+        target: /whistle
+      - type: bind
+        source: ${CONVERT_INPUT}
+        target: /whistle/input
+      - type: bind
+        source: ${CONVERT_MAPPING_FUNCTIONS}
+        target: /whistle/mapping-functions
+      - type: bind
+        source: ${CONVERT_MAPPING_CONCEPT_MAPS}
+        target: /whistle/mapping-concept-maps
+      - type: bind
+        source: ${CONVERT_MAIN}
+        target: /whistle/mains/main.wstl
+
+
+
+

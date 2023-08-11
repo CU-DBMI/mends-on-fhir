@@ -14,6 +14,12 @@
                   <Item>
                     <option name="path" value="compose.yaml" />
                   </Item>
+                  <Item>
+                    <option name="path" value="compose/hapi.yaml" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="compose/convert.yaml" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
