@@ -19,9 +19,8 @@ cd "$DIR"/..
 
 docker compose \
   -f convert.yaml \
-  pull
+  build --pull
 
 docker compose \
   -f convert.yaml \
-  up \
-  --build \
+  up

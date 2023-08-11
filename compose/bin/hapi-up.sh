@@ -19,9 +19,8 @@ cd "$DIR"/..
 
 docker compose \
   -f hapi.yaml \
-  pull
+  build --pull
 
 docker compose \
   -f hapi.yaml \
-  up \
-  --build \
+  up
