@@ -1,0 +1,5 @@
+# Rename to .env and place is same directory as PY file
+PG_USERNAME=POSTGRESQL_USER                    
+PG_PASSWORD=POSTGRESQL_PASSWORD                                
+PG_IP=POSTGRESQL_DATABASE_IP_ADDRESS
+PG_PORT=POSTGRESQL_DATABASE_PORT

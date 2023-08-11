@@ -38,22 +38,18 @@
 # 10 January 2022
 # Author: Michael Kahn (Michael.Kahn@cuanschutz.edu)
 
+# Reads environment variables using dotenv module
+# pip install python-dotenv
+
 # -*- coding: utf-8 -*-
 
+import os
+import argparse
 import pandas as pd 
-import json
-from google.cloud import bigquery
+
 from google.cloud import storage
 from sqlalchemy import create_engine
-import pyarrow
-import pybigquery
-
-
-import os
-import shutil
-import argparse
-import datetime
-import string
+from dotenv import load_dotenv
 
 def parse_sql(sqlfile, database, schema, nrows):
     queries = []
@@ -195,12 +191,24 @@ def process_sql_to_json():
     rmdir = args.rmdir
     rmkey = args.rmkey
 
+#
+# dotenv() used for PG variables: PG_USERNAME, PG_PASSWORD, PG_IP, PG_PORT
+# Postgres database name and schema are passed in -dbargs command line args
+#
+
+    load_dotenv()
+
   # TODO: Generalize by DBTYPE
+  # TODO: Use .env for Google parms rather than assume local environment
 
     if dbms == 'bigquery':
         db_url = "bigquery://" + database + "/" + schema
     elif (dbms == "postgres" or dbms == "postgresql" or dbms == "pg"):
-        db_url  = 'postgresql+psycopg2://postgres:synthea@10.43.112.34/' + database + '?options=-csearch_path%3D' + schema
+        pg_user = os.getenv("PG_USERNAME")                                   
+        pg_password = os.getenv("PG_PASSWORD")                                  
+        pg_host = os.getenv("PG_IP")
+        pg_port = os.getenv("PG_PORT")
+        db_url  = 'postgresql+psycopg2://' + pg_user + ':' + pg_password + '@' + pg_host + ':' + pg_port + '/'  + database + '?options=-csearch_path%3D' + schema
     else:
         print("Error: Should never be here")
         exit()
