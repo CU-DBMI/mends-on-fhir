@@ -6,7 +6,7 @@ set -o pipefail
 set -o noclobber
 #shopt -s  nullglob
 
-export MENDS_HOME=${HOME}/git/mends
+#export MENDS_HOME=${HOME}/git/mends
 export SQL_DIR=${MENDS_HOME}/omop-config/sql/postgresql
 export DB=postgresql
 export DBARGS=synthea/synthea10
