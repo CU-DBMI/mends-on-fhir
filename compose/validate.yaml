@@ -20,6 +20,7 @@ services:
       - /validation/resources/*.json
 
     network_mode: host
+    dns: ["8.8.8.8"]
     volumes:
       - type: bind
         source: validate/volume/results
