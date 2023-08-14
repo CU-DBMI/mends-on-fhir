@@ -19,7 +19,7 @@ services:
       - "4.0"
       - /validation/resources/*.json
 
-
+    network_mode: host
     volumes:
       - type: bind
         source: validate/volume/results
