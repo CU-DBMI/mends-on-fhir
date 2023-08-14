@@ -5,7 +5,6 @@ services:
     environment:
       - "SPRING_CONFIG_LOCATION=file:///hapi-config/application.yaml"
       - "HAPI_URL=${FHIR_URL}"
-      - "DEBUG=true"
     healthcheck:
       test: [ "CMD", "curl", "-f", "${FHIR_URL}/metadata" ]
       interval: 30s

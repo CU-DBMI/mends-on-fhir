@@ -1,2 +1,5 @@
+USER_UID=$(id -u)
+USER_GID=$(id -g)
 UID_GID="$(id -u):$(id -g)"
-export UID_GID
+NOW=$(date +%Y%m%d_%H%S)
+export USER_UID USER_GID UID_GID NOW

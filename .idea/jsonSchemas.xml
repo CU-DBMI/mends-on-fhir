@@ -20,6 +20,9 @@
                   <Item>
                     <option name="path" value="compose/convert.yaml" />
                   </Item>
+                  <Item>
+                    <option name="path" value="docker-compose/validate.yaml" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
