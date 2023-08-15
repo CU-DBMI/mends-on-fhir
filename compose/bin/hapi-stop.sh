@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-set -x
-set -e
-set -u
-set -o pipefail
-set -o noclobber
-shopt -s  nullglob
 
 # stack overflow #59895
 SOURCE="${BASH_SOURCE[0]}"

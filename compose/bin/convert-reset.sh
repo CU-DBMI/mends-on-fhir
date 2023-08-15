@@ -10,7 +10,4 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 . "${DIR}"/.init
 cd "$DIR"/..
 
-
-docker compose \
-  -f hapi.yaml \
-  up
+rm -f convert/volume/output/*.json

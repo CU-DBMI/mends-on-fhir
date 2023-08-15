@@ -12,5 +12,12 @@ cd "$DIR"/..
 
 
 docker compose \
+  -f convert.yaml \
+  -f validate-all.yaml \
+  -f load-all.yaml \
   -f hapi.yaml \
-  up
+  down --remove-orphans
+
+bin/convert-reset.sh
+bin/validate-reset.sh
+bin/load-reset.sh

@@ -1,3 +1,7 @@
+# This is a clone of the load.yaml file in order to add the convert dependency when running the full
+# pipeline with the "all" bash scripts. This is a workaround to what I think is a bug in docker compose.
+# See the following issue for clarification from their team: https://github.com/docker/compose/issues/10901
+
 services:
   validate:
     build:
@@ -18,7 +22,6 @@ services:
       - -version
       - "4.0"
       - /validation/resources/*.json
-
 #    network_mode: host
 #    dns: ["8.8.8.8"]
     volumes:
@@ -28,3 +31,8 @@ services:
       - type: bind
         source: convert/volume/output
         target: /validation/resources
+
+    depends_on:
+      convert:
+        condition: service_completed_successfully
+        required: false

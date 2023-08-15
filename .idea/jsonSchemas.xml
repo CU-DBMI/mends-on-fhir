@@ -23,6 +23,15 @@
                   <Item>
                     <option name="path" value="docker-compose/validate.yaml" />
                   </Item>
+                  <Item>
+                    <option name="path" value="compose/load.yaml" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="compose/validate.yaml" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="compose/validate-all.yaml" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>

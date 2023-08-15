@@ -4,9 +4,8 @@ services:
       context: hapi/build
     environment:
       - "SPRING_CONFIG_LOCATION=file:///hapi-config/application.yaml"
-      - "HAPI_URL=${FHIR_URL}"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "${FHIR_URL}/metadata" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/fhir/metadata" ]
       interval: 30s
       timeout: 30s
       retries: 10

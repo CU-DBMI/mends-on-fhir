@@ -10,7 +10,10 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 . "${DIR}"/.init
 cd "$DIR"/..
 
-
 docker compose \
+  -f convert.yaml \
+  -f validate-all.yaml \
+  -f load-all.yaml \
   -f hapi.yaml \
-  up
+  stop
+
