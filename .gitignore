@@ -2,4 +2,8 @@ nohup.out
 venv/
 .venv/
 .env
+.env*
+.DS_Store
+.DS_Store/
+pgdump*
 
