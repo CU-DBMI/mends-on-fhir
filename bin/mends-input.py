@@ -38,22 +38,18 @@
 # 10 January 2022
 # Author: Michael Kahn (Michael.Kahn@cuanschutz.edu)
 
+# Reads environment variables using dotenv module
+# pip install python-dotenv
+
 # -*- coding: utf-8 -*-
 
+import os
+import argparse
 import pandas as pd 
-import json
-from google.cloud import bigquery
+
 from google.cloud import storage
 from sqlalchemy import create_engine
-import pyarrow
-import pybigquery
-
-
-import os
-import shutil
-import argparse
-import datetime
-import string
+from dotenv import load_dotenv
 
 def parse_sql(sqlfile, database, schema, nrows):
     queries = []
@@ -176,7 +172,7 @@ def process_sql_to_json():
     clparse.add_argument('--sqlfile',required=True, default=None, help='Name of local file with SQL statements')
     clparse.add_argument('--rows',required=False, type=int, default=-1, help='Max number of row to extract. Default = extract all row')
     clparse.add_argument('--chunksize',required=False, type=int, default=1, help='Max number of elements per JSON object. Default = 1 object per file')
-    clparse.add_argument('--database', required=True, type=str.lower, choices =["mssql","oracle", "postgres","bigquery"], help='Specify DBMS: one of MSSQL, Oracle, Postgres, or BigQuery (only BQ currently supported)')
+    clparse.add_argument('--database', required=True, type=str.lower, choices =["mssql","oracle", "postgres","postgresql","pg","bigquery"], help='Specify DBMS: one of MSSQL, Oracle, Postgres, or BigQuery (only BQ currently supported)')
     clparse.add_argument('--dbargs', required=True,help='database/schema (Bigquery: "project/dataset)')
     clparse.add_argument('--rmdir', required=False, default=False, help='remove *.fhir files from localdir and/or gcsdir if provided. Does not process subdirs', action='store_true')
     clparse.add_argument('--rmkey', required=False, default=False, help='remove *.fhir for all JSON key declared ent in sqlfile. Does not process subdirs', action='store_true')
@@ -195,10 +191,24 @@ def process_sql_to_json():
     rmdir = args.rmdir
     rmkey = args.rmkey
 
+#
+# dotenv() used for PG variables: PG_USERNAME, PG_PASSWORD, PG_IP, PG_PORT
+# Postgres database name and schema are passed in -dbargs command line args
+#
+
+    load_dotenv()
+
   # TODO: Generalize by DBTYPE
+  # TODO: Use .env for Google parms rather than assume local environment
 
     if dbms == 'bigquery':
         db_url = "bigquery://" + database + "/" + schema
+    elif (dbms == "postgres" or dbms == "postgresql" or dbms == "pg"):
+        pg_user = os.getenv("PG_USERNAME")                                   
+        pg_password = os.getenv("PG_PASSWORD")                                  
+        pg_host = os.getenv("PG_IP")
+        pg_port = os.getenv("PG_PORT")
+        db_url  = 'postgresql+psycopg2://' + pg_user + ':' + pg_password + '@' + pg_host + ':' + pg_port + '/'  + database + '?options=-csearch_path%3D' + schema
     else:
         print("Error: Should never be here")
         exit()
