@@ -17,5 +17,4 @@ docker compose \
   -f validate.yaml \
   -f load.yaml \
   -f hapi.yaml \
-  -f all.yaml \
   build --pull --no-cache
