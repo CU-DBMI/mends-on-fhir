@@ -14,7 +14,7 @@ ENV POSTGRES_USER=${PG_USER}
 ENV POSTGRES_PASSWORD=${PG_PASSWORD}
 ENV PGDATA=${PG_DATA}
 
-RUN ["/usr/local/bin/docker-entrypoint.sh", "postgres", "-c" , "max_wal_size=1GB"]
+RUN ["/usr/local/bin/docker-entrypoint.sh", "postgres", "-c" , "max_wal_size=2GB"]
 
 # final build stage
 FROM ${PG_IMAGE}
