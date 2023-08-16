@@ -1,1 +1,0 @@
-The python script that queries BQ and generates OMOP JSON output has been moved to {MENDS_HOME}/bin/mends-input

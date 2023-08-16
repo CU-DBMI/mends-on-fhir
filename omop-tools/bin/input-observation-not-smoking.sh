@@ -27,7 +27,7 @@ CHUNK_SIZE="${3:-100}"
 
 # Needed boilerplate code finished. The following is the only relevant part.
 
-"${MENDS_ROOT}/bin/mends-input" \
+"${DIR}/generate-input.sh" \
     --size "$SMALL_DIR" \
     --chunk-size "$CHUNK_SIZE" \
     --rows "$ROWS" \

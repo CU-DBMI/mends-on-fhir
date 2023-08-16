@@ -14,7 +14,8 @@ bin/synthea-1-example-data-update.sh
 
 docker compose \
   -f convert.yaml \
-  -f validate-all.yaml \
-  -f load-all.yaml \
+  -f validate.yaml \
+  -f load.yaml \
   -f hapi.yaml \
+  -f all.yaml \
   build --pull --no-cache

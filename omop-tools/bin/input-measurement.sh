@@ -25,19 +25,19 @@ SMALL_DIR="${1:-_default}"
 ROWS="${2:-500}"
 CHUNK_SIZE="${3:-100}"
 
-
 # Needed boilerplate code finished. The following is the only relevant part.
 
-"${MENDS_ROOT}/omop-config/input-condition.sh" "$SMALL_DIR" "$ROWS" "$CHUNK_SIZE"
-"${MENDS_ROOT}/omop-config/input-drug.sh" "$SMALL_DIR" "$ROWS" "$CHUNK_SIZE"
-
-"${MENDS_ROOT}/omop-config/input-measurement.sh" "$SMALL_DIR" "$ROWS" "$CHUNK_SIZE"
-"${MENDS_ROOT}/omop-config/input-observation-not-smoking.sh" "$SMALL_DIR" "$ROWS" "$CHUNK_SIZE"
-
-"${MENDS_ROOT}/omop-config/input-payer_plan_period.sh" "$SMALL_DIR" "$ROWS" "$CHUNK_SIZE"
-"${MENDS_ROOT}/omop-config/input-person.sh" "$SMALL_DIR" "$ROWS" "$CHUNK_SIZE"
-
-"${MENDS_ROOT}/omop-config/input-smoking.sh" "$SMALL_DIR" "$ROWS" "$CHUNK_SIZE"
-"${MENDS_ROOT}/omop-config/input-visit.sh" "$SMALL_DIR" "$ROWS" "$CHUNK_SIZE"
+"${DIR}/generate-input.sh" \
+    --size "$SMALL_DIR" \
+    --chunk-size "$CHUNK_SIZE" \
+    --rows "$ROWS" \
+    --sql-file "${MENDS_ROOT}/omop-config/sql/MENDS_queries_measurement.sql" \
+    
+    # The following are not specified since they are defaulted as shown
+    #--source mends \
+    #--format python-name-array \
+    #--db bigquery \
+    #--dbargs "hdcdmmends/mends" \
+    #--dir "${MENDS_ROOT}/../input/mends/python-name-array/$SMALL_DIR"
 
 

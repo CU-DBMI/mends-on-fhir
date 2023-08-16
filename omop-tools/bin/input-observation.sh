@@ -15,24 +15,17 @@ while [ -h "$SOURCE" ]; do
 done
 DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 
-# if environment hasn't been activated, activate dev by default for this script
-if [ -z "${MENDS_PATH_ORIGINAL-}" ]; then
-    echo Activating environment for this script
-    source <(${DIR}/../env-setup.sh)
-fi
-
 SMALL_DIR="${1:-_default}"
 ROWS="${2:-500}"
 CHUNK_SIZE="${3:-100}"
 
 # Needed boilerplate code finished. The following is the only relevant part.
 
-
-"${MENDS_ROOT}/bin/mends-input" \
+"${DIR}/generate-input.sh" \
     --size "$SMALL_DIR" \
     --chunk-size "$CHUNK_SIZE" \
     --rows "$ROWS" \
-    --sql-file "${MENDS_ROOT}/omop-config/sql/MENDS_queries_condition_occurrence.sql" \
+    --sql-file "${MENDS_ROOT}/omop-config/sql/MENDS_queries_observation.sql" \
     
     # The following are not specified since they are defaulted as shown
     #--source mends \

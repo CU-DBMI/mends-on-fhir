@@ -10,11 +10,15 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 . "${DIR}"/.init
 cd "$DIR"/..
 
-bin/synthea-1-example-data-update.sh
 
 docker compose \
   -f convert.yaml \
-  -f validate-all.yaml \
-  -f load-all.yaml \
+  -f validate.yaml \
+  -f load.yaml \
   -f hapi.yaml \
-  build --pull
+  -f all.yaml \
+  down --remove-orphans
+
+bin/convert-reset.sh
+bin/validate-reset.sh
+bin/load-reset.sh

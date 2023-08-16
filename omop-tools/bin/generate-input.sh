@@ -11,42 +11,30 @@ SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do
     DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
     SOURCE="$(readlink "$SOURCE")"
-    [[$SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
 DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 
-# if environment hasn't been activated, activate dev by default for this script
-if [ -z "${MENDS_PATH_ORIGINAL-}" ]; then
-    echo Activating environment for this script
-    source <(${DIR}/../env-setup.sh)
-fi
-
 # Setting up and activating Python virtual environment for the Python tooling
-if [ -d ${MENDS_ROOT}/omop-config/.venv/lib64/python3.?/site-packages/pybigquery ]; then
-    source "${MENDS_ROOT}/omop-config/.venv/bin/activate"
+if [ -d "${DIR}/../.venv" ]; then
+    source "${DIR}/../.venv/bin/activate"
 else
-    echo ====================================================================
-    echo Need temporary internet access to set up Python virtual environment and dependencies
-    echo ====================================================================
-
-    if [ ! -d "${MENDS_ROOT}/omop-config/.venv" ]; then
-        python3 -m venv "${MENDS_ROOT}/omop-config/.venv"
-    fi
-    source "${MENDS_ROOT}/omop-config/.venv/bin/activate"
+    python3 -m venv "${DIR}/../.venv"
+    source "${DIR}/../.venv/bin/activate"
     pip3 install --upgrade pip
-    pip3 install -r "${MENDS_ROOT}/omop-config/requirements.txt"
+    pip3 install -r "${DIR}/../requirements.txt"
 fi
 
 
 
-MENDS_INPUT_SOURCE=mends
-MENDS_INPUT_FORMAT=python-name-array
-MENDS_INPUT_SIZE=small
-MENDS_INPUT_CHUNK_SIZE=100
-MENDS_INPUT_ROWS=500
-MENDS_INPUT_SQL_FILE=
-MENDS_INPUT_DB=bigquery
-MENDS_INPUT_DB_ARGS=hdcdmmends/mends
+OMOP_INPUT_SOURCE=mends
+OMOP_INPUT_FORMAT=python-name-array
+OMOP_INPUT_SIZE=small
+OMOP_INPUT_CHUNK_SIZE=100
+OMOP_INPUT_ROWS=500
+OMOP_INPUT_SQL_FILE=
+OMOP_INPUT_DB=bigquery
+OMOP_INPUT_DB_ARGS=hdcdmmends/mends
 
 
 #MENDS_TEST_MOD=false
@@ -72,7 +60,7 @@ do
         --source)
             if [ -n "$2" ]
             then
-                MENDS_INPUT_SOURCE=$2
+                OMOP_INPUT_SOURCE=$2
                 shift
             else
                 printf 'ERROR: "--source" requires a non-empty argument.\n' >&2
@@ -83,7 +71,7 @@ do
         --format)
             if [ -n "$2" ]
             then
-                MENDS_INPUT_FORMAT=$2
+                OMOP_INPUT_FORMAT=$2
                 shift
             else
                 printf 'ERROR: "--format" requires a non-empty argument.\n' >&2
@@ -94,7 +82,7 @@ do
         --size)
             if [ -n "$2" ]
             then
-                MENDS_INPUT_SIZE=$2
+                OMOP_INPUT_SIZE=$2
                 shift
             else
                 printf 'ERROR: "--size" requires a non-empty argument.\n' >&2
@@ -105,7 +93,7 @@ do
         --chunk-size)
             if [ -n "$2" ]
             then
-                MENDS_INPUT_CHUNK_SIZE=$2
+                OMOP_INPUT_CHUNK_SIZE=$2
                 shift
             else
                 printf 'ERROR: "--chunk-size" requires a non-empty argument.\n' >&2
@@ -116,7 +104,7 @@ do
         --rows)
             if [ -n "$2" ]
             then
-                MENDS_INPUT_ROWS=$2
+                OMOP_INPUT_ROWS=$2
                 shift
             else
                 printf 'ERROR: "--rows" requires a non-empty argument.\n' >&2
@@ -127,7 +115,7 @@ do
         --sql-file)
             if [ -n "$2" ]
             then
-                MENDS_INPUT_SQL_FILE=$2
+                OMOP_INPUT_SQL_FILE=$2
                 shift
             else
                 printf 'ERROR: "--sql-file" requires a non-empty argument.\n' >&2
@@ -138,7 +126,7 @@ do
         --db)
             if [ -n "$2" ]
             then
-                MENDS_INPUT_DB=$2
+                OMOP_INPUT_DB=$2
                 shift
             else
                 printf 'ERROR: "--db" requires a non-empty argument.\n' >&2
@@ -149,7 +137,7 @@ do
         --dbargs)
             if [ -n "$2" ]
             then
-                MENDS_INPUT_DB_ARGS=$2
+                OMOP_INPUT_DB_ARGS=$2
                 shift
             else
                 printf 'ERROR: "--dbargs" requires a non-empty argument.\n' >&2
@@ -160,7 +148,7 @@ do
         --dir)
             if [ -n "$2" ]
             then
-                MENDS_INPUT_DIR=$2
+                OMOP_INPUT_DIR=$2
                 shift
             else
                 printf 'ERROR: "--dir" requires a non-empty argument.\n' >&2
@@ -177,34 +165,34 @@ do
     shift 
 done
 
-if [ -z "${MENDS_INPUT_DIR:-}" ]; then
-    MENDS_INPUT_DIR="${MENDS_ROOT}/../input/${MENDS_INPUT_SOURCE}/${MENDS_INPUT_FORMAT}/${MENDS_INPUT_SIZE}"
+if [ -z "${OMOP_INPUT_DIR:-}" ]; then
+    OMOP_INPUT_DIR="${DIR}/../input/${OMOP_INPUT_SOURCE}/${OMOP_INPUT_FORMAT}/${OMOP_INPUT_SIZE}"
 fi
 
 
-if [ -z "${MENDS_INPUT_SQL_FILE:-}" ]
+if [ -z "${OMOP_INPUT_SQL_FILE:-}" ]
 then
     echo SQL file not provided, exiting
     exit 1
 fi
 
-if [ ! -f "${MENDS_INPUT_SQL_FILE}"  ];
+if [ ! -f "${OMOP_INPUT_SQL_FILE}"  ];
 then
-    echo SQL file does not exist: ${MENDS_INPUT_SQL_FILE}
+    echo SQL file does not exist: ${OMOP_INPUT_SQL_FILE}
     exit 1
 fi
 
-mkdir -p "${MENDS_INPUT_DIR}"
+mkdir -p "${OMOP_INPUT_DIR}"
 
-MENDS_INPUT_SQL_FILE="$(realpath ${MENDS_INPUT_SQL_FILE})"
-MENDS_INPUT_DIR="$(realpath ${MENDS_INPUT_DIR})"
+OMOP_INPUT_SQL_FILE="$(realpath ${OMOP_INPUT_SQL_FILE})"
+OMOP_INPUT_DIR="$(realpath ${OMOP_INPUT_DIR})"
 
 set -x
-${DIR}/mends-input.py \
-    --chunksize $MENDS_INPUT_CHUNK_SIZE \
-    --rows $MENDS_INPUT_ROWS \
-    --sqlfile="$MENDS_INPUT_SQL_FILE" \
-    --database "$MENDS_INPUT_DB" \
-    --dbargs "$MENDS_INPUT_DB_ARGS" \
-    --localdir "$MENDS_INPUT_DIR"
+python ${DIR}/../generate-input.py \
+    --chunksize $OMOP_INPUT_CHUNK_SIZE \
+    --rows $OMOP_INPUT_ROWS \
+    --sqlfile="$OMOP_INPUT_SQL_FILE" \
+    --database "$OMOP_INPUT_DB" \
+    --dbargs "$OMOP_INPUT_DB_ARGS" \
+    --localdir "$OMOP_INPUT_DIR"
 
