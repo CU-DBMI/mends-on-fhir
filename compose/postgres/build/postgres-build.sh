@@ -14,7 +14,13 @@ while [ -h "$SOURCE" ]; do
     [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
 DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
-. "${DIR}"/.init
-cd "$DIR"/..
+. "${DIR}"/../../bin/.init
+cd "$DIR"/../..
 
-docker image build --env-file .eng-pg --name mgkahn/compose-postgres ../postgres/build
+# docker build --tag mgkahn/compose-postgres postgres/build
+
+docker compose --progress plain \
+    -f postgres.yaml \
+    build
+
+docker compose -f postgres.yaml push

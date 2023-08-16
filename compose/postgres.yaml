@@ -1,27 +1,26 @@
 services:
-  convert:
+  postgres:
+    image: mgkahn/omop-synthea-postgres:latest
     build:
-      context: convert/build
+      context: postgres/build
       args:
-        CONVERT_IMAGE: ${CONVERT_IMAGE}
-    user: ${UID_GID}
-    command: [ "convert" ]
-    volumes:
-      - type: bind
-        source: convert/volume
-        target: /whistle
-      - type: bind
-        source: ${CONVERT_INPUT}
-        target: /whistle/input
-      - type: bind
-        source: ${CONVERT_MAPPING_FUNCTIONS}
-        target: /whistle/mapping-functions
-      - type: bind
-        source: ${CONVERT_MAPPING_CONCEPT_MAPS}
-        target: /whistle/mapping-concept-maps
-      - type: bind
-        source: ${CONVERT_MAIN}
-        target: /whistle/mains/main.wstl
+        PG_IMAGE: ${PG_IMAGE:?err}
+        PG_USER: ${PG_USER:?err}
+        PG_PASSWORD: ${PG_PASSWORD:?err}
+        PG_DATA: ${PG_DATA:?err}
+    environment:
+      - "POSTGRES_USER=${PG_USER:?err}"
+      - "POSTGRES_PASSWORD=${PG_PASSWORD:?err}"
+    ports:
+      - '5432:5432'
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    
+
 
 
 

@@ -1,5 +1,0 @@
-To replace Docker Compose Build:
-Create dockerfile to build
-Tag with mgkahn/name:latest
-Push to mgkahn/name:latest
-
