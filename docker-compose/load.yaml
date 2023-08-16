@@ -6,10 +6,4 @@ services:
       - type: bind
         source: convert/volume/output
         target: /output
-    depends_on:
-      fhir-server:
-        condition: service_healthy
-        required: false
-#      convert:
-#        condition: service_completed_successfully
-#        required: false
+
