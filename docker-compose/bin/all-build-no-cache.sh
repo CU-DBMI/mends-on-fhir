@@ -10,7 +10,7 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 . "${DIR}"/.init
 cd "$DIR"/..
 
-bin/synthea-1-example-data-update.sh
+bin/synthea-random-20-example-data-update.sh
 
 docker compose \
   -f convert.yaml \
