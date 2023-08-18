@@ -10,11 +10,5 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 . "${DIR}"/.init
 cd "$DIR"/..
 
-cd ..
-
-pwd
-
 set -x
-mkdir -p input-examples/synthea-random-20
-#git submodule init synthea-random-20
 git submodule update --init input-examples/synthea-random-20
