@@ -1,3 +1,0 @@
-def Main(input, context){
-  $this: MainImpl(input, context)
-}

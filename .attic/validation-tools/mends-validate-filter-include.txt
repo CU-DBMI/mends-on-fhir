@@ -1,4 +1,0 @@
-=============== Validating
-^  Information
-^  Warning
-^  Error

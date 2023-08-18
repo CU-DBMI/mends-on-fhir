@@ -1,5 +1,0 @@
-def ChangeArgument(json){
-  var arg: json
-  var arg.added: "added value"
-  // return is empty object
-}

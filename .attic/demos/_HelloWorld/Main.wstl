@@ -1,5 +1,0 @@
-$this: HelloWorld()
-
-def HelloWorld(){
-    Hello: "World"
-}

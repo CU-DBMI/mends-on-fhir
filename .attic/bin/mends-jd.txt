@@ -1,3 +1,0 @@
-see: https://github.com/josephburnett/jd
-
-Release: v1.4.0
