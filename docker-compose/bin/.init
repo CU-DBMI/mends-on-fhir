@@ -1,0 +1,15 @@
+#set -x
+set -e
+set -u
+set -o pipefail
+set -o noclobber
+shopt -s  nullglob
+
+USER_UID=$(id -u)
+USER_GID=$(id -g)
+UID_GID="$(id -u):$(id -g)"
+NOW=$(date +%Y%m%d_%H%M%S)
+export USER_UID USER_GID UID_GID NOW
+
+# for docker https://docs.docker.com/build/building/env-vars/
+export BUILDKIT_PROGRESS=auto  # "plain" for simpler to debug output

@@ -1,0 +1,1 @@
+This service runs the FHIR validator and saves the results to HTML and CSV output files uner `validate/volume/results`. The file names are datetime stamped. The validation results is for the `convert/volume/output/*.json` resources.  The FHIR validator's options can be customized in the `validate.yaml` Docker Compose file.

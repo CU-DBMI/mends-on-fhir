@@ -1,0 +1,14 @@
+services:
+  validate:
+    depends_on:
+      convert:
+        condition: service_completed_successfully
+        required: false
+  load:
+    depends_on:
+      fhir-server:
+        condition: service_healthy
+        required: false
+      validate:
+        condition: service_completed_successfully
+        required: false

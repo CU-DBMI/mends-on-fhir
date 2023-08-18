@@ -1,0 +1,30 @@
+services:
+  validate:
+    build:
+      context: validate/build
+      args:
+        USER_UID: ${USER_UID:?err}
+        USER_GID: ${USER_GID:?err}
+    user: ${UID_GID}
+    command:
+      - -ig
+      - ${VALIDATE_IG:?err}
+      - -html-output
+      - /validation/results/validation_${NOW}.html
+      - -output-style
+      - csv
+      - -output
+      - /validation/results/validation_${NOW}.csv
+      - -version
+      - "4.0"
+      - /validation/resources/*.json
+
+#    network_mode: host
+#    dns: ["8.8.8.8"]
+    volumes:
+      - type: bind
+        source: validate/volume/results
+        target: /validation/results
+      - type: bind
+        source: convert/volume/output
+        target: /validation/resources

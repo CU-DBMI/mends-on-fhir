@@ -1,0 +1,9 @@
+services:
+  load:
+    build:
+      context: load/build
+    volumes:
+      - type: bind
+        source: convert/volume/output
+        target: /output
+

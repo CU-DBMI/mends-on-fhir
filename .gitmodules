@@ -1,0 +1,4 @@
+[submodule "input-examples/synthea-random-20"]
+	path = input-examples/synthea-random-20
+	url = https://github.com/CU-DBMI/mends-on-fhir-example-data.git
+	branch = synthea-random-20

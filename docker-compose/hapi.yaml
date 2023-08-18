@@ -1,0 +1,20 @@
+services:
+  fhir-server:
+    build:
+      context: hapi/build
+    environment:
+      - "SPRING_CONFIG_LOCATION=file:///hapi-config/application.yaml"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/fhir/metadata" ]
+      interval: 30s
+      timeout: 30s
+      retries: 10
+    ports:
+      - target: 8080
+        host_ip: localhost
+        published: 8080
+    volumes:
+      - type: bind
+        source: hapi/config
+        target: /hapi-config
+
