@@ -11,4 +11,4 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 cd "$DIR"/..
 
 set -x
-git submodule update --init input-examples/synthea-random-20
+git submodule update --init ../input-examples/synthea-random-20
