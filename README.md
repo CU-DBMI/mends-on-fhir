@@ -21,6 +21,8 @@ Yellow components are existing systems. Green components are available on GitHub
 
 The demo begins with OMOP CDM V5.3 data extracted from a Postgresql database in NDJSON format. The Python tool/SQL queries that create these files can be found in the DEV branch but will be merged here when cleaned up. Shell scripts create Docker images and launch containers that perform the following tasks:
 
+### Make sure you are using the latest version of Docker (on MacOS: 4.22.1 at the time of writing). Otherwise you will get a complaint from docker compose about "Additional property required is not allowed".
+
 1. Attach demo data from a separate repository as a submodule:
     * `docker-compose/bin/synthea-random-20-example-data-update.sh`
 2. Build all of the required Docker images:
