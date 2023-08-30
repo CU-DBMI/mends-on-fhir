@@ -1,4 +1,8 @@
-[submodule "input-examples/synthea-random-20"]
-	path = input-examples/synthea-random-20
-	url = https://github.com/CU-DBMI/mends-on-fhir-example-data.git
-	branch = synthea-random-20
+[submodule "input-examples/synthea"]
+	path = input-examples/synthea
+	url = https://github.com/CU-DBMI/omop-fhir-data.git
+	branch = main
+[submodule "input-examples/omop-fhir-data"]
+	path = input-examples/omop-fhir-data
+	url = https://github.com/CU-DBMI/omop-fhir-data.git
+	branch = main

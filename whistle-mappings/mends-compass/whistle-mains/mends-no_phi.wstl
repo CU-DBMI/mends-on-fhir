@@ -1,0 +1,12 @@
+var context.config.input.instance-name: "mends-lds"
+var context.config.input.instance-version: "1.2.3"
+
+var context.config.input.model-name: "omop"
+var context.config.input.model-version: "5.3.1"
+
+var context.config.output.phi: "no"
+
+var resources[]: Main($root, context)
+
+// output the resources any w
+$this: Bundle(resources, context, "batch", "PUT", "http://projects/hdcekamends1/locations/us-central1/datasets/mends_dev/fhirStores/mends" )
