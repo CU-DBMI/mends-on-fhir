@@ -11,9 +11,9 @@ This repository is a stripped down version of the transformation rules used in t
 
 The figure, taken from the technical publication, below shows the overall data pipeline. Only those parts highlighted in green are implemented in this repository
 
-![High level processing flow](/assets/images/dataflow.png)
+![High level processing flow](/assets/images/MENDS-generalized.png)
 
-Yellow components are existing systems. Green components are available on GitHub. Green components with asterisk extended an existing, abandoned open-access proof-of-concept [GitHub project by the Google helathcare API team](https://github.com/GoogleCloudPlatform/healthcare-data-harmonization).
+Yellow components are existing systems. Green components are available in this repo. Green components with asterisk extended an existing, abandoned open-access proof-of-concept [GitHub project by the Google helathcare API team](https://github.com/GoogleCloudPlatform/healthcare-data-harmonization). Blue components are available in the [omop-fhir-data](https://github.com/cu-dbmi/omop-fhir-data) repo.
 
 ## TL;DR (aka the short story version)
 
