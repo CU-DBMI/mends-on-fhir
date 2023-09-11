@@ -11,5 +11,4 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 cd "$DIR"/..
 
 set -x
-set -o allexport source .env set +o allexport
-git submodule update --init ../input-examples/omop-fhir-data
+echo "Hello from foo"

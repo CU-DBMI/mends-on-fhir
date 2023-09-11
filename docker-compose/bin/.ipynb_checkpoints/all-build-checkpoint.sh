@@ -10,6 +10,12 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 . "${DIR}"/.init
 cd "$DIR"/..
 
-set -x
-set -o allexport source .env set +o allexport
-git submodule update --init ../input-examples/omop-fhir-data
+bin/omop-fhir-data-update.sh
+
+docker compose \
+  -f convert.yaml \
+  -f validate.yaml \
+  -f load.yaml \
+  -f hapi.yaml \
+  -f all.yaml \
+  build --pull
