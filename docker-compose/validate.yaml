@@ -23,8 +23,8 @@ services:
 #    dns: ["8.8.8.8"]
     volumes:
       - type: bind
-        source: validate/volume/results
+        source: ${HOST_MENDS_HOME}/docker-compose/validate/volume/results
         target: /validation/results
       - type: bind
-        source: convert/volume/output
-        target: /validation/resources
+        source: ${HOST_MENDS_HOME}/docker-compose/convert/volume/output
+        target: ${HOST_MENDS_HOME}/docker-compose/validation/resources

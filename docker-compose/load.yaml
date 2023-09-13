@@ -4,6 +4,6 @@ services:
       context: load/build
     volumes:
       - type: bind
-        source: convert/volume/output
+        source: ${HOST_MENDS_HOME}/docker-compose/convert/volume/output
         target: /output
 

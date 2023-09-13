@@ -15,6 +15,6 @@ services:
         published: 8080
     volumes:
       - type: bind
-        source: /Users/kahnmi/Documents/git/mends-on-fhir/docker-compose/hapi/config
+        source: ${MENDS_HOME}/docker-compose/hapi/config
         target: /hapi-config
 

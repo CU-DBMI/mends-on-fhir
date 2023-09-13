@@ -10,6 +10,7 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 . "${DIR}"/.init
 cd "$DIR"/..
 
-set -x
-set -o allexport source .env set +o allexport
+# Make all assignments in .env into environment vars
+set -o allexport ; source .env ; set +o allexport
+
 git submodule update --init ../input-examples/omop-fhir-data

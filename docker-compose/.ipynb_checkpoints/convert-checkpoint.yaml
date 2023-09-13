@@ -8,7 +8,7 @@ services:
     command: [ "convert" ]
     volumes:
       - type: bind
-        source: convert/volume
+        source: ${HOST_MENDS_HOME}/docker-compose/convert/volume
         target: /whistle
       - type: bind
         source: ${CONVERT_INPUT}
@@ -22,7 +22,3 @@ services:
       - type: bind
         source: ${CONVERT_MAIN}
         target: /whistle/mains/main.wstl
-
-
-
-

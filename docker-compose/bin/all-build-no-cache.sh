@@ -10,6 +10,8 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 . "${DIR}"/.init
 cd "$DIR"/..
 
+# Make all assignments in .env into environment vars
+set -o allexport ; source .env ; set +o allexport
 bin/omop-fhir-data-update.sh
 
 docker compose \

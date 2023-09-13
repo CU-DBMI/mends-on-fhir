@@ -90,7 +90,7 @@ VERSION="${VERSION#v}"
 #   * test
 #   * edge (deprecated)
 #   * nightly (deprecated)
-DEFAULT_CHANNEL_VALUE="test"
+DEFAULT_CHANNEL_VALUE="stable"
 if [ -z "$CHANNEL" ]; then
 	CHANNEL=$DEFAULT_CHANNEL_VALUE
 fi
