@@ -104,10 +104,13 @@ docker run -it --rm \
     -e CHOWN_HOME=yes \
     -e CHOWN_HOME_OPTS="-R" \
     -e GRANT_SUDO=yes \
-    -e LOCAL_MENDS_HOME="${HOME}/Documents/git/mends-on-fhir" \
-    -e JUPYTER_MENDS_HOME="/home/mends/mends-on-fhir" \
     -w "/home/mends" \
-    -v "${PWD}/..":/home/mends/mends-on-fhir \
+    -v "${PWD}":/home/mends/mends-on-fhir \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --privileged \
-    mgkahn_jupyter_docker_rise
+    jdr /start_jupyter_docker_rise.sh
+
+
+# RISE slides
+    https://github.com/jupyterlab-contrib/rise
+    conda install jupyterlab_rise

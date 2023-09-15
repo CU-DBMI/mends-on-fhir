@@ -1,0 +1,24 @@
+services:
+  jdr:
+    build:
+      context: jupyter/build
+    user: root
+    command: [ "/start_jdr.sh" ]
+    environment:
+      - "NB_USER=mends"
+      - "NB_UID=${USER_UID}"
+      - "NB_GID=${USER_GID}"
+      - "CHOWN_HOME=yes"
+      - "CHOWN_HOME_OPTS=-R"
+      - "GRANT_SUDO=yes"
+    ports:
+      - 8888:8888
+    privileged: true
+    volumes:
+      - type: bind
+        source: ${HOST_MENDS_HOME}
+        target: /home/mends/mends-on-fhir
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    working_dir: /home/mends

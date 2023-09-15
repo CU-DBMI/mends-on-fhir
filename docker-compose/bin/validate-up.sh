@@ -15,4 +15,4 @@ set -o allexport ; source .env ; set +o allexport
 
 docker compose \
   -f validate.yaml \
-  up
+  up 

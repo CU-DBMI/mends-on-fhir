@@ -14,3 +14,4 @@ cd "$DIR"/..
 set -o allexport ; source .env ; set +o allexport
 
 rm -f convert/volume/output/*.json
+

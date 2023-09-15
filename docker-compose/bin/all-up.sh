@@ -14,6 +14,8 @@ cd "$DIR"/..
 set -o allexport ; source .env ; set +o allexport
 
 bin/omop-fhir-data-update.sh
+bin/convert-reset.sh
+bin/validate-reset.sh
 
 docker compose \
   -f convert.yaml \
@@ -21,4 +23,4 @@ docker compose \
   -f load.yaml \
   -f hapi.yaml \
   -f all.yaml \
-  up
+  up 
