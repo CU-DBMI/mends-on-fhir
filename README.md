@@ -103,6 +103,7 @@ A vanilla version of the HAPI Docker image was used. The Docker build replaces t
 6. Import the above FHIR Bundle resources into the HAPI server.
 <ul>
 The import service loops through all FHIR Bundle files in docker-compose/convert/volume/output and does a simple POST REST call to the HAPI server. The import service is not activated until after the validate service has terminated (completed) and the HAPI server service is "healthy". 
+</ul>
 7. Bring up the HAPI server and search various resources to see the imported OMOP data as FHIR resources.
 <ul>
 HAPI lists all FHIR resource types down the left navigation bar. In the Synthea data, only FHIR resources for BASIC, CONDITION, COVERAGE, ENCOUNTER, MEDICATION, OBSERVATION and PATIENT were created. Select one of these FHIR resource types then select the green "Search" button. After a few seconds, the imported FHIR resources will appear underneath the Search panel. Apply FHIR search parameters to select a subset of the available resources.
