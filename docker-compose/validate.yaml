@@ -27,4 +27,4 @@ services:
         target: /validation/results
       - type: bind
         source: ${HOST_MENDS_HOME}/docker-compose/convert/volume/output
-        target: ${HOST_MENDS_HOME}/docker-compose/validation/resources
+        target: /validation/resources
