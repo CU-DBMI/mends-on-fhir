@@ -1,8 +1,5 @@
-/.idea
-.DS_Store
 pgdump*
 pgdump**
 *dump*
 *dump**
-
 
