@@ -4,5 +4,8 @@ pgdump*
 pgdump**
 *dump*
 *dump**
+*checkpoints*
+*checkpoints**
+
 
 
