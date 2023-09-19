@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # stack overflow #59895
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do
@@ -14,5 +15,5 @@ cd "$DIR"/..
 set -o allexport ; source .env ; set +o allexport
 
 docker compose \
-  -f convert.yaml \
-  down --remove-orphans
+  -f jdr.yaml \
+  stop

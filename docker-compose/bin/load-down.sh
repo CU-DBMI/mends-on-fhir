@@ -15,4 +15,4 @@ set -o allexport ; source .env ; set +o allexport
 
 docker compose \
   -f load.yaml \
-  down
+  down --remove-orphans

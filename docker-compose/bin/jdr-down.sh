@@ -15,4 +15,4 @@ set -o allexport ; source .env ; set +o allexport
 
 docker compose \
   -f jdr.yaml \
-  down 
+  down --remove-orphanse
