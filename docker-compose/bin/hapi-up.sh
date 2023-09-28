@@ -10,7 +10,10 @@ DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 . "${DIR}"/.init
 cd "$DIR"/..
 
+# Make all assignments in .env into environment vars
+set -o allexport ; source .env ; set +o allexport
 
 docker compose \
   -f hapi.yaml \
-  up
+  up --detach
+
