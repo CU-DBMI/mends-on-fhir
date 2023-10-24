@@ -1,0 +1,20 @@
+.reveal h1, 
+.reveal h3 {
+  font-size: 50px;
+  color: red;
+  margin: 0;
+}
+
+.reveal h6 {
+  font-size: 26px;
+  color: blue;
+}
+
+.reveal div.output pre {
+  font-size: 18px;
+  color: blue;
+}
+
+.reveal img {
+  width: 85%;
+}
