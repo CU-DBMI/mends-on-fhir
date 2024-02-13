@@ -10,9 +10,7 @@ services:
       timeout: 30s
       retries: 10
     ports:
-      - target: 8080
-        host_ip: localhost
-        published: 8080
+      - "8080:8080"
     volumes:
       - type: bind
         source: hapi/config
