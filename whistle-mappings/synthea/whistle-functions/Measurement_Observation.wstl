@@ -189,7 +189,7 @@ def meas_Profile(m) {
       if $MatchesRegex(value_source_value, "lb.*") {
         // convert lbs to kgs
         var temp: $StrSplit(value_source_value, "lb");
-        value_to_use: $Trim(temp[0]);
+        var value_to_use: $Trim(temp[0]);
         if $IsNotNil(value_to_use) {
           convert: Convert(value_to_use, m.range_low, m.range_high, "lb", "kg")
         }
