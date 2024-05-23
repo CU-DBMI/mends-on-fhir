@@ -1,0 +1,21 @@
+# Provide path in command line using --envfile
+# e.g. omop_to_json.py --envfile ../myenvfile
+# If not provided, default is ./.env
+
+# BigQuery parms
+BQ_PROJECTID=myOMOPsandbox
+BQ_DATASETID=myOMOPdataset
+BQ_LOCATION=us
+
+# Postgresql parms
+PG_USER=me
+PG_PASSWORD=you
+PG_HOST=localhost
+PG_DATABASE=myOMOPdatabase
+PG_SCHEMA=myOMOPschema
+
+# MySQL parms
+# Not implemented
+
+# MS SQL parms
+# Not implemented

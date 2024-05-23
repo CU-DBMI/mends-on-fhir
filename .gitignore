@@ -11,6 +11,7 @@ pgdump**
 .vscode/
 test/
 output/
+.venv/
 
 
 
