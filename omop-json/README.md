@@ -11,7 +11,7 @@ This program connects to a RDBMS that contains clinical data in the OMOP Common 
 
 ## Command syntax
 
-Example for a postgresql database using SQL statements contained in test.sql in the same directory:
+Example #1:  A postgresql database using SQL statements contained in test.sql in the same directory. The default location of the environment file (./.env) is used for additional needed postgres variables (user, password, host, database, schema):
 
 ```
 ./omop_to_json.py --db_type postgresql --sqlfile ./test.sql \
@@ -19,10 +19,11 @@ Example for a postgresql database using SQL statements contained in test.sql in 
     [optional db-specific commands]
 ```
 
-Example for a bigquery database with both runtime and bigquery-specific command line variables. This example generates 100 rows (nrows 100) total across 10 files. Each output file contains up to 10 rows (chunksize 10). The JSON files are written to a local directory named outputdir under the current directory and also prints output to stdout. It uses a BigQuery dataset named test_omop in the sandbox bigquery project located in the US region:
+Example #2: A bigquery database with both runtime and bigquery-specific command line variables. This example uses the file ../myenvfile for environment variables not set on the command line, generates 100 rows (nrows 100) total across 10 files. Each output file contains up to 10 rows (chunksize 10). The JSON files are written to a local directory named outputdir under the current directory and also prints output to stdout. It uses a BigQuery dataset named test_omop in a bigquery project named sandbox that is located in the US region:
 
 ```
 ./omop_to_json.py --db_type bigquery -- sqlfile ./test.sql \
+  --envfile ../myenvfile \
   --nrows 100 \
   --chunksize 10 \
   --locadir ./outputdir \
@@ -34,7 +35,7 @@ Example for a bigquery database with both runtime and bigquery-specific command 
 
 
 ## Runtime variables
-Runtime variables may be set on command line or in a .env file located in the same directory as the OMOP\_TO\_JSON.PY file. Variables declared in the command line overwrite values declared in the .env file. The one exception is the use of LIMIT in the provided SQLFILE. If LIMIT is present in the SQL statement, runtime values for nrow or NROW are ignored.
+Runtime variables may be set on command line or in a .env file located in the same directory as the OMOP\_TO\_JSON.PY file. Variables declared in the command line overwrite values declared in the .env file. See below for comment regarding LIMIT/NROWS.
 
 Default values, where listed below, are used when variable values are not set in the command line or .env file.
 
@@ -49,15 +50,15 @@ RDBMS-specific variables are mandatory for specified db_type
 | envfile | Not applicable | path to file with environment variables. Default ./.env |
 | stdout | STDOUT | Boolean flag to include output in standard output. Default False |
 | localdir | LOCALDIR | Full or relative path for local directory for output. |
-| nrows | NROWS | Number of total rows, across all chunck. Default = -1  (extract all rows)|
-| chunksize | CHUNKSIZE | Number of rows per chunck/output file. Default = 1 row per file|
-| **Postgresql-specific** (db_type=postgresql)|
+| nrows | NROWS | Number of total rows, across all chunks. Default = -1  (extract all rows)|
+| chunksize | CHUNKSIZE | Number of rows per chunk/output file. Default = 1 row per file|
+| **Postgresql-specific** (Required if db_type=postgresql)|
 | pg_user | PG_USER | Postgresql user name |
 | pg_password | PG_PASSWORD | Postgresql user password |
-| pg_host | PG_HOST | Postgress host name or IP address |
-| pg_database | PG_DATABASE | Postgres database for connection |
-| pg_schema | PG_SCHEMA | Postgres schema to use for queries |
-| **BigQuery-specific** (db_type=bigquery) |
+| pg_host | PG_HOST | Postgresql host name or IP address |
+| pg_database | PG_DATABASE | Postgresql database for connection |
+| pg_schema | PG_SCHEMA | Postgresql schema to use for queries |
+| **BigQuery-specific** (Required if db_type=bigquery) |
 | bq_projectid | BQ_PROJECTID | Bigquery projectID |
 | bq_datasetid | BQ_DATASETID | Bigquery dataset ID |
 | bq_location | BQ_LOCATION | Location or region of Bigquery project |
@@ -67,10 +68,8 @@ RDBMS-specific variables are mandatory for specified db_type
 | | | Not implemented -- need test instance |
 
 
-
-
 ## JSON output format
-This program creates a single valid JSON object from any SQL statement although the intended use case is creating A JSON object from an OMOP CDM. The output JSON format is in KEY: [{},{}....{}] pretty-print format where each element in the array is a list of column_names: values returned by the SQL query:
+This program creates a single valid JSON object from any SQL statement although the intended use case is creating A JSON object from an OMOP CDM. The output JSON format is in KEY: [{},{}....{}] pretty-print format where each element in the array is a list of column_name: value returned by the SQL query:
 
 ```
 {
