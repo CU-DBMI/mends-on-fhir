@@ -1,0 +1,2 @@
+\copy (SELECT * FROM synthea10.person limit 10) to '/Users/mgkahn/Documents/synthea_person_10.csv' with csv header;
+\copy (SELECT * FROM synthea10.cdm_source) to '/Users/mgkahn/Documents/synthea_source_table.csv' with csv header;

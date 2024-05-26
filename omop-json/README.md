@@ -50,7 +50,7 @@ RDBMS-specific variables are mandatory for specified db_type
 | envfile | Not applicable | path to file with environment variables. Default ./.env |
 | stdout | STDOUT | Boolean flag to include output in standard output. Default False |
 | localdir | LOCALDIR | Full or relative path for local directory for output. |
-| nrows | NROWS | Number of total rows, across all chunks. Default = -1  (extract all rows)|
+| nrows | NROWS | Number of total rows, across all chunks. Default = -1  (see note below)|
 | chunksize | CHUNKSIZE | Number of rows per chunk/output file. Default = 1 row per file|
 | **Postgresql-specific** (Required if db_type=postgresql)|
 | pg_user | PG_USER | Postgresql user name |
@@ -206,11 +206,13 @@ Example:
 ### @cdmDatabaseSchema
 All occurrences of the string @cdmDatabaseSchema in the SQLFILE are replaced with the by the string database.schema as declared by runtime or env variables. If @cdmDatabaseSchema is not present, it is assumed that the provided SQL is fully qualified for the target RDBMS.
 
-### LIMIT/NROWS
-If the SQL statement in SQLFILE contains a LIMIT clause, the LIMIT clause is ignored. The usual precedence (nrows from the command line first; NROWS in .env file second) will apply. Any negative value returns all available rows. The default for NROWS = -1, which will extract all available rows.
+### TOP N/LIMIT/NROWS
+Microsoft SQL server (db_type = 'sqlserver') uses TOP N in the SELECT clause to limit the total number of rows returned in a query. All other RDBMSs use LIMIT N at the end of an SQL statement.
 
+If NROWS is < 0, the  SQL statement in --sqlfile/SQLFILE is passed unchanged. 
 
- 
- 
-   
+**WARNING: NROWS < 0 DOES NOT MODIFY THE SOURCE SQL TO CONFORM TO THE EXECUTION RDBMS SYNTAX.** If the source SQL statement is written with one syntax but is executed on a RDBMS that uses the other syntax, the SQL will fail with a illegal SQL syntax error. 
 
+If NROWS is >= 0, any  LIMIT N or TOP N clause in the source SQLFILE is *replaced* with LIMIT NROWS or TOP NROWS. If there is no existing LIMIT/TOP clause, the LIMIT NROWS or TOP NROWS clause is *added*. The use of LIMIT versus TOP is appropriate for the RDBMS set by db_type/DB_TYPE.
+
+It is recommended that TOP N/LIMIT N clauses  not be included in the source SQL file (--sqlfile/SQLFILE). Use --nrows/NROWS to limit output. By following this recommendation, setting NROWS = -1 will return all rows.

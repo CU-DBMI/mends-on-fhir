@@ -5,6 +5,7 @@
 from sqlalchemy import *
 from sqlalchemy import create_engine
 from sqlalchemy.schema import *
+import urllib
 
 # Postgresql imports
 import psycopg2
@@ -43,7 +44,7 @@ class DatabaseConnector:
         self.cursor = None
 
         if self.db_type is None: 
-            raise ValueError("No db_type set in enviornment or .env file")
+            raise ValueError("No db_type set in environment or .env file")
         match self.db_type:
             case 'postgresql': 
                 # postgresql+psycopg2://user:password@hostname/database_name
@@ -51,8 +52,9 @@ class DatabaseConnector:
                 self.password = os.getenv('pg_password')
                 self.host = os.getenv('pg_host')
                 self.database = os.getenv('pg_database')
+                self.port = os.getenv('pg_port')
                 self.schema = os.getenv('pg_schema')
-                self.connection_string = f'postgresql+psycopg2://{self.user}:{self.password}@{self.host}/{self.database}'
+                self.connection_string = f'postgresql+psycopg2://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}'
                 self.db_engine = create_engine(self.connection_string,connect_args={'options': '-csearch_path={}'.format(self.schema)})
                 self.connection = self.db_engine.connect().execution_options(stream_results=True)
             case 'bigquery': 
@@ -64,10 +66,28 @@ class DatabaseConnector:
                 self.connection_string = f'bigquery://{self.database}/{self.schema}'
                 self.db_engine = create_engine(self.connection_string, location=self.location)
                 self.connection = self.db_engine.connect().execution_options(stream_results=True)
-            case 'mysql': 
-                self.connection_string = coalesce(os.getenv('cl_connection_string'),os.getenv('mysql_connection_string'), "No mysql connection string")
             case 'sqlserver': 
-                self.connection_string = coalesce(os.getenv('cl_connection_string'),os.getenv('sqlserver_connection_string'), "No sqlserver connection string")
+                #engine = sa.create_engine('mssql+pyodbc://user:password@server/database')
+                self.user = os.getenv('sqlserver_user')
+                self.password = os.getenv('sqlserver_password')
+                self.host = os.getenv('sqlserver_host')
+                self.database = os.getenv('sqlserver_database')
+                self.schema = os.getenv('sqlserver_schema')
+                self.connection_string = (
+                    f"DRIVER={{ODBC Driver 18 for SQL Server}};"
+                    f"SERVER={self.host};"
+                    f"DATABASE={self.database};"
+                    f"UID={self.user};"
+                    f"PWD={self.password};"
+                    f"Encrypt=no;"
+                    f"TrustServerCertificate=yes;"
+                    f"Connection Timeout=30;"
+                )
+                self.encoded_connection_string = urllib.parse.quote_plus(self.connection_string)
+                self.db_engine = create_engine(f"mssql+pyodbc:///?odbc_connect={self.encoded_connection_string}")
+                self.connection = self.db_engine.connect().execution_options(stream_results=True)
+            case 'mysql': 
+                self.connection_string = coalesce(os.getenv('cl_connection_string'),os.getenv('mysql_connection_string'), "No mysql server connection string")
             case _ : 
                 raise ValueError(f"Unsupported db_type value: {self.db_type}")
         
@@ -97,9 +117,21 @@ class DatabaseConnector:
 
 ## End of class DatabaseConnector()
 
+# Utility functions
 def coalesce(*values) :
     """Return the first non-None value or None if all values are None"""
     return next((v for v in values if v is not None), None)
+
+def split_string_at_regex(input_string, pattern):
+    # Compile the regular expression pattern
+#    regex = re.compile(pattern,re.IGNORECASE)
+    regex = re.compile(pattern)
+    
+    # Split the input string at the locations that match the pattern
+    split_result = regex.split(input_string)
+      
+    return split_result
+# End of utility functions
 
 def load_env():
     """Sets environment vars: Vars in command line override vars in .env file"""
@@ -115,21 +147,30 @@ def load_env():
     clparse.add_argument('--chunksize',required=False, type=int, help='Max number of elements per JSON object. Default = 1 object per file')
     clparse.add_argument('--db_type', required=False, default="", type=str.lower, choices =["postgresql","bigquery","mysql","sqlserver"], help='Specify DBMS: one of postgresql, bigquery, sqlite, mysql, sqlserver')
 # Database-specific arguments
+# BigQuery
     clparse.add_argument('--bq_projectid', required=False, default=None, help='BigQuery only: Specify BQ projectid')
     clparse.add_argument('--bq_datasetid', required=False, default=None, help='BigQuery only: Specify BQ data_set_id')
     clparse.add_argument('--bq_location', required=False, default=None, help='BigQuery only: Specify BQ project location')
+# Postgres
     clparse.add_argument('--pg_user', required=False, default=None, help='Postgresql only: Specify Postgres user')
     clparse.add_argument('--pg_password', required=False, default=None, help='Postgresql only: Specify Postgres password')
     clparse.add_argument('--pg_host', required=False, default=None,  help='Postgresql only: Specify Postgres server')
+    clparse.add_argument('--pg_port', required=False, default=None, help='Port for Postgres server')
     clparse.add_argument('--pg_database', required=False, default=None, help='Postgresql only: Specify Postgres database')
     clparse.add_argument('--pg_schema', required=False, default=None, help='Postgresql only: Specify Postgres schema')
+# SQL Server
+    clparse.add_argument('--sqlserver_user', required=False, default=None, help='MS SQL Server only: Specify SQL Server user')
+    clparse.add_argument('--sqlserver_password', required=False, default=None, help='MS SQL Server only: Specify SQL Server password')
+    clparse.add_argument('--sqlserver_host', required=False, default=None,  help='MS SQL Server only: Specify SQL Server server')
+    clparse.add_argument('--sqlserver_database', required=False, default=None, help='MS SQL Server only: Specify SQL Server database')
+    clparse.add_argument('--sqlserver_schema', required=False, default=None, help='MS SQL Server only: Specify SQL Server schema')
     args = clparse.parse_args()
 
     # Grab variables from env file
     envfile = os.path.abspath(args.envfile) if args.envfile else os.path.join(os.getcwd(), ".env")
     load_dotenv(envfile)
     # Convert stdout from string to Boolean
-    if os.environ.get('stdout') is not None and os.environ.get('stdout').lower() == 'true':
+    if os.environ.get('STDOUT') is not None and os.environ.get('STDOUT').lower() == 'true':
         dotenv_stdout = True
     else:
         dotenv_stdout = False
@@ -147,28 +188,39 @@ def load_env():
    # All environment variables must be strings, including Boolean and integer vars (stdout, nrows, chunksize)
     os.environ['envfile'] = os.path.abspath(args.envfile)
     os.environ['stdout_str'] = "True" if cl_stdout or dotenv_stdout else "False"
-    os.environ['localdir'] =  coalesce(cl_localdir, os.environ.get("localdir"),"No local directory provided")
-    os.environ['sqlfile'] = coalesce(cl_sqlfile, os.environ.get("sqlfile"), "No sql file provided")
-    os.environ['nrows'] =  str(coalesce(cl_nrows, os.environ.get("nrows"), "-1"))
-    os.environ['chunksize'] =  str(coalesce(cl_chunksize, os.environ.get("chunksize"), "1"))
-    os.environ['db_type'] =  coalesce(cl_db_type, os.environ.get("db_type"),"No db_type provided")
+    os.environ['localdir'] =  coalesce(cl_localdir, os.environ.get("LOCALDIR"),"No local directory provided")
+    os.environ['sqlfile'] = coalesce(cl_sqlfile, os.environ.get("SQLFILE"), "No sql file provided")
+    os.environ['nrows'] =  str(coalesce(cl_nrows, os.environ.get("NROWS"), "-1"))
+    os.environ['chunksize'] =  str(coalesce(cl_chunksize, os.environ.get("CHUNKSIZE"), "1"))
+    os.environ['db_type'] =  coalesce(cl_db_type, os.environ.get("DB_TYPE"),"No db_type provided")
 
 # Database-specific vars
+# BigQuery
     os.environ['bq_projectid'] = coalesce(args.bq_projectid, os.environ.get("BQ_PROJECTID"), None)
     os.environ['bq_datasetid'] = coalesce(args.bq_datasetid, os.environ.get("BQ_DATASETID"), None)
     os.environ['bq_location'] = coalesce(args.bq_location, os.environ.get("BQ_LOCATION"), None)
+# Postgresql
     os.environ['pg_user'] = coalesce(args.pg_user, os.environ.get("PG_USER"), None)
     os.environ['pg_password'] = coalesce(args.pg_password, os.environ.get("PG_PASSWORD"), None)
     os.environ['pg_host'] = coalesce(args.pg_host, os.environ.get("PG_HOST"), None)
+    os.environ['pg_port'] = coalesce(args.pg_port, os.environ.get("PG_PORT"), "5432")
     os.environ['pg_database'] = coalesce(args.pg_database, os.environ.get("PG_DATABASE"), None)
     os.environ['pg_schema'] = coalesce(args.pg_schema, os.environ.get("PG_SCHEMA"), None)
+# SQL Server
+    os.environ['sqlserver_user'] = coalesce(args.sqlserver_user, os.environ.get("SQLSERVER_USER"), None)
+    os.environ['sqlserver_password'] = coalesce(args.sqlserver_password, os.environ.get("SQLSERVER_PASSWORD"), None)
+    os.environ['sqlserver_host'] = coalesce(args.sqlserver_host, os.environ.get("SQLSERVER_HOST"), None)
+    os.environ['sqlserver_database'] = coalesce(args.sqlserver_database, os.environ.get("SQLSERVER_DATABASE"), None)
+    os.environ['sqlserver_schema'] = coalesce(args.sqlserver_schema, os.environ.get("SQLSERVER_SCHEMA"), None)
 
 def parse_sqlfile(sqlfile, conn, nrows) :
     """Returns Python list with {KEY: <WhistleKey>, SQL: <SQL statement>}
     
     Replaces @cdmDatabaseSchema with database.schema
-    Appends LIMIT {NROWS} if NROWS != -1
-    If SQL statement has LIMIT, NROWS is ignored"""
+    if NROWS >=0: Adds LIMIT {NROWS} or TOP {NROWS} (sqlserver only)
+    If NROWS < 0: Passes SQL without any change
+    
+    """
 
     JSON_KEY = "JSON_KEY:"
     queries_dict = {}
@@ -176,38 +228,30 @@ def parse_sqlfile(sqlfile, conn, nrows) :
 
     with open(sqlfile,"r") as f :
         for line in f:
-            line = line.replace("@cdmDatabaseSchema", conn.database + '.' + conn.schema)
-            if line.strip().startswith('--JSON_KEY') :
-#                key = line[ line.find(JSON_KEY) + len(JSON_KEY):].strip()
+            if line.strip().startswith('--JSON_KEY:') :
                 key = re.split(r'JSON_KEY:',line)[1].strip()
                 sql = ''
-            elif line.strip().endswith(';') :
-                # Remove the semi-colon. We will add it back in with LIMIT
-                sql = sql + line.split(';')[0]              
-                # nrows < 0 (default): extract ALL rows
-                limit = f';\n' if nrows < 0  else f' LIMIT {nrows}\n; '
-                # LIMIT in SQL statement is ignored
-                x = re.split(r'(?i)limit|;', sql)
-                sql = x[0] + limit
-
-                # This code implements a different precedence for NROWS:
-                # Precedence for LIMIT clause:
-                #  1. nrows in SQL statement
-                #  2. nrows in command line
-                #  3. nrows in env file        
-    #           if bool(re.search(r'(?i)limit +\d+ *;*', query) == False:
-    #               limit = ";" if nrows < 0  else f' LIMIT {nrows}; '
-    #               sql  = sql.split(';')[0] + limit
-                
-                # Reached the end of an SQL statement so add to query array.
+                continue  ##move to next line
+            sql = sql+ line
+            if sql.strip().endswith(";") :
+                # We have a complete SQL statement
+                # Post-processing of SQL statement
+                sql = sql.replace("@cdmDatabaseSchema", conn.database + '.' + conn.schema)
+                # If nrows > 0 process nrows else leave SQL statement unchanged
+                if nrows >= 0 :
+                    # Remove existing TOP N / LIMIT N
+                    sql = re.sub(r'(?i)top\s+\d+', ' ', sql)
+                    sql = re.sub(r'(?i)limit\s+\d+', ' ', sql)
+                    if conn.db_type == 'sqlserver':
+                        # Use TOP N syntax for sqlserver
+                        sql = re.sub(r'(?i)select', f'SELECT TOP {nrows} ', sql)
+                    else :
+                        # Use LIMIT N syntax for non sqlserver
+                        sql = re.sub(r'(?i);$', f' LIMIT {nrows} ;', sql.strip())
                 queries_dict[key] = sql
+                key = ''
+                sql = ''
 
-                # Continue to process file for other SQL statements
-            else: 
-                # Not at a JSON_KEY line
-                # Not at the end of a SQL statement
-                sql = sql + line
-    
     return(queries_dict)
 
 def create_metadata(conn):
