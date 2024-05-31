@@ -97,7 +97,7 @@ class DatabaseConnector:
     def execute_querydf(self, query):
         return pd.read_sql_query(query,self.connection, coerce_float=False) 
 
-    def download_query_results_in_chunksdf(self, query, nrows=-1, chunksize=10000):
+    def download_query_results_in_chunksdf(self, query, chunksize=10000):
         if self.db_type == 'sqlite':
             # SQLite does not natively support chunked fetching in the same way; 
             # you'd have to manage offsets and limits manually.
@@ -117,26 +117,14 @@ class DatabaseConnector:
 
 ## End of class DatabaseConnector()
 
-# Utility functions
 def coalesce(*values) :
     """Return the first non-None value or None if all values are None"""
     return next((v for v in values if v is not None), None)
 
-def split_string_at_regex(input_string, pattern):
-    # Compile the regular expression pattern
-#    regex = re.compile(pattern,re.IGNORECASE)
-    regex = re.compile(pattern)
-    
-    # Split the input string at the locations that match the pattern
-    split_result = regex.split(input_string)
-      
-    return split_result
-# End of utility functions
-
 def load_env():
     """Sets environment vars: Vars in command line override vars in .env file"""
 
-    # Grab variables from command line
+# Grab variables from command line
 
     clparse = argparse.ArgumentParser(description='Create name-array JSON from SQL statements')
     clparse.add_argument('--envfile',required=False, default='./.env', help='Optional path to env file')
@@ -151,7 +139,7 @@ def load_env():
     clparse.add_argument('--bq_projectid', required=False, default=None, help='BigQuery only: Specify BQ projectid')
     clparse.add_argument('--bq_datasetid', required=False, default=None, help='BigQuery only: Specify BQ data_set_id')
     clparse.add_argument('--bq_location', required=False, default=None, help='BigQuery only: Specify BQ project location')
-# Postgres
+# Postgresql
     clparse.add_argument('--pg_user', required=False, default=None, help='Postgresql only: Specify Postgres user')
     clparse.add_argument('--pg_password', required=False, default=None, help='Postgresql only: Specify Postgres password')
     clparse.add_argument('--pg_host', required=False, default=None,  help='Postgresql only: Specify Postgres server')
@@ -166,7 +154,7 @@ def load_env():
     clparse.add_argument('--sqlserver_schema', required=False, default=None, help='MS SQL Server only: Specify SQL Server schema')
     args = clparse.parse_args()
 
-    # Grab variables from env file
+# Grab variables from env file
     envfile = os.path.abspath(args.envfile) if args.envfile else os.path.join(os.getcwd(), ".env")
     load_dotenv(envfile)
     # Convert stdout from string to Boolean
@@ -175,7 +163,6 @@ def load_env():
     else:
         dotenv_stdout = False
 
-    # Convert stdout from None to False
     cl_stdout = args.stdout
     cl_localdir = os.path.abspath(args.localdir) if args.localdir else None
     cl_sqlfile = os.path.abspath(args.sqlfile) if args.sqlfile else None
@@ -302,7 +289,7 @@ def main():
         queries_dict = parse_sqlfile(sqlfile, conn, nrows)
         for key, sql in queries_dict.items() :
             filename_idx = 0
-            for chunkdf in conn.download_query_results_in_chunksdf(sql, nrows=nrows, chunksize=chunksize):
+            for chunkdf in conn.download_query_results_in_chunksdf(sql, chunksize=chunksize):
                 chunkjs = chunkdf.to_json(orient = 'records', indent=2)
                 chunkjs_key = f'\"{key}\" :\n'
                 js = '{\n' + chunkjs_key + chunkjs +'\n}\n'

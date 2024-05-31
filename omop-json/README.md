@@ -6,12 +6,11 @@ This program connects to a RDBMS that contains clinical data in the OMOP Common 
 
 * Postgresql (tested)
 * BigQuery (tested)
-* MySQL (untested, need test instance)
-* Microsoft SQL Server (untested, need test instance)
+* Microsoft SQL Server (tested)
 
 ## Command syntax
 
-Example #1:  A postgresql database using SQL statements contained in test.sql in the same directory. The default location of the environment file (./.env) is used for additional needed postgres variables (user, password, host, database, schema):
+Example #1:  A postgresql database using SQL statements contained in test.sql in the same directory. The default location of the environment file (./.env) is used for additional needed postgresql variables (user, password, host, database, schema):
 
 ```
 ./omop_to_json.py --db_type postgresql --sqlfile ./test.sql \
@@ -35,22 +34,22 @@ Example #2: A bigquery database with both runtime and bigquery-specific command 
 
 
 ## Runtime variables
-Runtime variables may be set on command line or in a .env file located in the same directory as the OMOP\_TO\_JSON.PY file. Variables declared in the command line overwrite values declared in the .env file. See below for comment regarding LIMIT/NROWS.
+Runtime variables may be set on command line or in a .env file located in the same directory as the OMOP\_TO\_JSON.PY file (or in an env file identified in the --envfile command line variable). Variables declared in the command line overwrite values declared in the .env file. See below for additional comments regarding LIMIT/NROWS.
 
 Default values, where listed below, are used when variable values are not set in the command line or .env file.
 
-RDBMS-specific variables are mandatory for specified db_type
+RDBMS-specific variables are mandatory when specified as the db_type
 
 | **Command line** | **.env file** | **Defintion** |
 | :----------- | :--------: | :---------|
 | **Mandatory** |
-| db_type | DB_TYPE | One of {postgresql, bigquery, mysql, sqlserver} |
+| db_type | DB_TYPE | One of {postgresql, bigquery, sqlserver} |
 | sqlfile | SQLFILE | Full or relative path for OMOP SQL commands |
 | **Optional** |
 | envfile | Not applicable | path to file with environment variables. Default ./.env |
 | stdout | STDOUT | Boolean flag to include output in standard output. Default False |
 | localdir | LOCALDIR | Full or relative path for local directory for output. |
-| nrows | NROWS | Number of total rows, across all chunks. Default = -1  (see note below)|
+| nrows | NROWS | Number of total rows, across all chunks. Default = -1  (see LIMIT/NROWS note below)|
 | chunksize | CHUNKSIZE | Number of rows per chunk/output file. Default = 1 row per file|
 | **Postgresql-specific** (Required if db_type=postgresql)|
 | pg_user | PG_USER | Postgresql user name |
@@ -62,14 +61,16 @@ RDBMS-specific variables are mandatory for specified db_type
 | bq_projectid | BQ_PROJECTID | Bigquery projectID |
 | bq_datasetid | BQ_DATASETID | Bigquery dataset ID |
 | bq_location | BQ_LOCATION | Location or region of Bigquery project |
-| **MySQL-specific** (db_type=mysql) |
-| | | Not implemented -- need test instance |
 | **Microsoft SQL Server-specific** (db_type=sqlserver) |
-| | | Not implemented -- need test instance |
+| sqlserver_user | SQLSERVER_USER | MSSQL user name |
+| sqlserver_password | SQLSERVER_PASSWORD | MSSQL user password |
+| sqlserver_host | SQLSERVER_HOST| MSSQL host name or IP address |
+| sqlserver_database | SQLSERVER_DATABASE| MSSQL database for connection |
+| sqlserver_schema | SQLSERVER_SCHEMA| MSSQL schema to use for queries |
 
 
 ## JSON output format
-This program creates a single valid JSON object from any SQL statement although the intended use case is creating A JSON object from an OMOP CDM. The output JSON format is in KEY: [{},{}....{}] pretty-print format where each element in the array is a list of column_name: value returned by the SQL query:
+This program creates a single valid JSON object from any SQL statement although the intended use case is creating a JSON object from an OMOP CDM. The output JSON format is in KEY: [{},{}....{}] pretty-print format where each element in the array is a list of column_name: value returned by the SQL query:
 
 ```
 {
@@ -144,7 +145,7 @@ Example from OMOP Person table (synthetic data) (NROWS=2, CHUNKSIZE=2):
 ```
 
 ## MENDS_metadata.json file
-This output file is unique to the MENDS project and is unique to the OMOP CDM. The code creates a Context JSON object and currently contains a single "omop_source" key-value pair that holds OMOP CDM metadata from the OMOP-specific cdm_source table. The MENDS_metadata.json file has a fixed structure that conforms to rules in the MENDS Whistle transformation rules for a FHIR META resource. It is mostly used to help debug different MENDS runs.
+This output file is unique to the MENDS project and is unique to the OMOP CDM. The code creates a Context JSON object and currently contains a single "omop_source" key-value pair that holds OMOP CDM metadata from the OMOP-specific cdm_source table. The MENDS_metadata.json file has a fixed structure that conforms to rules in the MENDS Whistle transformation rules for a FHIR META resource. It is  used to help differentiate/debug different MENDS runs.
 
 Example MENDS_metadata.json file
 
@@ -157,8 +158,8 @@ Example MENDS_metadata.json file
     "cdm_source_abbreviation":"Synthea",
     "cdm_holder":"OHDSI Community",
     "source_description":"SyntheaTM is a Synthetic Patient Population Simulator. The goal is to output synthetic, realistic (but not real), patient data and associated health records in a variety of formats.",
-    "source_documentation_reference":"https:\/\/synthetichealth.github.io\/synthea\/",
-    "cdm_etl_reference":"https:\/\/github.com\/OHDSI\/ETL-Synthea",
+    "source_documentation_reference":"https://synthetichealth.github.io/synthea/",
+    "cdm_etl_reference":"https://github.com/OHDSI/ETL-Synthea",
     "source_release_date":"2021-06-24",
     "cdm_release_date":"2021-06-24",
     "cdm_version":"v5.3",
@@ -189,30 +190,36 @@ Example:
    
 All other SQL comment lines are ignored.
 
+A SQLFILE may contain multiple SQL statements.
 **A unique JSON Key value is required for each SQL statement contained in SQLFILE.** Each query result will be associated with the JSON Key value. For this reason, it is typical to place the --JSON_KEY: declaration just prior to each SQL statement. 
 Example:
 
 
 ```
- -- SQL comments above are ignored
+ -- SQL comments before SQL are ignored
  
- --JSON_KEY: test_key   
- SELECT * FROM @cdmDatabaseSchema.person LIMIT 10; 
+ --JSON_KEY: person_key   
+ SELECT * FROM @cdmDatabaseSchema.person; 
  
- -- SQL comments after are ignored 
+ -- SQL comments after SQL are ignored 
+
+ -- This is a second SQL statement in SQLFILE
+
+ --JSON KEY: visit_key
+ SELECT * from @cdmDatabaseSchema.visit_occurrence;
 ```
 
 
 ### @cdmDatabaseSchema
-All occurrences of the string @cdmDatabaseSchema in the SQLFILE are replaced with the by the string database.schema as declared by runtime or env variables. If @cdmDatabaseSchema is not present, it is assumed that the provided SQL is fully qualified for the target RDBMS.
+All occurrences of the string @cdmDatabaseSchema in the SQLFILE are replaced by the string database.schema as declared by command line or env variables. If @cdmDatabaseSchema is not present, it is assumed that the provided SQL is fully qualified for the target RDBMS.
 
 ### TOP N/LIMIT/NROWS
 Microsoft SQL server (db_type = 'sqlserver') uses TOP N in the SELECT clause to limit the total number of rows returned in a query. All other RDBMSs use LIMIT N at the end of an SQL statement.
 
 If NROWS is < 0, the  SQL statement in --sqlfile/SQLFILE is passed unchanged. 
 
-**WARNING: NROWS < 0 DOES NOT MODIFY THE SOURCE SQL TO CONFORM TO THE EXECUTION RDBMS SYNTAX.** If the source SQL statement is written with one syntax but is executed on a RDBMS that uses the other syntax, the SQL will fail with a illegal SQL syntax error. 
+**WARNING: NROWS < 0 DOES NOT MODIFY THE SOURCE SQL TO CONFORM TO THE EXECUTION RDBMS SYNTAX.** If the source SQL statement is written with one syntax for TOP/LIMIT but is executed on a RDBMS that uses the other syntax, the SQL will fail with a illegal SQL syntax error. 
 
-If NROWS is >= 0, any  LIMIT N or TOP N clause in the source SQLFILE is *replaced* with LIMIT NROWS or TOP NROWS. If there is no existing LIMIT/TOP clause, the LIMIT NROWS or TOP NROWS clause is *added*. The use of LIMIT versus TOP is appropriate for the RDBMS set by db_type/DB_TYPE.
+If NROWS is >= 0, any existing LIMIT N or TOP N clause in the source SQLFILE is *replaced* with LIMIT NROWS or TOP NROWS. If there is no existing LIMIT/TOP clause, the LIMIT NROWS or TOP NROWS clause is *added*. The use of LIMIT versus TOP is appropriate for the RDBMS set by db_type/DB_TYPE.
 
-It is recommended that TOP N/LIMIT N clauses  not be included in the source SQL file (--sqlfile/SQLFILE). Use --nrows/NROWS to limit output. By following this recommendation, setting NROWS = -1 will return all rows.
+It is recommended that TOP/LIMIT clauses not be included in the source SQL file (--sqlfile/SQLFILE). Use --nrows/NROWS to limit output. By following this recommendation, setting --nrows/NROWS = -1 will return all rows.
