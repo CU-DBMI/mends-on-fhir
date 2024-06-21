@@ -1,0 +1,76 @@
+// Change Log:
+// 2022-09-09: Add source_concept to payor.type CodeableConcept
+// 2022-09-09: Use plan source value as proxy for (mandatory) payor
+// 2022-09-02: Created PPP.payor-concept-id --> Coverage.type concept map
+
+def PPP_CoverageImpl(PPP, context) {
+   resourceType: "Coverage"
+
+// from Resource: id, meta, implicitRules, and language
+   id: PPP.payer_plan_period_id
+   meta.profile[].url: ""
+   implicitRules: ""
+   language:"en-US"
+
+// from DomainResource: text, contained, extension, and modifierExtension
+   text: ""
+   contained[]: ""
+   extension: ""
+   modifierExtension: ""
+
+// from https://www.hl7.org/fhir/coverage.html
+   identifier[]: Identifier(Identifier_System("omop-id"), PPP.payer_plan_period_id)
+   status: "active"
+
+   type: PPP_Type(PPP)
+   policyHolder: ""
+   subscriber: ""
+   subscriberId: ""
+   beneficiary: Reference("Patient",PPP.person_id)
+   dependent: ""
+   relationship: ""
+
+   if context.config.output.phi = "yes" {
+     period.start: ReformatDatetime(PPP.payer_plan_period_start_date)
+     period.end: ReformatDatetime(PPP.payer_plan_period_end_date)
+   } else {
+     period.start: ReformatDatetime("2030-01-01")
+     period.end: ReformatDatetime("2030-01-01")
+   }
+   
+
+   // MANDATORY FIELD
+   // "The program or plan underwriter or payor including both insurance and non-insurance agreements, such as patient-pay agreements"
+   // "Reference (Organization | Patient | RelatedPerson)"
+   // "Need to identify the issuer to target for claim processing and for coordination of benefit procecessing"
+   //" May provide multiple identifiers such as insurance company identifier or business identifier (BIN number)."
+   // "For selfpay it may provide multiple paying persons and/or organizations"
+   // Best approximate proxy in OMOP: plan_source_value
+
+   // Use Reference.display: PPP.plan_source_value
+   payor[].display: PPP.plan_source_value
+
+   class[]: ""
+   order: ""
+   network: ""
+   costToBeneficiary[]: ""
+   subrogation: ""
+   contract[]: ""
+}
+
+// ******* End of PPP_Coverage *************
+
+
+// *************************************************************************
+// *
+// *   All PPP-specific function calls here.
+// *   Function calls useful accross resources are in DataTypes.wstl
+// *
+// *************************************************************************
+
+def PPP_Type(PPP) {
+    $this: CodeableConceptMapNull(PPP.payer_concept_id, "PPP.payor-concept-id--Coverage.type", PPP.payer_source_value)
+        if PPP.payer_concept_id ~= PPP.payer_source_concept_id {
+           coding[]: Coding(Code_System(PPP.payer_source_vocabulary_id), "", PPP.payer_source_concept_code, PPP.payer_source_concept_name)
+        }
+}

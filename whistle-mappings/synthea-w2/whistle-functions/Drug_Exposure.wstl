@@ -1,0 +1,693 @@
+// 2021-03-22: Comment out MedicationStatement
+// 2022-07-01: added validityPeriod for MedicationRequest, Added meta.profile and corrected misspelled elements
+
+//-----------------------------------------------------------------------------
+// DRUG_EXPOSURE
+//-----------------------------------------------------------------------------
+def Drug_Exposure(Drug_Exposure, required context) {
+
+    // Define Medication ID to be used as medicationReference and as id for the Medication resource
+    var medicationID: Id_Spaces_To_Dash($StrCat("med-", Drug_Exposure.drug_concept_id, "-",Drug_Exposure.drug_source_concept_id, "-", $Hash(Drug_Exposure.lot_number)))
+
+    // 32818 = EHR administration record
+    if (Drug_Exposure.drug_type_concept_id = "32818") {
+        // CVX = Vaccine Administered
+        if (Drug_Exposure.drug_source_vocabulary_id = "CVX") {
+            var resources[]: Drug_Exposure_Immunization(Drug_Exposure, context) 
+            var medicationID: ""
+        } else {
+          var resources[]: Drug_Exposure_MedicationAdministration(Drug_Exposure, context, medicationID) 
+        }
+    }
+
+    // 32833 = EHR order
+    if Drug_Exposure.drug_type_concept_id = "32833" {
+        var resources[]: Drug_Exposure_MedicationRequest(Drug_Exposure, context, medicationID)
+    }
+
+    // 32865 = Patient self-report
+    //if (Drug_Exposure.drug_type_concept_id = "32865") {
+    //    var resources[]: Drug_Exposure_MedicationStatement(Drug_Exposure, context, medicationID)    
+    //} 
+
+    // 32825 = EHR dispensing record
+    if (Drug_Exposure.drug_type_concept_id = "32825") {
+        var resources[]: Drug_Exposure_MedicationDispense(Drug_Exposure, context, medicationID)
+    }
+
+    // Always create a Medication Resource when drug_concept_id or drug_source_concept_id are ~= "0" and medicationID not empty
+    if (Drug_Exposure.drug_concept_id ~= "0" or (Drug_Exposure.drug_concept_id = "0" and Drug_Exposure.drug_source_concept_id ~= "0" and medicationID ~= "")) {
+        var resources[]: Drug_Exposure_Medication(Drug_Exposure, context, medicationID)
+    }
+
+    $this: resources
+
+}
+
+
+//-----------------------------------------------------------------------------
+// Medication - FHIR US Core
+//-----------------------------------------------------------------------------
+def Drug_Exposure_Medication(Drug_Exposure, required context, required medicationID) {
+
+    // MedicationRequest Resource
+    resourceType: "Medication"
+
+    // id, 0..1, id
+    id: medicationID
+
+   // meta, 0..1, Meta
+    meta.profile[]: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medication"
+
+    implicitRules: ""
+    language: "en-US"
+    text: ""
+    contained: ""
+    extension: ""
+    modifierExtension: ""
+
+    // identifier, 0..*, Identifier
+    identifier[0].use: "secondary";
+    identifier[0].system: Code_System("HDC")
+    identifier[0].value: medicationID
+
+    // code,1..1,CodeableConcept
+    if (Drug_Exposure.drug_concept_id ~= "0") {
+        code.coding[]: CodingSelected(Code_System(Drug_Exposure.drug_concept_vocabulary_id), "", Drug_Exposure.drug_concept_code, Drug_Exposure.drug_concept_name, true)
+
+        if (Drug_Exposure.drug_concept_code ~= Drug_Exposure.drug_source_concept_code) {
+            code.coding[]: CodingSelected(Code_System(Drug_Exposure.drug_source_vocabulary_id), "", Drug_Exposure.drug_source_concept_code, Drug_Exposure.drug_source_concept_name, true)
+        }
+    } else {
+        if(Drug_Exposure.drug_source_concept_id ~= "0") {
+            code.coding[]: CodingSelected(Code_System(Drug_Exposure.drug_source_vocabulary_id), "", Drug_Exposure.drug_source_concept_code, Drug_Exposure.drug_source_concept_name, true)
+        }
+    }
+
+    status: "active"
+
+    manufacturer: ""
+    form: ""
+
+    // batch,0..1,BackboneElement
+    // lotNumber, 0..1, string
+    batch.lotNumber: Drug_Exposure.lot_number
+
+}
+
+
+//-----------------------------------------------------------------------------
+// MedicationRequest - FHIR US Core
+//-----------------------------------------------------------------------------
+def Drug_Exposure_MedicationRequest(Drug_Exposure, required context, required medicationID) {
+
+    // MedicationRequest Resource
+    resourceType: "MedicationRequest"
+
+    // id, 0..1, id
+    id: Drug_Exposure.drug_exposure_id
+
+    // meta, 0..1, Meta
+    meta.profile[]: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest"
+
+    implicitRules: ""
+    language: "en-US"
+    text: ""
+    contained: ""
+    extension: ""
+    modifierExtension: ""
+
+    // identifier, 0..*, Identifier
+    identifier[0].use: "secondary";
+    identifier[0].system: Code_System("HDC")
+    identifier[0].value: Drug_Exposure.drug_exposure_id
+
+    // status, 1..1, code 
+    if (Drug_Exposure.stop_reason) {
+        status: "stopped"
+        statusReason.text: Drug_Exposure.stop_reason
+    } else {
+        status: "unknown"
+    }
+
+    // intent, 1..1, code
+    intent: "order"
+    category: ""
+    priority: ""
+    doNotPerform: ""
+
+    // reported[x], 0..1
+    reportedBoolean: false    
+
+    // medication[x], 1..1
+    medicationReference: Reference("Medication", medicationID)
+
+    // subject, 1..1, Reference
+    if (Drug_Exposure.person_id) {
+        subject: Reference("Patient", Drug_Exposure.person_id)
+    }
+
+    // encounter, 0..1, Reference
+    if (Drug_Exposure.visit_occurrence_id) {
+        encounter: Reference("Encounter", Drug_Exposure.visit_occurrence_id)
+    }
+
+    supportingInformation: ""
+
+    // authoredOn, 0..1, dateTime
+    if context.config.output.phi = "yes" {
+        authoredOn: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
+    } else {
+        authoredOn: ReformatDatetime("2030-01-01")
+    }
+
+    // requester, 0..1, Reference
+    //OPTION A
+    if(Drug_Exposure.provider_id) {
+        requester: Reference("Practitioner", Drug_Exposure.provider_id)
+    }
+
+    //OPTION B
+    //if($IsNotNil(Drug_Exposure.provider_id)) {
+    //    requester: Reference("Practitioner", Drug_Exposure.provider_id)
+    //} else {
+    //    requester: Reference("Practitioner", "NULL")
+    //}
+        
+    performer: ""
+    performerType: ""
+    recorder: ""
+    reasonCode: ""
+    reasonReference: ""
+    instantiatesCanonical: ""
+    instantiatesUri: ""
+    basedOn: ""
+    groupIdentifier: ""
+    courseOfTherapyType: ""
+    insurance: ""
+    note: ""
+
+    // dosageInstruction, 0..*, Dosage
+
+    // text, 0..1, string 
+    if Drug_Exposure.sig {
+        dosageInstruction[0].text: Drug_Exposure.sig 
+    }
+
+    // route, 0..1, CodeableConcept
+    dosageInstruction[0].route.text: Drug_Exposure.route_source_value
+    if(Drug_Exposure.route_concept_id and  Drug_Exposure.route_concept_id ~= "0") {
+        dosageInstruction[0].route.coding[0].system: Code_System(Drug_Exposure.route_vocabulary_id)
+        dosageInstruction[0].route.coding[0].code: Drug_Exposure.route_concept_code
+        dosageInstruction[0].route.coding[0].display: Drug_Exposure.route_concept_name
+    }
+
+    if(Drug_Exposure.dose_unit_source_value ~= "*Unspecified") {
+        dosageInstruction[0].doseAndRate[0].doseQuantity.unit: Drug_Exposure.dose_unit_source_value
+    }
+
+    // dispenseRequest, 0..1, BackboneElement
+    if (Drug_Exposure.drug_exposure_start_date) {
+        if context.config.output.phi = "yes" {
+            dispenseRequest.validityPeriod.start: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
+        } else {
+            dispenseRequest.validityPeriod.start: ReformatDatetime("2030-01-01")
+        }
+    }
+    if (Drug_Exposure.drug_exposure_end_date) {
+        if context.config.output.phi = "yes" {
+            dispenseRequest.validityPeriod.end: ReformatDatetimeDate(Drug_Exposure.drug_exposure_end_datetime, Drug_Exposure.drug_exposure_end_date)
+        } else {
+            dispenseRequest.validityPeriod.end: ReformatDatetime("2030-01-01")
+        }
+    }
+
+    if(Drug_Exposure.refills) {
+        dispenseRequest.numberOfRepeatsAllowed: $ParseFloat(Drug_Exposure.refills)
+    }
+
+    if(Drug_Exposure.quantity) {
+        dispenseRequest.quantity.value: $ParseFloat(Drug_Exposure.quantity)
+    }
+    
+    if(Drug_Exposure.days_supply) {
+        dispenseRequest.expectedSupplyDuration.value: $ParseFloat(Drug_Exposure.days_supply)
+        dispenseRequest.expectedSupplyDuration.code: "d"
+        dispenseRequest.expectedSupplyDuration.system: "http://unitsofmeasure.org"
+    }
+    
+    substitution: ""
+    priorPrescription: ""
+    detectedIssue: ""
+    eventHistory: ""
+
+}
+
+
+//-----------------------------------------------------------------------------
+// Immunization - FHIR US Core
+//-----------------------------------------------------------------------------
+def Drug_Exposure_Immunization(Drug_Exposure, required context) {
+
+    // Immunization Resource
+    resourceType: "Immunization"
+
+    // id, 0..1, id
+    id: Drug_Exposure.drug_exposure_id
+
+   // meta, 0..1, Meta
+    meta.profile[]: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-immunization"
+
+    implicitRules: ""
+    language: "en-US"
+    text: ""
+    contained: ""
+    extension: ""
+    modifierExtension: ""
+
+    // identifier, 0..*, Identifier
+    identifier[0].use: "secondary";
+    identifier[0].system: Code_System("HDC")
+    identifier[0].value: Drug_Exposure.drug_exposure_id
+
+    // status, 1..1, code 
+    if (Drug_Exposure.stop_reason) {
+        status: "not-done"
+        statusReason.text: Drug_Exposure.stop_reason
+    } else {
+        status: "completed"
+    }
+
+    // vaccineCode, 1..1, CodeableConcept
+    vaccineCode.text: Drug_Exposure.drug_concept_name
+    vaccineCode.coding[]: Coding(Code_System(Drug_Exposure.drug_concept_vocabulary_id), "", Drug_Exposure.drug_concept_code, Drug_Exposure.drug_concept_name)
+
+    if (Drug_Exposure.drug_concept_code ~= Drug_Exposure.drug_source_concept_code) {
+        vaccineCode.coding[]: Coding(Code_System(Drug_Exposure.drug_source_vocabulary_id), "", Drug_Exposure.drug_source_concept_code, Drug_Exposure.drug_source_concept_name)
+    }
+    
+    // patient, 1..1, Reference
+    if (Drug_Exposure.person_id) {
+        patient: Reference("Patient", Drug_Exposure.person_id)
+    }
+
+    // encounter, 0..1, Reference
+    if (Drug_Exposure.visit_occurrence_id) {
+        encounter: Reference("Encounter", Drug_Exposure.visit_occurrence_id)
+    }
+
+    // occurrence[x], 1..1
+
+    if context.config.output.phi = "yes" {
+        occurrenceDateTime: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
+    } else {
+        occurrenceDateTime: ReformatDatetime("2030-01-01")
+    }
+
+    recorded: ""
+
+    // primarySource, 1..1, boolean
+    primarySource: true
+
+    reportOrigin: ""
+    location: ""
+    manufacturer: ""
+
+    //lotNumber, 0..1, string
+    lotNumber: Drug_Exposure.lot_number
+
+    expirationDate: ""
+    site: ""
+
+    // route, 0..1, CodeableConcept
+    if Drug_Exposure.route_source_value {
+        route.text: Drug_Exposure.route_source_value
+    }
+    if(Drug_Exposure.route_concept_id and Drug_Exposure.route_concept_id ~= "0") {
+        route.coding[0].system: Code_System(Drug_Exposure.route_vocabulary_id)
+        route.coding[0].code: Drug_Exposure.route_concept_code
+        route.coding[0].display: Drug_Exposure.route_concept_name
+    }
+
+    // doseQuantity, 0..1, SimpleQuantity
+    if(Drug_Exposure.quantity) {
+        doseQuantity.value: $ParseFloat(Drug_Exposure.quantity)
+    }
+    doseQuantity.unit: Drug_Exposure.dose_unit_source_value
+
+    performer: ""
+    note: ""
+    reasonCode: ""
+    reasonReference: ""
+    isSubpotent: ""
+    subpotentReason: ""
+    education: ""
+    programEligibility: ""
+    fundingSource: ""
+    reaction: ""
+
+}
+
+
+//-----------------------------------------------------------------------------
+// MedicationAdministration - FHIR Core
+//-----------------------------------------------------------------------------
+def Drug_Exposure_MedicationAdministration(Drug_Exposure, required context, required medicationID) {
+
+    // MedicationAdministration Resource
+    resourceType: "MedicationAdministration"
+
+    // id, 0..1, id
+    id: Drug_Exposure.drug_exposure_id
+
+    meta: ""
+    implicitRules: ""
+    language: "en-US"
+    text: ""
+    contained: ""
+    extension: ""
+    modifierExtension: ""
+
+    // identifier, 0..*, Identifier
+    identifier[0].use: "secondary";
+    identifier[0].system: Code_System("HDC")
+    identifier[0].value: Drug_Exposure.drug_exposure_id
+
+    instantiates: ""
+    partOf: ""
+
+    // status, 1..1, code 
+    if (Drug_Exposure.stop_reason) {
+        status: "stopped"
+        statusReason.text: Drug_Exposure.stop_reason
+    } else {
+        if (Drug_Exposure.drug_exposure_end_date or Drug_Exposure.drug_exposure_end_datetime) {
+            status: "completed"
+        } else {
+            status: "in-progress"
+        }
+    }
+
+    category: ""
+
+    // medication[x], 1..1
+    medicationReference: Reference("Medication", medicationID)
+    
+    // subject, 1..1, Reference
+    if (Drug_Exposure.person_id) {
+        subject: Reference("Patient", Drug_Exposure.person_id)
+    }
+
+    // context, 0..1, Reference
+    if (Drug_Exposure.visit_occurrence_id) {
+        context: Reference("Encounter", Drug_Exposure.visit_occurrence_id)
+    }
+    
+    supportingInformation: ""
+
+    // effective[x], 1..1
+    if context.config.output.phi = "yes" {
+        if(Drug_Exposure.drug_exposure_start_date = Drug_Exposure.drug_exposure_end_date) {
+            effectiveDateTime: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
+        } else {
+            effectivePeriod.start: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
+            effectivePeriod.end: ReformatDatetimeDate(Drug_Exposure.drug_exposure_end_datetime, Drug_Exposure.drug_exposure_end_date)
+        }
+    } else {
+        if(Drug_Exposure.drug_exposure_start_date = Drug_Exposure.drug_exposure_end_date) {
+            effectiveDateTime: ReformatDatetime("2030-01-01")
+        } else {
+            effectivePeriod.start: ReformatDatetime("2030-01-01")
+            effectivePeriod.end: ReformatDatetime("2030-01-01")
+        }
+    }
+
+    // performer, 0..*, BackboneElement
+    // actor, 1..1, Reference(Practitioner)
+    performer[].actor: Reference("Practitioner", Drug_Exposure.provider_id)
+
+    reasonCode: ""
+    reasonReference: ""
+    request: ""
+    device: ""
+    note: ""
+
+    // dosage, 0..1, BackboneElement
+    // text, 0..1, string 
+    if Drug_Exposure.sig {
+        dosage.text: Drug_Exposure.sig 
+    }
+    
+
+    // route, 0..1, CodeableConcept
+    if Drug_Exposure.route_source_value {
+        dosage.route.text: Drug_Exposure.route_source_value
+    }
+    if( Drug_Exposure.route_concept_id and Drug_Exposure.route_concept_id ~= "0") {
+        var coding.system: Code_System(Drug_Exposure.route_vocabulary_id)
+        var coding.code: Drug_Exposure.route_concept_code
+        var coding.display: Drug_Exposure.route_concept_name
+        dosage.route.coding[]: coding
+    }
+
+    // dose, 0..1, SimpleQuantity
+    if(Drug_Exposure.quantity) {
+        dosage.dose.value: $ParseFloat(Drug_Exposure.quantity)
+    }
+
+    if Drug_Exposure.dose_unit_source_value {
+        dosage.dose.unit: Drug_Exposure.dose_unit_source_value
+    }
+    
+
+    rateRatio: ""
+    rateQuantity: ""
+    eventHistory: ""
+
+}
+
+
+//-----------------------------------------------------------------------------
+// MedicationDispense - FHIR Core
+//-----------------------------------------------------------------------------
+def Drug_Exposure_MedicationDispense(Drug_Exposure, required context, required medicationID) {
+
+    // MedicationDispense Resource
+    resourceType: "MedicationDispense"
+
+    // id, 0..1, id
+    id: Drug_Exposure.drug_exposure_id
+
+    meta: ""
+    implicitRules: ""
+    language: "en-US"
+    text: ""
+    contained: ""
+    extension: ""
+    modifierExtension: ""
+
+    // identifier, 0..*, Identifier
+    identifier[0].use: "secondary";
+    identifier[0].system: Code_System("HDC")
+    identifier[0].value: Drug_Exposure.drug_exposure_id
+
+    partOf: ""
+
+    // status, 1..1, code 
+    if (Drug_Exposure.stop_reason) {
+        status: "stopped"
+        statusReason.text: Drug_Exposure.stop_reason
+    } else {
+        if (Drug_Exposure.drug_exposure_end_date or Drug_Exposure.drug_exposure_end_datetime) {
+            status: "completed"
+        } else {
+            status: "in-progress"
+        }
+    }
+
+    category: ""
+
+    // medication[x], 1..1
+    medicationReference: Reference("Medication", medicationID)
+    
+    // subject, 1..1, Reference
+    if (Drug_Exposure.person_id) {
+        subject: Reference("Patient", Drug_Exposure.person_id)
+    }
+
+    // context, 0..1, Reference
+    if (Drug_Exposure.visit_occurrence_id) {
+        context: Reference("Encounter", Drug_Exposure.visit_occurrence_id)
+    }
+    
+    supportingInformation: ""
+
+    // performer, 0..*, BackboneElement
+    // actor, 1..1, Reference(Practitioner)
+    performer[].actor: Reference("Practitioner", Drug_Exposure.provider_id)
+
+    location: ""
+    authorizingPrescription: ""
+    type: ""
+
+    // quantity 0..1, SimpleQuantity
+    if(Drug_Exposure.quantity) {
+        quantity.value: $ParseFloat(Drug_Exposure.quantity)
+    }
+
+    // daysSupply, 0..1, SimpleQuantity
+    if(Drug_Exposure.days_supply) {
+        daysSupply.value: $ParseFloat(Drug_Exposure.days_supply)
+        daysSupply.code: "d"
+        daysSupply.system: "http://unitsofmeasure.org"
+    }
+    
+    whenPrepared: ""
+    
+    // whenHandedOver, 0..1, dateTime
+    if context.config.output.phi = "yes" {
+        whenHandedOver: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
+    } else {
+        whenHandedOver: ReformatDatetime("2030-01-01")
+    }
+
+    destination: ""
+    receiver: ""
+    note: ""
+
+    // dosage, 0..1, BackboneElement
+    // text, 0..1, string
+    if Drug_Exposure.sig {
+        var dosage.text: Drug_Exposure.sig
+    }
+    
+
+    // route, 0..1, CodeableConcept
+    if Drug_Exposure.route_source_value {
+        var dosage.route.text: Drug_Exposure.route_source_value
+    }
+    if(Drug_Exposure.route_concept_id and  Drug_Exposure.route_concept_id ~= "0") {
+
+        var coding.system: Code_System(Drug_Exposure.route_vocabulary_id)
+        var coding.code: Drug_Exposure.route_concept_code
+        var coding.display: Drug_Exposure.route_concept_name
+        var dosage.route.coding[]: coding
+    }
+
+    if Drug_Exposure.dose_unit_source_value {
+        var dosage.doseAndRate[].doseQuantity.unit: Drug_Exposure.dose_unit_source_value
+    }
+    
+
+    dosageInstruction[]: dosage
+    substitution: ""
+    detectedIssue: ""
+    eventHistory: ""
+
+}
+
+
+//-----------------------------------------------------------------------------
+// MedicationStatement - FHIR Core
+// INCOMPLETE - Do Not Use
+//-----------------------------------------------------------------------------
+def DO_NOT_USE_Drug_Exposure_MedicationStatement(Drug_Exposure, required context, required medicationID) {
+
+    // MedicationStatement Resource
+    resourceType: "MedicationStatement"
+
+    // id, 0..1, id
+    id: Drug_Exposure.drug_exposure_id
+
+    // identifier, 0..*, Identifier
+    identifier[0].use: "secondary";
+    identifier[0].system: Code_System("HDC")
+    identifier[0].value: Drug_Exposure.drug_exposure_id
+
+    basedOn: ""
+    partOf: ""
+    
+    // status, 1..1, code 
+    if (Drug_Exposure.stop_reason) {
+        status: "stopped"
+        statusReason[0].text: Drug_Exposure.stop_reason
+    } else {
+        if (Drug_Exposure.drug_exposure_end_date or Drug_Exposure.drug_exposure_end_datetime) {
+            status: "completed"
+        } else {
+            status: "in-progress"
+        }
+    }
+
+    // category, 0..1, CodeableConcept
+    category.text: "patientspecified"
+    category.coding[0].system: "http://hl7.org/fhir/ValueSet/medication-statement-category"
+    category.coding[0].code: "patientspecified"
+    category.coding[0].display: "Patient Specified"
+    category.coding[0].userSelected: true
+
+    // medication[x], 1..1
+    if (Drug_Exposure.lot_number) {
+        medicationReference: Reference("Medication", Drug_Exposure.drug_concept_id)
+    } else {
+        medicationCodeableConcept.coding[]: CodingSelected(Code_System(Drug_Exposure.drug_concept_vocabulary_id), "", Drug_Exposure.drug_concept_code, Drug_Exposure.drug_concept_name, true)
+
+        if (Drug_Exposure.drug_concept_code ~= Drug_Exposure.drug_source_concept_code) {
+            medicationCodeableConcept.coding[]: CodingSelected(Code_System(Drug_Exposure.drug_source_vocabulary_id), "", Drug_Exposure.drug_source_concept_code, Drug_Exposure.drug_source_concept_name, true)
+        }
+
+    }
+    
+    // subject, 1..1, Reference
+    if (Drug_Exposure.person_id) {
+        subject: Reference("Patient", Drug_Exposure.person_id)
+    }
+
+    // context, 0..1, Reference
+    if (Drug_Exposure.visit_occurrence_id) {
+        context: Reference("Encounter", Drug_Exposure.visit_occurrence_id)
+    }
+
+    // effective[x], 1..1
+    effectiveDateTime: ""
+    if context.config.output.phi = "yes" {
+        effectivePeriod.start: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
+        effectivePeriod.end: ReformatDatetimeDate(Drug_Exposure.drug_exposure_end_datetime, Drug_Exposure.drug_exposure_end_date)
+    } else {
+        effectivePeriod.start: ReformatDatetime("2030-01-01")
+        effectivePeriod.end: ReformatDatetime("2030-01-01")
+    }
+
+    dateAsserted: ""
+
+    // informationSource, 0..1, Reference
+    informationSource: Reference("Patient", Drug_Exposure.person_id)
+    informationSource.display: Drug_Exposure.person_id
+    informationSource.identifier.use: "secondary"
+
+    derivedFrom: ""
+    reasonCode: ""
+    reasonReference: ""
+    note: ""
+
+    // dosage, 0..*, dosage
+    // text, 0..1, string
+    if Drug_Exposure.sig {
+        dosage[0].text: Drug_Exposure.sig 
+    }
+
+    // route, 0..1, CodeableConcept
+    if Drug_Exposure.route_source_value {
+        dosage[0].route.text: Drug_Exposure.route_source_value
+    }
+    dosage[0].route.coding[0].system: Code_System(Drug_Exposure.route_vocabulary_id)
+    dosage[0].route.coding[0].code: Drug_Exposure.route_concept_code
+    dosage[0].route.coding[0].display: Drug_Exposure.route_concept_name
+
+    // dose[x], 0..1
+    if (Drug_Exposure.quantity and Drug_Exposure.dose_unit_source_value) {
+        dosage[0].doseAndRate[0].doseQuantity.value: Drug_Exposure.quantity
+        dosage[0].doseAndRate[0].doseQuantity.unit: Drug_Exposure.dose_unit_source_value
+    }
+
+}

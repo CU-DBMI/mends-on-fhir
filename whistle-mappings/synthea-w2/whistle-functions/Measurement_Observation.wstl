@@ -1,0 +1,363 @@
+
+// Change Log:
+// 2022-07-31: Added missing concept_ids for vitals that were dropping down to labs
+// 2022-08-01: Fixed $Regex to extract numeric value from source values that contain units (eg 125 lbs)
+// 2022-08-22: Fixed bmi, hgt, temp, and wgt: USCore only allows for valueQuantity in these resources
+// 2022-08-22: Fixed bug in value_to_use not being set correctly. Using var value_to_use
+// 2022-08-27: Replaced unit_concept_name with unit_concept_code, which matches UCUM codes
+// 2022-09-09: Add source_concept to Condition.code CodeableConcept
+
+def Measurement_Observation(Measurement, required context) {
+
+// profile_type: An internal variable to determine what type/subtype of observation profile to use.
+// Other attributes assign fixed URLs or fixed codes per FHIR specification
+// Does not appear in final resource
+// profile_type.type = "LAB" for all labs. profile.subtype = "lab"
+// profile_type.type = "VS" requires profile.subtype to determine if using sbp, dbp, hgt, wgt, bmi specific subprofiles
+
+  var profile_type: meas_Profile(Measurement)
+  
+  resourceType: "Observation"
+  id: Measurement.measurement_id
+  meta.profile[]: profile_type.profileurl;
+  implicitRules: ""
+  language: "en-US"
+  text: ""
+  contained[]: ""
+  extension[]: ""
+  modifierExtension[]: ""
+
+  identifier[0].use: "secondary";
+  identifier[0].system: Code_System("HDC")
+  identifier[0].value: Measurement.measurement_id
+
+  basedOn[]: ""
+  partOf[]: ""
+
+// All OMOP measurement results are final
+  status: "final"
+  
+  category[]: Measurement_Category(profile_type,Measurement);
+  code: Measurement_Code(profile_type,Measurement);
+
+
+  subject: Reference("Patient", Measurement.person_id)
+  focus[]: ""
+  encounter: Reference("Encounter", Measurement.visit_occcurrence_id)
+ 
+  if context.config.output.phi = "yes" {
+    // effective[x], 1..1
+    effectiveDateTime: ReformatDatetimeDate(Measurement.measurement_datetime, Measurement.measurement_date)
+    issued: ReformatDatetimeDate(Measurement.measurement_datetime, Measurement.measurement_date)
+  } else {
+    effectiveDateTime: ReformatDatetimeDate("2030-01-01","2030-01-01")
+    issued: ReformatDatetimeDate("2030-01-01","2030-01-01")
+  }
+
+  performer[0]: Reference("Practitioner", Measurement.provider_id)
+
+
+// value[x] logic is contained in Meas_Lab_Value()
+// Returns dataAbsentReason if value[x] is null
+  $this: Meas_Lab_Value(profile_type,Measurement)
+
+
+  interpretation[]: ""
+  note[]: ""
+  bodySite: ""
+  method: ""
+  specimen: ""
+  device: ""
+
+  // referenceRange, 0..*, BackboneElement
+  referenceRange[0].low.value: profile_type.convert.low;
+  referenceRange[0].high.value: profile_type.convert.high;
+  
+  hasMember[]: ""
+  derivedFrom[]: ""
+
+}
+
+
+// **************************************************************
+//
+// Measurement Functions
+//
+// **************************************************************
+
+def meas_Profile(m) {
+
+  if $And($IsNotNil(m.value_as_number),m.value_as_number ~=" ") {
+    var value_to_use : m.value_as_number
+    } else {
+      var value_to_use: "None"
+    }
+  
+  value_to_use: value_to_use
+
+
+  if $MatchesRegex(m.measurement_concept_id,"3038553") {
+    // BMI code from Measurement domain. Other BMI codes are in Observation domain.
+    // BMI records have NULL units. Assume default fixed vaue from US Core.
+    // BMI concept_ids in 4xxxxxx range are from OMOP Observations. These record do not have BMI values
+    type: "VS"
+    subtype: "bmi"
+    codesystem: Code_System("LOINC")
+    codecode: "39156-5"
+    codedisplay: "Body mass index (BMI) [Ratio]"
+    unit: "kg/m2"
+    unitcode: "kg/m2"
+    unitsystem: Code_System("UCUM")
+    convert: Convert(value_to_use, m.range_low, m.range_high, "kg/m2", "kg/m2")
+    profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-bmi"
+    }
+
+  if $MatchesRegex(m.measurement_concept_id,"3019171|3036277") {
+    // All heights are in inches. No NULL records
+    // UCUM code = [in_i]; display = in_i
+    type: "VS"
+    subtype: "hgt"
+    codesystem: Code_System("LOINC")
+    codecode: "8302-2"
+    codedisplay: "Body height"
+    unit: "in_i"
+    unitcode: "[in_i]"
+    unitsystem: Code_System("UCUM")
+    convert: Convert(value_to_use, m.range_low, m.range_high, "inches", "inches")
+    profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-height"
+  }
+
+  if $MatchesRegex(m.measurement_concept_id, "3004249|4152194|4353843") {
+    type: "VS"
+    subtype: "sbp"
+    codesystem: Code_System("LOINC")
+    codecode: "8480-6"
+    codedisplay: "Systolic blood pressure"
+    unit: "mm[Hg]"
+    unitcode: "mm[Hg]"
+    unitsystem: Code_System("UCUM")
+    convert: Convert(value_to_use, m.range_low, m.range_high, "mmHg", "mmHg")
+    profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-vital-signs"
+  }
+    
+  if $MatchesRegex(m.measurement_concept_id, "3012888|4154790|4354253") {
+    type: "VS"
+    subtype: "dbp"
+    codesystem: Code_System("LOINC")
+    codecode: "8462-4"
+    codedisplay: "Diastolic blood pressure"
+    unit: "mm[Hg]"
+    unitcode: "mm[Hg]"
+    unitsystem: Code_System("UCUM")
+    convert: Convert(value_to_use, m.range_low, m.range_high, "mmHg", "mmHg")
+    profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-vital-signs"
+  }
+
+  if $MatchesRegex(m.measurement_concept_id, "3013762|3023166|3025315|3026600") {
+    // US Core allows units as kg, lb_av, g. We normalize all weights to KG.
+    type: "VS"
+    subtype: "wgt"
+    codesystem: Code_System("LOINC")
+    codecode: "29463-7"
+    codedisplay: "Body weight"
+    unit: "kg"
+    unitcode: "kg"
+    unitsystem: Code_System("UCUM")
+    if (m.unit_concept_id = "9529") {
+      // 9529 = kg
+      convert: Convert(value_to_use, m.range_low, m.range_high, "kg", "kg")
+    }
+    if (m.unit_concept_id = "8739") {
+      // 8739 = pounds
+      convert: Convert(value_to_use, m.range_low, m.range_high, "lb", "kg")
+    }
+    if (m.unit_concept_id = "9373") {
+      // 9373 = "ounces"
+      convert: Convert(value_to_use, m.range_low, m.range_high, "oz", "kg")
+    }
+    if (m.unit_concept_id = "0") {
+
+      // We are stuck doing regex/strsplits to pull out numeric value from value_source_value string
+      // OMOP query that shows string variations
+      //     select distinct measurement_source_value, value_source_value 
+      //     from @cdmSchema.measurement
+      //     where measurement_concept_id in (30137623023166,3025315,3026600) 
+      //     and lower(value_source_value) like '%lb%'
+      
+      var value_source_value: $ToLower(m.value_source_value);
+      
+      if $MatchesRegex(value_source_value, "lb.*") {
+        // convert lbs to kgs
+        var temp: $StrSplit(value_source_value, "lb");
+        var value_to_use: $Trim(temp[0]);
+        if $IsNotNil(value_to_use) {
+          convert: Convert(value_to_use, m.range_low, m.range_high, "lb", "kg")
+        }
+      } 
+
+      if $MatchesRegex(value_source_value, "kg.*") {
+        // kg
+        var temp: $StrSplit(value_source_value, "kg");
+        var value_to_use: $Trim(temp[0]);
+        if $IsNotNil(value_to_use) {
+          convert: Convert(value_to_use, m.range_low, m.range_high, "kg", "kg")
+        }
+      } 
+    }
+
+    profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-weight"
+  }
+
+  if $MatchesRegex(m.measurement_concept_id, "3020891") {
+    type: "VS"
+    subtype: "temp"
+    codesystem: Code_System("LOINC")
+    codecode: "8310-5"
+    codedisplay: "Body temperature"
+    unit: "Cel"
+    unitcode: "Cel"
+    unitsystem: Code_System("UCUM")
+    if $MatchesRegex(m.unit_concept_id,"586323|9471") {
+      // Celcius
+      convert: Convert(value_to_use, m.range_low, m.range_high, "Cel", "Cel")
+    }
+    if (m.unit_concept_id = "8517") {
+      // Mapping error: Farad
+      //Convert Farhenheit to Celsius
+      convert: Convert(value_to_use, m.range_low, m.range_high, "Farhenheit", "Cel")
+    }
+    if ($Or(m.unit_concept_id  = "0", m.unit_concept_id = "")) {
+      // No units to distingush Farhenheit from Celcius.
+      // Arbitrary cutoff = 50 to separate Celcius from Fahrenheit
+      if ( HasValue(value_to_use)) {
+        var vnum: $ParseFloat(value_to_use);
+        if $Gt(vnum,50) {
+        // treat as Fahrenheit
+          convert: Convert(value_to_use, m.range_low, m.range_high, "Farhenheit", "Cel")
+        } else {
+        // treat as Celsius
+          convert: Convert(value_to_use, m.range_low, m.range_high, "Cel", "Cel")
+        }
+      }
+    }
+      profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-temperature"
+  }
+  
+  if (type ~= "VS") {
+    // We  get here only if we have not assigned as a vital sign. 
+    // Default everything else in Measurement as a Lab
+    // TODO: Need more work on unmapped lab units
+    type: "LAB"
+    subtype: "lab"
+    codesystem: Code_System("LOINC")
+    codecode: m.measurement_concept_code
+    codedisplay: m.measurement_concept_name
+    if $And(m.unit_concept_id = "0", $IsNotNil(m.unit_source_value)) {
+      unitcode: m.unit_source_value
+      unitsystem: Code_System("HDC")
+      } else {
+        unitcode: m.unit_concept_code
+        unitsystem: Code_System(m.unit_vocabulary_id)
+      }
+    convert: Convert(value_to_use, m.range_low, m.range_high, "None", "None") 
+    profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab"
+  }  
+}  
+
+
+// ******************************************************************************************
+// Measurement_Category(): Fill in category field based on profile_type
+// ******************************************************************************************
+def Measurement_Category(profile_type, m) {
+  if (profile_type.type = "VS") {
+    var coding: Coding("http://terminology.hl7.org/CodeSystem/observation-category","","vital-signs", "Vital Signs")
+    $this: CodeableConcept(coding, "Vital Signs")
+  }
+  if (profile_type.type = "LAB") {
+    var coding: Coding("http://terminology.hl7.org/CodeSystem/observation-category", "", "laboratory","Laboratory") 
+    $this: CodeableConcept(coding, "Laboratory")
+  }  
+}
+
+// ******************************************************************************************
+// Measurement_Code(): Fill in code with both standard and source codes
+// *****************************************************************************************
+def Measurement_Code(profile_type,m){
+//  var text: m.measurement_concept_name;
+  var text: profile_type.display;
+  var codesystem: profile_type.codesystem;
+  var codecode: profile_type.codecode;
+  var codedisplay: profile_type.codedisplay;
+  var coding[]: Coding(codesystem, "", codecode, codedisplay);
+
+  if (m.measurement_concept_code ~= m.measurement_source_concept_code) {
+    var coding[]: Coding(Code_System(m.measurement_source_vocabulary_id), "", m.measurement_source_concept_code, m.measurement_source_concept_name)
+  }
+  $this: CodeableConcept(coding,m.measurement_source_value)
+}
+
+// *******************************************************************************************
+// Meas_Lab_Value(): figure out how to fill out the value[x] field
+// *******************************************************************************************
+def Meas_Lab_Value(profile_type,m) {
+  // USCore Vital Signs: 11 types of value[x] allowed
+  // USCore BMI, Height, Temp, Weight: value_quantity only
+ 
+  // For blood pressure, we use separate Vital Signs rather than combined USCore Blood pressure
+
+  var isValueQuantity: $MatchesRegex(profile_type.subtype, "bmi|hgt|wgt|temp");
+
+  // Priority for selecting value[x] if not constrained:
+  //       value_as_concept_id exists and is not 0  --> valueCodeableConcept
+  //       value_as_number exists  --> valueQuantity
+  //       value_source_value exists  --> valueString
+  // 
+
+ if (isValueQuantity) {
+   // One of the subtypes that only is allowed to have a ValueQuantity for value[x]
+       if ( HasValue(m.value_as_number)) {
+      // We have a number --> valueQuantity?? SHAHIM?
+      valueQuantity.value : profile_type.convert.value
+      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id ~=" ",m.operator_concept_id ~= "0")) {
+        valueQuantity.comparator: m.operator_concept_name
+      }
+      valueQuantity.unit: profile_type.unit
+      valueQuantity.system: profile_type.unitsystem
+      valueQuantity.code: profile_type.unitcode
+      } else {
+        // We only get here if we have nothing to put into valueQuantity
+        // Return dataAbsentReason rather than valueQuantity
+        dataAbsentReason : CodeableConcept(Coding("http://terminology.hl7.org/CodeSystem/data-absent-reason", "", "unknown", "Unknown"),"Unknown");
+      }
+ } else {
+  // One of the subtypes that is allowed to have different types of value[x]
+     if ( ConceptHasValue(m.value_as_concept_id)) {
+  // We have a mapped value --> valueCodeableConcept
+      var text: $StrFmt("%+s",m.value_as_concept_name)
+      var coding: Coding(Code_System(m.value_as_concept_vocabulary_id), "", m.value_as_concept_code, text)
+      valueCodeableConcept: CodeableConcept(coding,m.value_source_value)
+  } else {
+    if ( HasValue(m.value_as_number)) {
+      // We have a number --> valueQuantity?? SHAHIM?
+      valueQuantity.value : profile_type.convert.value
+      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id ~=" ",m.operator_concept_id ~= "0")) {
+        valueQuantity.comparator: m.operator_concept_name
+      }
+      valueQuantity.unit: profile_type.unit
+      valueQuantity.system: profile_type.unitsystem
+      valueQuantity.code: profile_type.unitcode
+    } else {
+      if  ( HasValue(m.value_source_value)) {
+      // We only have a source_value and nothing else --> valueString
+      valueString: m.value_source_value
+      } else {
+        // We only get here if we have nothing useful in any OMOP value fields
+        // Return dataAbsentReason rather than value[x]
+        dataAbsentReason : CodeableConcept(Coding("http://terminology.hl7.org/CodeSystem/data-absent-reason", "", "unknown", "Unknown"),"Unknown");
+      }
+    }
+  }
+ }
+
+
+}
