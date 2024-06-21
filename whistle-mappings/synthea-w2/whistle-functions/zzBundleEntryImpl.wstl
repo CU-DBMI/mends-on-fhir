@@ -1,3 +1,4 @@
+package main
 
 def BundleEntryImpl(entryResource, method, baseUrl) {
     resource: entryResource

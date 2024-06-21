@@ -1,3 +1,5 @@
+package main
+
 // 2022-08-22: Removed Convert(). Moved to Utils.wstl
 
 
@@ -29,7 +31,7 @@ def CodeMapDefault(code, mapId) {
 def CodeMapNull(code, mapId) {
     var mappings : $HarmonizeCode("$Local", code, "omop", mapId)
     var unharmonized: $StrCat(mapId, "-unharmonized")
-    if ( $Not( $Eq(mappings[0].system, unharmonized ))) {
+    if ( $Not( $Eq(mappings[0].system, unharmonized ))) then {
         $this: mappings[0].code
     }
 }
@@ -38,7 +40,7 @@ def CodeMapNull(code, mapId) {
 
 def CodeMapOverride(code, mapId) {
     var override: CodeMapNull(code, mapId)
-    if $IsNotNil(override) {
+    if $IsNotNil(override)  then {
         $this: override
     } else {
         $this: code
@@ -84,10 +86,13 @@ def Code_IsFHIRValid(code){
 def Coding(system, version, code, display){
     system: system
     version: version
-    code: Code_CleanSpaces(code)    // TODO:SE do we really want to hardcode this here? 
+    code: Code_CleanSpaces(code)
+    // It appears in Whistle 2 the end of line comments are not working, at least in my distribution.
+    // The docs say it should work. TODO: check this here https://github.com/GoogleCloudPlatform/healthcare-data-harmonization/blob/master/doc/spec.md#user-content-comments-comments
+    // TODO:SE do we really want to hardcode this here?
                                     // It might be better to have a Code_MapOverride or Code_IsFHIRValid call first, by the caller, to deal with this in a more controlled way.
     display: display
-    
+
 }
 
 def CodingSelected(system, version, code, display, selected){
@@ -107,7 +112,7 @@ def CodingMapDefault(code, mapId) {
 def CodingMapNull(code, mapId) {
     // Depends on having an actually mapped code
     var mapped: CodeMapNull(code, mapId)
-    if ( $IsNotNil( mapped)) {
+    if ( $IsNotNil( mapped))  then {
         $this: CodingMapDefault(code, mapId)
     }
 }
@@ -116,7 +121,7 @@ def CodingMapNull(code, mapId) {
 def CodingMapOverride(system, version, code, display, selected, mapId){
     // Depends on having an actually mapped code
     var mapped: CodeMapNull(code, mapId)
-    if ( $IsNotNil(mapped)) {
+    if ( $IsNotNil(mapped))  then {
         $this: CodingMapDefault(code, mapId)
         userSelected: selected
     } else {
@@ -133,7 +138,7 @@ def CodingsMapDefault(code, mapId){
 
 // this returns an array of found Codings even if no actual mapping
 def CodingsMapNull(code, mapId){
-    if ( $IsNotNil(CodeMapNull(code, mapId)) ){
+    if ( $IsNotNil(CodeMapNull(code, mapId)) ) then {
         // we have at least one real mapped code.
         // we can safely return the default since there will be no "whistle default".
         $this: CodingsMapDefault(code, mapId)
@@ -201,70 +206,70 @@ def CodeableConceptsMapNull(code, mapId, text){
 
 def Code_System(code) {
 
-    if ($ToUpper(code) = "ATC") {
+    if (toUpper(code) == "ATC")  then {
         $this: "http://hl7.org/fhir/sid/ndc"
     }
-    if ($ToUpper(code) = "CPT4") {
+    if (toUpper(code) == "CPT4")  then {
         $this: "http://www.ama-assn.org/go/cpt"
-    } 
-    if ($ToUpper(code) = "CVX") {
+    }
+    if (toUpper(code) == "CVX")  then {
         $this: "http://hl7.org/fhir/sid/cvx"
     }
-    if ($ToUpper(code) = "HCPCS") {
+    if (toUpper(code) == "HCPCS")  then {
         $this: "urn:oid:2.16.840.1.113883.6.14"
     }
-    if ($ToUpper(code) = "HDC") {
+    if (toUpper(code) == "HDC")  then {
         $this: "http://healthdatacompass.org"
-    } 
-    if ($ToUpper(code) = "ICD9CM") {
+    }
+    if (toUpper(code) == "ICD9CM") then {
         $this: "http://hl7.org/fhir/sid/icd-9-cm"
-    } 
-    if ($ToUpper(code) = "ICD9PROC") {
+    }
+    if (toUpper(code) == "ICD9PROC")  then {
         $this: "http://hl7.org/fhir/sid/icd-9-proc"
     }
-    if ($ToUpper(code) = "ICD10") {
+    if (toUpper(code) == "ICD10")  then {
         $this: "http://hl7.org/fhir/sid/icd-10"
-    }  
-    if ($ToUpper(code) = "ICD10CM") {
+    }
+    if (toUpper(code) == "ICD10CM")  then {
         $this: "http://hl7.org/fhir/sid/icd-10-cm"
     }
-    if ($ToUpper(code) = "ICD10PCS") {
+    if (toUpper(code) == "ICD10PCS")  then {
         $this: "http://hl7.org/fhir/sid/icd-10-pcs"
-    } 
-    if ($ToUpper(code) = "ISBT128") {
+    }
+    if (toUpper(code) == "ISBT128")  then {
         $this: "urn:oid:2.16.840.1.113883.6.18"
     }
-    if ($ToUpper(code) = "LOINC") {
+    if (toUpper(code) == "LOINC")  then {
         $this: "http://loinc.org"
-    }        
-    if ($ToUpper(code) = "NDC") {
+    }
+    if (toUpper(code) == "NDC")  then {
         $this: "http://hl7.org/fhir/sid/ndc"
     }
-    if ($ToUpper(code) = "RXNORM") {
+    if (toUpper(code) == "RXNORM")  then {
         $this: "http://www.nlm.nih.gov/research/umls/rxnorm"
     }
-    if ($ToUpper(code) = "RXNORM EXTENSION"){
+    if (toUpper(code) == "RXNORM EXTENSION") then {
         $this: "http://ohdsi.org"
     }
-    if ($ToUpper(code) = "SNOMED") {
+    if (toUpper(code) == "SNOMED")  then {
         $this: "http://snomed.info/sct"
     }
-    if ($ToUpper(code) = "UCHEALTH_CDW") {
+    if (toUpper(code) == "UCHEALTH_CDW")  then {
         $this: "http://uchealth.org"
     }
-    if ($ToUpper(code) = "UCUM") {
+    if (toUpper(code) == "UCUM")  then {
         $this: "http://unitsofmeasure.org"
-    } 
-    if ($ToUpper(code) = "NONE"){
+    }
+    if (toUpper(code) == "NONE") then {
         $this: "http://ohdsi.org"
     }
-    if (code = "") {
+    if (code == "")  then {
         $this: ""
     }
 }
 
 def Identifier_System(code) {
-    if ( $ToLower(code) = "omop-id") {
+    if ( toLower(code) == "omop-id")  then {
         $this: "http://healthdatacompass.org/fhir/system/identifier/omop-lds"
     }
 }

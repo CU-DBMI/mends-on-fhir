@@ -1,9 +1,11 @@
+package main
+
 // 2022-03-22: Removed Visit_Datetime. Replaced by ReformatDatetime() in datatypes.wstl
 // 2022-03-22: Moved MendsMetaData to datatypes.wstl
 // 2022-08-22: Moved Convert() to this file
 
 def HasValue(v) {
-  if $And($IsNotNil(v),v ~= " ", $ToLower(v)~= "none", v~="")  {
+  if $And($IsNotNil(v),v != " ", toLower(v) != "none", v != "")   then {
     $this: true
   } else {
     $this: false
@@ -11,7 +13,7 @@ def HasValue(v) {
 }
 
 def ConceptHasValue(c) {
-  if ($And(HasValue(c), c ~= "0") ) {
+  if ($And(HasValue(c), c != "0") )  then {
     $this: true
   } else {
     $this: false
@@ -28,13 +30,13 @@ def ConceptHasValue(c) {
 
 
 def Convert(v,lo,hi,from,to) {
-    if (HasValue(v)) {
-        convert.value: Convert_Value(v,from,to)
-        if (HasValue(lo) ) {
-            convert.low: Convert_Value(lo,from,to)
+    if (HasValue(v))  then {
+        var convert.value: Convert_Value(v,from,to)
+        if (HasValue(lo) )  then {
+            var convert.low: Convert_Value(lo,from,to)
         }
-        if (HasValue(hi) ) {
-            convert.high: Convert_Value(hi,from,to)
+        if (HasValue(hi) )  then {
+            var convert.high: Convert_Value(hi,from,to)
         }
         $this: convert
     }
@@ -42,26 +44,26 @@ def Convert(v,lo,hi,from,to) {
 
 
 def Convert_Value(v,from, to) {
-    var lfrom: $ToLower(from);
-    var lto: $ToLower(to);
+    var lfrom: toLower(from);
+    var lto: toLower(to);
 
-    if $Eq(lfrom, lto) {
+    if $Eq(lfrom, lto)  then {
         // No conversion required
         $this: $ParseFloat(v)
     }
-    if ($MatchesRegex(lfrom,"far") and $MatchesRegex(lto, "cel")) {
+    if ($MatchesRegex(lfrom,"far") and $MatchesRegex(lto, "cel"))  then {
         // Farhenheit --> Celsius
         $this: ($ParseFloat(v) - 32) * (5/9)
     }
-    if $MatchesRegex(lfrom,"lb|pound") and $MatchesRegex(lto,"kg") {
+    if $MatchesRegex(lfrom,"lb|pound") and $MatchesRegex(lto,"kg")  then {
         // Pounds --> kgs
         $this: $ParseFloat(v) * 0.45359
     }
-    if $MatchesRegex(lfrom,"oz|ounces") and $MatchesRegex(lto,"kg") {
+    if $MatchesRegex(lfrom,"oz|ounces") and $MatchesRegex(lto,"kg")  then {
         // Ounces --> kgs
         $this: $ParseFloat(v) * 0.02834952
     }
-    if $MatchesRegex(lfrom,"inch") and $MatchesRegex(lto,"cm") {
+    if $MatchesRegex(lfrom,"inch") and $MatchesRegex(lto,"cm")  then {
         // Inches --> Centimeters
         $this: $ParseFloat(v) * 2.54
     }

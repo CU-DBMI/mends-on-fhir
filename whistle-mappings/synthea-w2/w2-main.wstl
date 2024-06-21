@@ -1,0 +1,36 @@
+package main
+
+import "whistle-functions/BundleEntry.wstl"
+import "whistle-functions/Bundle.wstl"
+import "whistle-functions/Code_Map.wstl"
+import "whistle-functions/ConditionOccurrence_Condition.wstl"
+import "whistle-functions/Datatypes.wstl"
+import "whistle-functions/Drug_Exposure.wstl"
+import "whistle-functions/Main.wstl"
+import "whistle-functions/Measurement_Observation.wstl"
+import "whistle-functions/Observation_NotSmoking.wstl"
+import "whistle-functions/Observation_Smoking.wstl"
+import "whistle-functions/Omop531.wstl"
+import "whistle-functions/Person_Patient.wstl"
+import "whistle-functions/PPP_Coverage.wstl"
+import "whistle-functions/Utils.wstl"
+import "whistle-functions/Visit_Encounter.wstl"
+import "whistle-functions/zzBundleEntryImpl.wstl"
+import "whistle-functions/zzBundleImpl.wstl"
+import "whistle-functions/zzMainImpl.wstl"
+import "whistle-functions/zzOmop531Impl.wstl"
+import "whistle-functions/zzPPP_CoverageImpl.wstl"
+
+
+var context.config.input.instance\-name: "mends-lds"
+var context.config.input.instance\-version: "1.2.3"
+
+var context.config.input.model\-name: "omop"
+var context.config.input.model\-version: "5.3.1"
+
+var context.config.output.phi: "yes"
+
+var resources[]: Main($root, context)
+
+// output the resources any w
+$this: Bundle(resources, context, "batch", "PUT", "http://localhost:8080/fhir" )

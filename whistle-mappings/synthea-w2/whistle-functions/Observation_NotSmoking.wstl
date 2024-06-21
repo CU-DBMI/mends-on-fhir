@@ -1,3 +1,4 @@
+package main
 
 // 2022-09-09: Add source_concept to Observation.code CodeableConcept
 
@@ -42,7 +43,7 @@ def Observation_NotSmoking(Observation, required context) {
   focus[]: ""
   encounter: Reference("Encounter", Observation.visit_occcurrence_id)
  
-  if context.config.output.phi = "yes" {
+  if context.config.output.phi == "yes"  then {
       // effective[x], 1..1
     effectiveDateTime: ReformatDatetimeDate(Observation.observation_datetime, Observation.observation_date)
     issued: ReformatDatetimeDate(Observation.observation_datetime, Observation.observation_date)
@@ -84,14 +85,15 @@ def Observation_NotSmoking(Observation, required context) {
 
 def observation_Profile(m) {
 
-  if $And($IsNotNil(m.value_as_number),m.value_as_number ~=" ") {
+  var value_to_use: {}
+  if $And($IsNotNil(m.value_as_number),m.value_as_number !=" ")  then {
     value_to_use : m.value_as_number
     } else {
       value_to_use: "None"
   }
 
 
-  if $MatchesRegex(m.observation_concept_id,"4060705|4060985|4135421|4147565|4256640") {
+  if $MatchesRegex(m.observation_concept_id,"4060705|4060985|4135421|4147565|4256640")  then {
     // BMI records have NULL units. Assume default fixed vaue from US Core.
     // BMI concept_ids in 4xxxxxx range are from OMOP Observations. These record do not have BMI values
     type: "VS"
@@ -113,11 +115,11 @@ def observation_Profile(m) {
 // Observation_Category(): Fill in category field based on profile_type
 // ******************************************************************************************
 def Observation_Category(profile_type, m) {
-  if (profile_type.type = "VS") {
+  if (profile_type.type == "VS")  then {
     var coding: Coding("http://terminology.hl7.org/CodeSystem/observation-category","","vital-signs", "Vital Signs")
     $this: CodeableConcept(coding, "Vital Signs")
   }
-  if (profile_type.type = "LAB") {
+  if (profile_type.type == "LAB")  then {
     var coding: Coding("http://terminology.hl7.org/CodeSystem/observation-category", "", "laboratory","Laboratory") 
     $this: CodeableConcept(coding, "Laboratory")
   }  
@@ -132,7 +134,7 @@ def Observation_Code(profile_type,m){
   var codedisplay: profile_type.codedisplay;
   var coding[]: Coding(codesystem, "", codecode, codedisplay);
 
-  if (m.observation_concept_code ~= m.observation_source_concept_code) {
+  if (m.observation_concept_code != m.observation_source_concept_code)  then {
     coding[]: Coding(Code_System(m.observation_source_vocabulary_id), "", m.observation_source_concept_code, m.observation_source_concept_name)
   }
   $this: CodeableConcept(coding,m.observation_source_value)
@@ -148,23 +150,23 @@ def Observation_Value(profile_type,m) {
   //       value_source_value exists
   // 
 
-  if (ConceptHasValue(m.value_as_concept_id)) {
+  if (ConceptHasValue(m.value_as_concept_id))  then {
   // We have a mapped value --> valueCodeableConcept
       var text: $StrFmt("%+s",m.value_as_concept_name)
       var coding: Coding(Code_System(m.value_as_concept_vocabulary_id), "", m.value_as_concept_code, text)
       valueCodeableConcept: CodeableConcept(coding,m.value_source_value)
   } else {
-    if (HasValue(m.value_as_number)) {
+    if (HasValue(m.value_as_number))  then {
       // We have a number --> valueQuantity?? SHAHIM?
       valueQuantity.value : profile_type.convert.value
-      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id ~=" ",m.operator_concept_id ~= "0")) {
+      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id !=" ",m.operator_concept_id != "0"))  then {
         valueQuantity.comparator: m.operator_concept_name
       }
       valueQuantity.unit: profile_type.unit
       valueQuantity.system: profile_type.unitsystem
       valueQuantity.code: profile_type.unitcode
     } else {
-      if  (HasValue(m.observation_source_value)) {
+      if  (HasValue(m.observation_source_value))  then {
       // We only have a source_value and nothing else --> valueString
       //valueString: $StrFmt("%s",m.observation_source_value)
       valueString: m.observation_source_value

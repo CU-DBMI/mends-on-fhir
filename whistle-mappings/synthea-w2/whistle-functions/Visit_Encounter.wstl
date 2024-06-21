@@ -1,3 +1,5 @@
+package main
+
 // See comments/note at end, below the funtion
 
 def Visit_Encounter(Visit, required context) {
@@ -17,7 +19,7 @@ def Visit_Encounter(Visit, required context) {
     class: CodingMapDefault(Visit.visit_concept_id, "VisitOccurrence.visit-concept-id--Encounter.class")
 
     var classHistory: CodingMapNull(Visit.visit_concept_id, "VisitOccurrence.visit-concept-id--Encounter.classHistory")
-    if ( $IsNotNil(classHistory)) {
+    if ( $IsNotNil(classHistory))  then {
         var ch.class: classHistory
         var ch.period.id: "classHistory.period.hack.to.force.an.object.creation.TODO"
         classHistory[]: ch
@@ -48,8 +50,8 @@ def Visit_Encounter(Visit, required context) {
     // M .start -> Encounter.hosp_admit_dt (date)
     // M .end -> Encounter.hosp_dschrg_dt (date)
     // Make sure that there are datetimes for both start and end, else only use dates for both
-    if context.config.output.phi = "yes" {
-        if $And($IsNotNil(Visit.visit_start_datetime), $IsNotNil(Visit.visit_end_datetime)) {
+    if context.config.output.phi == "yes"  then {
+        if $And($IsNotNil(Visit.visit_start_datetime), $IsNotNil(Visit.visit_end_datetime))  then {
             period.start: ReformatDatetime(Visit.visit_start_datetime)
             period.end: ReformatDatetime(Visit.visit_end_datetime)
         } else {
@@ -59,7 +61,7 @@ def Visit_Encounter(Visit, required context) {
             period.end: Visit.visit_end_date
         }
     } else {
-        if $And($IsNotNil(Visit.visit_start_datetime), $IsNotNil(Visit.visit_end_datetime)) {
+        if $And($IsNotNil(Visit.visit_start_datetime), $IsNotNil(Visit.visit_end_datetime))  then {
             period.start: ReformatDatetime("2030-01-01")
             period.end: ReformatDatetime("2030-01-01")
         } else {
@@ -100,7 +102,7 @@ def Visit_Encounter(Visit, required context) {
 
 def Encounter_Type(Visit) {
     $this: CodeableConceptMapNull(Visit.visit_concept_id, "VisitOccurrence.visit-concept-id--Encounter.type", Visit.visit_source_value)
-        if Visit.visit_concept_id ~= Visit.visit_source_concept_id {
+        if Visit.visit_concept_id != Visit.visit_source_concept_id  then {
            coding[]: Coding(Code_System(Visit.visit_source_vocabulary_id), "", Visit.visit_source_concept_code, Visit.visit_source_concept_name)
         }
 }

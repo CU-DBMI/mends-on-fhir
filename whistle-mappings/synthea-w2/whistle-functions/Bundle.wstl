@@ -1,3 +1,5 @@
+package main
+
 def Bundle(resources, context, bundleType, method, baseUrl ) {
     $this: BundleImpl(resources, context, bundleType, method, baseUrl )
 }
