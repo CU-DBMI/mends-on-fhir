@@ -1,3 +1,4 @@
+package main
 
 // Change Log:
 // 2022-07-31: Added missing concept_ids for vitals that were dropping down to labs
@@ -45,7 +46,7 @@ def Measurement_Observation(Measurement, required context) {
   focus[]: ""
   encounter: Reference("Encounter", Measurement.visit_occcurrence_id)
  
-  if context.config.output.phi = "yes" {
+  if context.config.output.phi == "yes"  then {
     // effective[x], 1..1
     effectiveDateTime: ReformatDatetimeDate(Measurement.measurement_datetime, Measurement.measurement_date)
     issued: ReformatDatetimeDate(Measurement.measurement_datetime, Measurement.measurement_date)
@@ -87,7 +88,9 @@ def Measurement_Observation(Measurement, required context) {
 
 def meas_Profile(m) {
 
-  if $And($IsNotNil(m.value_as_number),m.value_as_number ~=" ") {
+  var value_to_use: {}
+  var type: {}
+  if $And($IsNotNil(m.value_as_number),m.value_as_number !=" ")  then {
     var value_to_use : m.value_as_number
     } else {
       var value_to_use: "None"
@@ -96,7 +99,7 @@ def meas_Profile(m) {
   value_to_use: value_to_use
 
 
-  if $MatchesRegex(m.measurement_concept_id,"3038553") {
+  if $MatchesRegex(m.measurement_concept_id,"3038553")  then {
     // BMI code from Measurement domain. Other BMI codes are in Observation domain.
     // BMI records have NULL units. Assume default fixed vaue from US Core.
     // BMI concept_ids in 4xxxxxx range are from OMOP Observations. These record do not have BMI values
@@ -112,7 +115,7 @@ def meas_Profile(m) {
     profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-bmi"
     }
 
-  if $MatchesRegex(m.measurement_concept_id,"3019171|3036277") {
+  if $MatchesRegex(m.measurement_concept_id,"3019171|3036277")  then {
     // All heights are in inches. No NULL records
     // UCUM code = [in_i]; display = in_i
     type: "VS"
@@ -127,7 +130,7 @@ def meas_Profile(m) {
     profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-height"
   }
 
-  if $MatchesRegex(m.measurement_concept_id, "3004249|4152194|4353843") {
+  if $MatchesRegex(m.measurement_concept_id, "3004249|4152194|4353843")  then {
     type: "VS"
     subtype: "sbp"
     codesystem: Code_System("LOINC")
@@ -140,7 +143,7 @@ def meas_Profile(m) {
     profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-vital-signs"
   }
     
-  if $MatchesRegex(m.measurement_concept_id, "3012888|4154790|4354253") {
+  if $MatchesRegex(m.measurement_concept_id, "3012888|4154790|4354253")  then {
     type: "VS"
     subtype: "dbp"
     codesystem: Code_System("LOINC")
@@ -153,7 +156,7 @@ def meas_Profile(m) {
     profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-vital-signs"
   }
 
-  if $MatchesRegex(m.measurement_concept_id, "3013762|3023166|3025315|3026600") {
+  if $MatchesRegex(m.measurement_concept_id, "3013762|3023166|3025315|3026600")  then {
     // US Core allows units as kg, lb_av, g. We normalize all weights to KG.
     type: "VS"
     subtype: "wgt"
@@ -163,19 +166,19 @@ def meas_Profile(m) {
     unit: "kg"
     unitcode: "kg"
     unitsystem: Code_System("UCUM")
-    if (m.unit_concept_id = "9529") {
+    if (m.unit_concept_id == "9529")  then {
       // 9529 = kg
       convert: Convert(value_to_use, m.range_low, m.range_high, "kg", "kg")
     }
-    if (m.unit_concept_id = "8739") {
+    if (m.unit_concept_id == "8739")  then {
       // 8739 = pounds
       convert: Convert(value_to_use, m.range_low, m.range_high, "lb", "kg")
     }
-    if (m.unit_concept_id = "9373") {
+    if (m.unit_concept_id == "9373")  then {
       // 9373 = "ounces"
       convert: Convert(value_to_use, m.range_low, m.range_high, "oz", "kg")
     }
-    if (m.unit_concept_id = "0") {
+    if (m.unit_concept_id == "0")  then {
 
       // We are stuck doing regex/strsplits to pull out numeric value from value_source_value string
       // OMOP query that shows string variations
@@ -184,22 +187,22 @@ def meas_Profile(m) {
       //     where measurement_concept_id in (30137623023166,3025315,3026600) 
       //     and lower(value_source_value) like '%lb%'
       
-      var value_source_value: $ToLower(m.value_source_value);
+      var value_source_value: toLower(m.value_source_value);
       
-      if $MatchesRegex(value_source_value, "lb.*") {
+      if $MatchesRegex(value_source_value, "lb.*")  then {
         // convert lbs to kgs
         var temp: $StrSplit(value_source_value, "lb");
         var value_to_use: $Trim(temp[0]);
-        if $IsNotNil(value_to_use) {
+        if $IsNotNil(value_to_use)  then {
           convert: Convert(value_to_use, m.range_low, m.range_high, "lb", "kg")
         }
       } 
 
-      if $MatchesRegex(value_source_value, "kg.*") {
+      if $MatchesRegex(value_source_value, "kg.*")  then {
         // kg
         var temp: $StrSplit(value_source_value, "kg");
         var value_to_use: $Trim(temp[0]);
-        if $IsNotNil(value_to_use) {
+        if $IsNotNil(value_to_use)  then {
           convert: Convert(value_to_use, m.range_low, m.range_high, "kg", "kg")
         }
       } 
@@ -208,7 +211,7 @@ def meas_Profile(m) {
     profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-weight"
   }
 
-  if $MatchesRegex(m.measurement_concept_id, "3020891") {
+  if $MatchesRegex(m.measurement_concept_id, "3020891")  then {
     type: "VS"
     subtype: "temp"
     codesystem: Code_System("LOINC")
@@ -217,21 +220,21 @@ def meas_Profile(m) {
     unit: "Cel"
     unitcode: "Cel"
     unitsystem: Code_System("UCUM")
-    if $MatchesRegex(m.unit_concept_id,"586323|9471") {
+    if $MatchesRegex(m.unit_concept_id,"586323|9471")  then {
       // Celcius
       convert: Convert(value_to_use, m.range_low, m.range_high, "Cel", "Cel")
     }
-    if (m.unit_concept_id = "8517") {
+    if (m.unit_concept_id == "8517")  then {
       // Mapping error: Farad
       //Convert Farhenheit to Celsius
       convert: Convert(value_to_use, m.range_low, m.range_high, "Farhenheit", "Cel")
     }
-    if ($Or(m.unit_concept_id  = "0", m.unit_concept_id = "")) {
+    if ($Or(m.unit_concept_id  == "0", m.unit_concept_id == ""))  then {
       // No units to distingush Farhenheit from Celcius.
       // Arbitrary cutoff = 50 to separate Celcius from Fahrenheit
-      if ( HasValue(value_to_use)) {
+      if ( HasValue(value_to_use))  then {
         var vnum: $ParseFloat(value_to_use);
-        if $Gt(vnum,50) {
+        if $Gt(vnum,50)  then {
         // treat as Fahrenheit
           convert: Convert(value_to_use, m.range_low, m.range_high, "Farhenheit", "Cel")
         } else {
@@ -243,7 +246,7 @@ def meas_Profile(m) {
       profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-temperature"
   }
   
-  if (type ~= "VS") {
+  if (type != "VS")  then {
     // We  get here only if we have not assigned as a vital sign. 
     // Default everything else in Measurement as a Lab
     // TODO: Need more work on unmapped lab units
@@ -252,7 +255,7 @@ def meas_Profile(m) {
     codesystem: Code_System("LOINC")
     codecode: m.measurement_concept_code
     codedisplay: m.measurement_concept_name
-    if $And(m.unit_concept_id = "0", $IsNotNil(m.unit_source_value)) {
+    if $And(m.unit_concept_id == "0", $IsNotNil(m.unit_source_value))  then {
       unitcode: m.unit_source_value
       unitsystem: Code_System("HDC")
       } else {
@@ -269,11 +272,11 @@ def meas_Profile(m) {
 // Measurement_Category(): Fill in category field based on profile_type
 // ******************************************************************************************
 def Measurement_Category(profile_type, m) {
-  if (profile_type.type = "VS") {
+  if (profile_type.type == "VS")  then {
     var coding: Coding("http://terminology.hl7.org/CodeSystem/observation-category","","vital-signs", "Vital Signs")
     $this: CodeableConcept(coding, "Vital Signs")
   }
-  if (profile_type.type = "LAB") {
+  if (profile_type.type == "LAB")  then {
     var coding: Coding("http://terminology.hl7.org/CodeSystem/observation-category", "", "laboratory","Laboratory") 
     $this: CodeableConcept(coding, "Laboratory")
   }  
@@ -290,7 +293,7 @@ def Measurement_Code(profile_type,m){
   var codedisplay: profile_type.codedisplay;
   var coding[]: Coding(codesystem, "", codecode, codedisplay);
 
-  if (m.measurement_concept_code ~= m.measurement_source_concept_code) {
+  if (m.measurement_concept_code != m.measurement_source_concept_code)  then  {
     var coding[]: Coding(Code_System(m.measurement_source_vocabulary_id), "", m.measurement_source_concept_code, m.measurement_source_concept_name)
   }
   $this: CodeableConcept(coding,m.measurement_source_value)
@@ -313,12 +316,12 @@ def Meas_Lab_Value(profile_type,m) {
   //       value_source_value exists  --> valueString
   // 
 
- if (isValueQuantity) {
+ if (isValueQuantity)  then {
    // One of the subtypes that only is allowed to have a ValueQuantity for value[x]
-       if ( HasValue(m.value_as_number)) {
+       if ( HasValue(m.value_as_number))  then {
       // We have a number --> valueQuantity?? SHAHIM?
       valueQuantity.value : profile_type.convert.value
-      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id ~=" ",m.operator_concept_id ~= "0")) {
+      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id != " ", m.operator_concept_id != "0"))  then {
         valueQuantity.comparator: m.operator_concept_name
       }
       valueQuantity.unit: profile_type.unit
@@ -331,23 +334,23 @@ def Meas_Lab_Value(profile_type,m) {
       }
  } else {
   // One of the subtypes that is allowed to have different types of value[x]
-     if ( ConceptHasValue(m.value_as_concept_id)) {
+     if ( ConceptHasValue(m.value_as_concept_id))  then {
   // We have a mapped value --> valueCodeableConcept
       var text: $StrFmt("%+s",m.value_as_concept_name)
       var coding: Coding(Code_System(m.value_as_concept_vocabulary_id), "", m.value_as_concept_code, text)
       valueCodeableConcept: CodeableConcept(coding,m.value_source_value)
   } else {
-    if ( HasValue(m.value_as_number)) {
+    if ( HasValue(m.value_as_number))  then {
       // We have a number --> valueQuantity?? SHAHIM?
       valueQuantity.value : profile_type.convert.value
-      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id ~=" ",m.operator_concept_id ~= "0")) {
+      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id !=" ",m.operator_concept_id != "0")) then  {
         valueQuantity.comparator: m.operator_concept_name
       }
       valueQuantity.unit: profile_type.unit
       valueQuantity.system: profile_type.unitsystem
       valueQuantity.code: profile_type.unitcode
     } else {
-      if  ( HasValue(m.value_source_value)) {
+      if  ( HasValue(m.value_source_value)) then  {
       // We only have a source_value and nothing else --> valueString
       valueString: m.value_source_value
       } else {

@@ -1,3 +1,5 @@
+package main
+
 // 2021-03-22: Comment out MedicationStatement
 // 2022-07-01: added validityPeriod for MedicationRequest, Added meta.profile and corrected misspelled elements
 
@@ -8,11 +10,12 @@ def Drug_Exposure(Drug_Exposure, required context) {
 
     // Define Medication ID to be used as medicationReference and as id for the Medication resource
     var medicationID: Id_Spaces_To_Dash($StrCat("med-", Drug_Exposure.drug_concept_id, "-",Drug_Exposure.drug_source_concept_id, "-", $Hash(Drug_Exposure.lot_number)))
-
+    // Shahim: Whistle 2 has variable scoping rules and a declaration is needed. See: https://github.com/GoogleCloudPlatform/healthcare-data-harmonization/blob/master/doc/spec.md#user-content-scope-scope
+    var resources[]: []
     // 32818 = EHR administration record
-    if (Drug_Exposure.drug_type_concept_id = "32818") {
+    if (Drug_Exposure.drug_type_concept_id == "32818")  then {
         // CVX = Vaccine Administered
-        if (Drug_Exposure.drug_source_vocabulary_id = "CVX") {
+        if (Drug_Exposure.drug_source_vocabulary_id == "CVX")  then {
             var resources[]: Drug_Exposure_Immunization(Drug_Exposure, context) 
             var medicationID: ""
         } else {
@@ -21,22 +24,22 @@ def Drug_Exposure(Drug_Exposure, required context) {
     }
 
     // 32833 = EHR order
-    if Drug_Exposure.drug_type_concept_id = "32833" {
+    if Drug_Exposure.drug_type_concept_id == "32833"  then {
         var resources[]: Drug_Exposure_MedicationRequest(Drug_Exposure, context, medicationID)
     }
 
     // 32865 = Patient self-report
-    //if (Drug_Exposure.drug_type_concept_id = "32865") {
+    //if (Drug_Exposure.drug_type_concept_id == "32865")  then {
     //    var resources[]: Drug_Exposure_MedicationStatement(Drug_Exposure, context, medicationID)    
     //} 
 
     // 32825 = EHR dispensing record
-    if (Drug_Exposure.drug_type_concept_id = "32825") {
+    if (Drug_Exposure.drug_type_concept_id == "32825")  then {
         var resources[]: Drug_Exposure_MedicationDispense(Drug_Exposure, context, medicationID)
     }
 
-    // Always create a Medication Resource when drug_concept_id or drug_source_concept_id are ~= "0" and medicationID not empty
-    if (Drug_Exposure.drug_concept_id ~= "0" or (Drug_Exposure.drug_concept_id = "0" and Drug_Exposure.drug_source_concept_id ~= "0" and medicationID ~= "")) {
+    // Always create a Medication Resource when drug_concept_id or drug_source_concept_id are != "0" and medicationID not empty
+    if (Drug_Exposure.drug_concept_id != "0" or (Drug_Exposure.drug_concept_id == "0" and Drug_Exposure.drug_source_concept_id != "0" and medicationID != ""))  then {
         var resources[]: Drug_Exposure_Medication(Drug_Exposure, context, medicationID)
     }
 
@@ -72,14 +75,14 @@ def Drug_Exposure_Medication(Drug_Exposure, required context, required medicatio
     identifier[0].value: medicationID
 
     // code,1..1,CodeableConcept
-    if (Drug_Exposure.drug_concept_id ~= "0") {
+    if (Drug_Exposure.drug_concept_id != "0")  then {
         code.coding[]: CodingSelected(Code_System(Drug_Exposure.drug_concept_vocabulary_id), "", Drug_Exposure.drug_concept_code, Drug_Exposure.drug_concept_name, true)
 
-        if (Drug_Exposure.drug_concept_code ~= Drug_Exposure.drug_source_concept_code) {
+        if (Drug_Exposure.drug_concept_code != Drug_Exposure.drug_source_concept_code)  then {
             code.coding[]: CodingSelected(Code_System(Drug_Exposure.drug_source_vocabulary_id), "", Drug_Exposure.drug_source_concept_code, Drug_Exposure.drug_source_concept_name, true)
         }
     } else {
-        if(Drug_Exposure.drug_source_concept_id ~= "0") {
+        if(Drug_Exposure.drug_source_concept_id != "0")  then {
             code.coding[]: CodingSelected(Code_System(Drug_Exposure.drug_source_vocabulary_id), "", Drug_Exposure.drug_source_concept_code, Drug_Exposure.drug_source_concept_name, true)
         }
     }
@@ -123,7 +126,7 @@ def Drug_Exposure_MedicationRequest(Drug_Exposure, required context, required me
     identifier[0].value: Drug_Exposure.drug_exposure_id
 
     // status, 1..1, code 
-    if (Drug_Exposure.stop_reason) {
+    if (Drug_Exposure.stop_reason)  then {
         status: "stopped"
         statusReason.text: Drug_Exposure.stop_reason
     } else {
@@ -143,19 +146,19 @@ def Drug_Exposure_MedicationRequest(Drug_Exposure, required context, required me
     medicationReference: Reference("Medication", medicationID)
 
     // subject, 1..1, Reference
-    if (Drug_Exposure.person_id) {
+    if (Drug_Exposure.person_id)  then {
         subject: Reference("Patient", Drug_Exposure.person_id)
     }
 
     // encounter, 0..1, Reference
-    if (Drug_Exposure.visit_occurrence_id) {
+    if (Drug_Exposure.visit_occurrence_id)  then {
         encounter: Reference("Encounter", Drug_Exposure.visit_occurrence_id)
     }
 
     supportingInformation: ""
 
     // authoredOn, 0..1, dateTime
-    if context.config.output.phi = "yes" {
+    if context.config.output.phi == "yes"  then {
         authoredOn: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
     } else {
         authoredOn: ReformatDatetime("2030-01-01")
@@ -163,12 +166,12 @@ def Drug_Exposure_MedicationRequest(Drug_Exposure, required context, required me
 
     // requester, 0..1, Reference
     //OPTION A
-    if(Drug_Exposure.provider_id) {
+    if(Drug_Exposure.provider_id)  then {
         requester: Reference("Practitioner", Drug_Exposure.provider_id)
     }
 
     //OPTION B
-    //if($IsNotNil(Drug_Exposure.provider_id)) {
+    //if($IsNotNil(Drug_Exposure.provider_id))  then {
     //    requester: Reference("Practitioner", Drug_Exposure.provider_id)
     //} else {
     //    requester: Reference("Practitioner", "NULL")
@@ -190,47 +193,47 @@ def Drug_Exposure_MedicationRequest(Drug_Exposure, required context, required me
     // dosageInstruction, 0..*, Dosage
 
     // text, 0..1, string 
-    if Drug_Exposure.sig {
+    if Drug_Exposure.sig  then {
         dosageInstruction[0].text: Drug_Exposure.sig 
     }
 
     // route, 0..1, CodeableConcept
     dosageInstruction[0].route.text: Drug_Exposure.route_source_value
-    if(Drug_Exposure.route_concept_id and  Drug_Exposure.route_concept_id ~= "0") {
+    if(Drug_Exposure.route_concept_id and  Drug_Exposure.route_concept_id != "0")  then {
         dosageInstruction[0].route.coding[0].system: Code_System(Drug_Exposure.route_vocabulary_id)
         dosageInstruction[0].route.coding[0].code: Drug_Exposure.route_concept_code
         dosageInstruction[0].route.coding[0].display: Drug_Exposure.route_concept_name
     }
 
-    if(Drug_Exposure.dose_unit_source_value ~= "*Unspecified") {
+    if(Drug_Exposure.dose_unit_source_value != "*Unspecified")  then {
         dosageInstruction[0].doseAndRate[0].doseQuantity.unit: Drug_Exposure.dose_unit_source_value
     }
 
     // dispenseRequest, 0..1, BackboneElement
-    if (Drug_Exposure.drug_exposure_start_date) {
-        if context.config.output.phi = "yes" {
+    if (Drug_Exposure.drug_exposure_start_date)  then {
+        if context.config.output.phi == "yes"  then {
             dispenseRequest.validityPeriod.start: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
         } else {
             dispenseRequest.validityPeriod.start: ReformatDatetime("2030-01-01")
         }
     }
-    if (Drug_Exposure.drug_exposure_end_date) {
-        if context.config.output.phi = "yes" {
+    if (Drug_Exposure.drug_exposure_end_date)  then {
+        if context.config.output.phi == "yes"  then {
             dispenseRequest.validityPeriod.end: ReformatDatetimeDate(Drug_Exposure.drug_exposure_end_datetime, Drug_Exposure.drug_exposure_end_date)
         } else {
             dispenseRequest.validityPeriod.end: ReformatDatetime("2030-01-01")
         }
     }
 
-    if(Drug_Exposure.refills) {
+    if(Drug_Exposure.refills)  then {
         dispenseRequest.numberOfRepeatsAllowed: $ParseFloat(Drug_Exposure.refills)
     }
 
-    if(Drug_Exposure.quantity) {
+    if(Drug_Exposure.quantity)  then {
         dispenseRequest.quantity.value: $ParseFloat(Drug_Exposure.quantity)
     }
     
-    if(Drug_Exposure.days_supply) {
+    if(Drug_Exposure.days_supply)  then {
         dispenseRequest.expectedSupplyDuration.value: $ParseFloat(Drug_Exposure.days_supply)
         dispenseRequest.expectedSupplyDuration.code: "d"
         dispenseRequest.expectedSupplyDuration.system: "http://unitsofmeasure.org"
@@ -271,7 +274,7 @@ def Drug_Exposure_Immunization(Drug_Exposure, required context) {
     identifier[0].value: Drug_Exposure.drug_exposure_id
 
     // status, 1..1, code 
-    if (Drug_Exposure.stop_reason) {
+    if (Drug_Exposure.stop_reason)  then {
         status: "not-done"
         statusReason.text: Drug_Exposure.stop_reason
     } else {
@@ -282,23 +285,23 @@ def Drug_Exposure_Immunization(Drug_Exposure, required context) {
     vaccineCode.text: Drug_Exposure.drug_concept_name
     vaccineCode.coding[]: Coding(Code_System(Drug_Exposure.drug_concept_vocabulary_id), "", Drug_Exposure.drug_concept_code, Drug_Exposure.drug_concept_name)
 
-    if (Drug_Exposure.drug_concept_code ~= Drug_Exposure.drug_source_concept_code) {
+    if (Drug_Exposure.drug_concept_code != Drug_Exposure.drug_source_concept_code)  then {
         vaccineCode.coding[]: Coding(Code_System(Drug_Exposure.drug_source_vocabulary_id), "", Drug_Exposure.drug_source_concept_code, Drug_Exposure.drug_source_concept_name)
     }
     
     // patient, 1..1, Reference
-    if (Drug_Exposure.person_id) {
+    if (Drug_Exposure.person_id)  then {
         patient: Reference("Patient", Drug_Exposure.person_id)
     }
 
     // encounter, 0..1, Reference
-    if (Drug_Exposure.visit_occurrence_id) {
+    if (Drug_Exposure.visit_occurrence_id)  then {
         encounter: Reference("Encounter", Drug_Exposure.visit_occurrence_id)
     }
 
     // occurrence[x], 1..1
 
-    if context.config.output.phi = "yes" {
+    if context.config.output.phi == "yes"  then {
         occurrenceDateTime: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
     } else {
         occurrenceDateTime: ReformatDatetime("2030-01-01")
@@ -320,17 +323,17 @@ def Drug_Exposure_Immunization(Drug_Exposure, required context) {
     site: ""
 
     // route, 0..1, CodeableConcept
-    if Drug_Exposure.route_source_value {
+    if Drug_Exposure.route_source_value  then {
         route.text: Drug_Exposure.route_source_value
     }
-    if(Drug_Exposure.route_concept_id and Drug_Exposure.route_concept_id ~= "0") {
+    if(Drug_Exposure.route_concept_id and Drug_Exposure.route_concept_id != "0")  then {
         route.coding[0].system: Code_System(Drug_Exposure.route_vocabulary_id)
         route.coding[0].code: Drug_Exposure.route_concept_code
         route.coding[0].display: Drug_Exposure.route_concept_name
     }
 
     // doseQuantity, 0..1, SimpleQuantity
-    if(Drug_Exposure.quantity) {
+    if(Drug_Exposure.quantity)  then {
         doseQuantity.value: $ParseFloat(Drug_Exposure.quantity)
     }
     doseQuantity.unit: Drug_Exposure.dose_unit_source_value
@@ -377,11 +380,11 @@ def Drug_Exposure_MedicationAdministration(Drug_Exposure, required context, requ
     partOf: ""
 
     // status, 1..1, code 
-    if (Drug_Exposure.stop_reason) {
+    if (Drug_Exposure.stop_reason)  then {
         status: "stopped"
         statusReason.text: Drug_Exposure.stop_reason
     } else {
-        if (Drug_Exposure.drug_exposure_end_date or Drug_Exposure.drug_exposure_end_datetime) {
+        if (Drug_Exposure.drug_exposure_end_date or Drug_Exposure.drug_exposure_end_datetime)  then {
             status: "completed"
         } else {
             status: "in-progress"
@@ -394,27 +397,27 @@ def Drug_Exposure_MedicationAdministration(Drug_Exposure, required context, requ
     medicationReference: Reference("Medication", medicationID)
     
     // subject, 1..1, Reference
-    if (Drug_Exposure.person_id) {
+    if (Drug_Exposure.person_id)  then {
         subject: Reference("Patient", Drug_Exposure.person_id)
     }
 
     // context, 0..1, Reference
-    if (Drug_Exposure.visit_occurrence_id) {
+    if (Drug_Exposure.visit_occurrence_id)  then {
         context: Reference("Encounter", Drug_Exposure.visit_occurrence_id)
     }
     
     supportingInformation: ""
 
     // effective[x], 1..1
-    if context.config.output.phi = "yes" {
-        if(Drug_Exposure.drug_exposure_start_date = Drug_Exposure.drug_exposure_end_date) {
+    if context.config.output.phi == "yes"  then {
+        if(Drug_Exposure.drug_exposure_start_date == Drug_Exposure.drug_exposure_end_date)  then {
             effectiveDateTime: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
         } else {
             effectivePeriod.start: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
             effectivePeriod.end: ReformatDatetimeDate(Drug_Exposure.drug_exposure_end_datetime, Drug_Exposure.drug_exposure_end_date)
         }
     } else {
-        if(Drug_Exposure.drug_exposure_start_date = Drug_Exposure.drug_exposure_end_date) {
+        if(Drug_Exposure.drug_exposure_start_date == Drug_Exposure.drug_exposure_end_date)  then {
             effectiveDateTime: ReformatDatetime("2030-01-01")
         } else {
             effectivePeriod.start: ReformatDatetime("2030-01-01")
@@ -434,16 +437,16 @@ def Drug_Exposure_MedicationAdministration(Drug_Exposure, required context, requ
 
     // dosage, 0..1, BackboneElement
     // text, 0..1, string 
-    if Drug_Exposure.sig {
+    if Drug_Exposure.sig  then {
         dosage.text: Drug_Exposure.sig 
     }
     
 
     // route, 0..1, CodeableConcept
-    if Drug_Exposure.route_source_value {
+    if Drug_Exposure.route_source_value  then {
         dosage.route.text: Drug_Exposure.route_source_value
     }
-    if( Drug_Exposure.route_concept_id and Drug_Exposure.route_concept_id ~= "0") {
+    if( Drug_Exposure.route_concept_id and Drug_Exposure.route_concept_id != "0")  then {
         var coding.system: Code_System(Drug_Exposure.route_vocabulary_id)
         var coding.code: Drug_Exposure.route_concept_code
         var coding.display: Drug_Exposure.route_concept_name
@@ -451,11 +454,11 @@ def Drug_Exposure_MedicationAdministration(Drug_Exposure, required context, requ
     }
 
     // dose, 0..1, SimpleQuantity
-    if(Drug_Exposure.quantity) {
+    if(Drug_Exposure.quantity)  then {
         dosage.dose.value: $ParseFloat(Drug_Exposure.quantity)
     }
 
-    if Drug_Exposure.dose_unit_source_value {
+    if Drug_Exposure.dose_unit_source_value  then {
         dosage.dose.unit: Drug_Exposure.dose_unit_source_value
     }
     
@@ -494,11 +497,11 @@ def Drug_Exposure_MedicationDispense(Drug_Exposure, required context, required m
     partOf: ""
 
     // status, 1..1, code 
-    if (Drug_Exposure.stop_reason) {
+    if (Drug_Exposure.stop_reason)  then {
         status: "stopped"
         statusReason.text: Drug_Exposure.stop_reason
     } else {
-        if (Drug_Exposure.drug_exposure_end_date or Drug_Exposure.drug_exposure_end_datetime) {
+        if (Drug_Exposure.drug_exposure_end_date or Drug_Exposure.drug_exposure_end_datetime)  then {
             status: "completed"
         } else {
             status: "in-progress"
@@ -511,12 +514,12 @@ def Drug_Exposure_MedicationDispense(Drug_Exposure, required context, required m
     medicationReference: Reference("Medication", medicationID)
     
     // subject, 1..1, Reference
-    if (Drug_Exposure.person_id) {
+    if (Drug_Exposure.person_id)  then {
         subject: Reference("Patient", Drug_Exposure.person_id)
     }
 
     // context, 0..1, Reference
-    if (Drug_Exposure.visit_occurrence_id) {
+    if (Drug_Exposure.visit_occurrence_id)  then {
         context: Reference("Encounter", Drug_Exposure.visit_occurrence_id)
     }
     
@@ -531,12 +534,12 @@ def Drug_Exposure_MedicationDispense(Drug_Exposure, required context, required m
     type: ""
 
     // quantity 0..1, SimpleQuantity
-    if(Drug_Exposure.quantity) {
+    if(Drug_Exposure.quantity)  then {
         quantity.value: $ParseFloat(Drug_Exposure.quantity)
     }
 
     // daysSupply, 0..1, SimpleQuantity
-    if(Drug_Exposure.days_supply) {
+    if(Drug_Exposure.days_supply)  then {
         daysSupply.value: $ParseFloat(Drug_Exposure.days_supply)
         daysSupply.code: "d"
         daysSupply.system: "http://unitsofmeasure.org"
@@ -545,7 +548,7 @@ def Drug_Exposure_MedicationDispense(Drug_Exposure, required context, required m
     whenPrepared: ""
     
     // whenHandedOver, 0..1, dateTime
-    if context.config.output.phi = "yes" {
+    if context.config.output.phi == "yes"  then {
         whenHandedOver: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
     } else {
         whenHandedOver: ReformatDatetime("2030-01-01")
@@ -555,18 +558,19 @@ def Drug_Exposure_MedicationDispense(Drug_Exposure, required context, required m
     receiver: ""
     note: ""
 
+    var dosage: {}
     // dosage, 0..1, BackboneElement
     // text, 0..1, string
-    if Drug_Exposure.sig {
+    if Drug_Exposure.sig  then {
         var dosage.text: Drug_Exposure.sig
     }
     
 
     // route, 0..1, CodeableConcept
-    if Drug_Exposure.route_source_value {
+    if Drug_Exposure.route_source_value  then {
         var dosage.route.text: Drug_Exposure.route_source_value
     }
-    if(Drug_Exposure.route_concept_id and  Drug_Exposure.route_concept_id ~= "0") {
+    if(Drug_Exposure.route_concept_id and  Drug_Exposure.route_concept_id != "0")  then {
 
         var coding.system: Code_System(Drug_Exposure.route_vocabulary_id)
         var coding.code: Drug_Exposure.route_concept_code
@@ -574,7 +578,7 @@ def Drug_Exposure_MedicationDispense(Drug_Exposure, required context, required m
         var dosage.route.coding[]: coding
     }
 
-    if Drug_Exposure.dose_unit_source_value {
+    if Drug_Exposure.dose_unit_source_value  then {
         var dosage.doseAndRate[].doseQuantity.unit: Drug_Exposure.dose_unit_source_value
     }
     
@@ -608,11 +612,11 @@ def DO_NOT_USE_Drug_Exposure_MedicationStatement(Drug_Exposure, required context
     partOf: ""
     
     // status, 1..1, code 
-    if (Drug_Exposure.stop_reason) {
+    if (Drug_Exposure.stop_reason)  then {
         status: "stopped"
         statusReason[0].text: Drug_Exposure.stop_reason
     } else {
-        if (Drug_Exposure.drug_exposure_end_date or Drug_Exposure.drug_exposure_end_datetime) {
+        if (Drug_Exposure.drug_exposure_end_date or Drug_Exposure.drug_exposure_end_datetime)  then {
             status: "completed"
         } else {
             status: "in-progress"
@@ -627,30 +631,30 @@ def DO_NOT_USE_Drug_Exposure_MedicationStatement(Drug_Exposure, required context
     category.coding[0].userSelected: true
 
     // medication[x], 1..1
-    if (Drug_Exposure.lot_number) {
+    if (Drug_Exposure.lot_number)  then {
         medicationReference: Reference("Medication", Drug_Exposure.drug_concept_id)
     } else {
         medicationCodeableConcept.coding[]: CodingSelected(Code_System(Drug_Exposure.drug_concept_vocabulary_id), "", Drug_Exposure.drug_concept_code, Drug_Exposure.drug_concept_name, true)
 
-        if (Drug_Exposure.drug_concept_code ~= Drug_Exposure.drug_source_concept_code) {
+        if (Drug_Exposure.drug_concept_code != Drug_Exposure.drug_source_concept_code)  then {
             medicationCodeableConcept.coding[]: CodingSelected(Code_System(Drug_Exposure.drug_source_vocabulary_id), "", Drug_Exposure.drug_source_concept_code, Drug_Exposure.drug_source_concept_name, true)
         }
 
     }
     
     // subject, 1..1, Reference
-    if (Drug_Exposure.person_id) {
+    if (Drug_Exposure.person_id)  then {
         subject: Reference("Patient", Drug_Exposure.person_id)
     }
 
     // context, 0..1, Reference
-    if (Drug_Exposure.visit_occurrence_id) {
+    if (Drug_Exposure.visit_occurrence_id)  then {
         context: Reference("Encounter", Drug_Exposure.visit_occurrence_id)
     }
 
     // effective[x], 1..1
     effectiveDateTime: ""
-    if context.config.output.phi = "yes" {
+    if context.config.output.phi == "yes"  then {
         effectivePeriod.start: ReformatDatetimeDate(Drug_Exposure.drug_exposure_start_datetime, Drug_Exposure.drug_exposure_start_date)
         effectivePeriod.end: ReformatDatetimeDate(Drug_Exposure.drug_exposure_end_datetime, Drug_Exposure.drug_exposure_end_date)
     } else {
@@ -672,12 +676,12 @@ def DO_NOT_USE_Drug_Exposure_MedicationStatement(Drug_Exposure, required context
 
     // dosage, 0..*, dosage
     // text, 0..1, string
-    if Drug_Exposure.sig {
+    if Drug_Exposure.sig  then {
         dosage[0].text: Drug_Exposure.sig 
     }
 
     // route, 0..1, CodeableConcept
-    if Drug_Exposure.route_source_value {
+    if Drug_Exposure.route_source_value  then {
         dosage[0].route.text: Drug_Exposure.route_source_value
     }
     dosage[0].route.coding[0].system: Code_System(Drug_Exposure.route_vocabulary_id)
@@ -685,7 +689,7 @@ def DO_NOT_USE_Drug_Exposure_MedicationStatement(Drug_Exposure, required context
     dosage[0].route.coding[0].display: Drug_Exposure.route_concept_name
 
     // dose[x], 0..1
-    if (Drug_Exposure.quantity and Drug_Exposure.dose_unit_source_value) {
+    if (Drug_Exposure.quantity and Drug_Exposure.dose_unit_source_value)  then {
         dosage[0].doseAndRate[0].doseQuantity.value: Drug_Exposure.quantity
         dosage[0].doseAndRate[0].doseQuantity.unit: Drug_Exposure.dose_unit_source_value
     }

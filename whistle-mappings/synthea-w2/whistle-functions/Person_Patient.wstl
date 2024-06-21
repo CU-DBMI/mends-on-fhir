@@ -1,3 +1,5 @@
+package main
+
 // 2022-03-22: Aligned Y-M-D_of_birth to new SQL
 // 2022-03-24: Refactor
 
@@ -26,16 +28,16 @@ def Person_Patient(Person, required context) {
    telecom:"";
    gender: CodeMapDefault(Person.gender_concept_id, "Person.gender.conceptid");
 
-   if context.config.output.phi = "yes" {
+   if context.config.output.phi == "yes"  then {
       birthDate : $StrJoin("-", Person.year_of_birth, Person.month_of_birth, Person.day_of_birth);
       var Death_DT: Person.death_date;
-      if (Death_DT) {
+      if (Death_DT)  then {
          deceasedDateTime: Death_DT;
       }
    } else {
       birthDate : "2030-01-01"
       var Death_DT: Person.death_date;
-      if (Death_DT) {
+      if (Death_DT)  then {
          deceasedDateTime: "2030-01-01";
       }
    }
@@ -49,7 +51,7 @@ def Person_Patient(Person, required context) {
 
 // US-Core: generalPractitioner
    var Provider_ID: Person.provider_id; 
-   if (Provider_ID) {
+   if (Provider_ID)  then {
       generalPractitioner[]: Reference("Practitioner", Provider_ID);
    }
 
@@ -78,7 +80,7 @@ def USCore_Race(race_concept_id) {
    
    // add OMB if we have it
    var OmbCoding : CodingMapNull(race_concept_id, "Person.race-concept-id--Patient.x.uscore-omb");
-   if (OmbCoding) {
+   if (OmbCoding)  then {
       var text.valueString: OmbCoding.display
       var omb.url: "ombCategory"
       var omb.valueCoding : OmbCoding
@@ -86,7 +88,7 @@ def USCore_Race(race_concept_id) {
    }
 
    var DetailCodings: CodingsMapNull(race_concept_id, "Person.race-concept-id--Patient.x.uscore-detailed")
-   if (DetailCodings){
+   if (DetailCodings) then {
       var text.valueString: DetailCodings[0].display
    }
    extension[]: USCore_Race_Detailed(DetailCodings[])
@@ -102,7 +104,7 @@ def USCore_Race_Detailed(detailed_coding) {
 def USCore_Ethnicity(ethnicity_concept_id) {
    url : "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity";
    var EthnicityValueCoding : CodingMapDefault(ethnicity_concept_id, "Person.ethnicity.conceptid");
-   if (EthnicityValueCoding){
+   if (EthnicityValueCoding) then {
       extension[0].valueCoding : EthnicityValueCoding;
       extension[0].url : "ombCategory";
       extension[1].valueString : EthnicityValueCoding.display;

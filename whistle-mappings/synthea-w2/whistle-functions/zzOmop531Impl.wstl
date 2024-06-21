@@ -1,21 +1,23 @@
+package main
+
 // returns an array of resources
 def Omop531Impl(input, context){
 
-  var resources[] ( if input.Person? ) : Person_Patient(input.Person[], context)
-  var resources[] ( if input.Visit_Occurrence? ) : Visit_Encounter(input.Visit_Occurrence[], context)
-  var resources[] ( if input.Drug_Exposure? ) : $Flatten(Drug_Exposure(input.Drug_Exposure[], context))
-  var resources[] ( if input.Drug_Exposure2? ) : $Flatten(Drug_Exposure(input.Drug_Exposure2[], context))
-  var resources[] ( if input.Drug_Exposure3? ) : $Flatten(Drug_Exposure(input.Drug_Exposure3[], context))
-  var resources[] ( if input.Condition_Occurrence? ) : ConditionOccurrence_Condition(input.Condition_Occurrence[], context)
-  var resources[] ( if input.Measurement? ) : Measurement_Observation(input.Measurement[], context)
-  var resources[] ( if input.Measurement2? ) : Measurement_Observation(input.Measurement2[], context)
-  var resources[] ( if input.Measurement3? ) : Measurement_Observation(input.Measurement3[], context)
-  var resources[] ( if input.ObservationNotSmoking? ) : Observation_NotSmoking(input.ObservationNotSmoking[], context)
-  var resources[] ( if input.Metadata.omop_source? ) : OmopSource(input.Metadata.omop_source, context)
-  var resources[] ( if input.Payer_Plan_Period? ) : PPP_Coverage(input.Payer_Plan_Period[], context)
+  var resources[]: if input.Person? then Person_Patient(input.Person[], context)
+  var resources[]: if input.Visit_Occurrence? then Visit_Encounter(input.Visit_Occurrence[], context)
+  var resources[]: if input.Drug_Exposure? then $Flatten(Drug_Exposure(input.Drug_Exposure[], context))
+  var resources[]: if input.Drug_Exposure2? then $Flatten(Drug_Exposure(input.Drug_Exposure2[], context))
+  var resources[]: if input.Drug_Exposure3? then $Flatten(Drug_Exposure(input.Drug_Exposure3[], context))
+  var resources[]: if input.Condition_Occurrence? then ConditionOccurrence_Condition(input.Condition_Occurrence[], context)
+  var resources[]: if input.Measurement? then Measurement_Observation(input.Measurement[], context)
+  var resources[]: if input.Measurement2?  then Measurement_Observation(input.Measurement2[], context)
+  var resources[]: if input.Measurement3?  then Measurement_Observation(input.Measurement3[], context)
+  var resources[]: if input.ObservationNotSmoking?  then Observation_NotSmoking(input.ObservationNotSmoking[], context)
+  var resources[]: if input.Metadata.omop_source?  then OmopSource(input.Metadata.omop_source, context)
+  var resources[]: if input.Payer_Plan_Period?  then PPP_Coverage(input.Payer_Plan_Period[], context)
 
   // Smoking filtered POC
-  var resources[] ( if input.Observation_Smoking? ) : Observation_Smoking(input.Observation_Smoking[], context)
+  var resources[]: if input.Observation_Smoking?  then Observation_Smoking(input.Observation_Smoking[], context)
 
   $this: resources
 }

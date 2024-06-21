@@ -1,3 +1,5 @@
+package main
+
 // Change Log:
 // 2022-09-09: Add source_concept to Condition.code CodeableConcept
 
@@ -43,12 +45,12 @@ def ConditionOccurrence_Condition(ConditionOccurrence, required context) {
   // In OMOP, conditions do not need to be associated with an encounter
   // In FHIR, encounter is optional
   var Encounter_ID: ConditionOccurrence.visit_occurrence_id;
-  if (Encounter_ID) {
+  if (Encounter_ID)  then {
     encounter: Reference("Encounter", ConditionOccurrence.visit_occurrence_id);
   }
   
   // MENDS
-  if context.config.output.phi = "yes" {
+  if context.config.output.phi == "yes"  then {
     onsetPeriod.start : ConditionOccurrence.condition_start_date;
     onsetPeriod.end : ConditionOccurrence.condition_end_date;
   } else {
@@ -59,7 +61,7 @@ def ConditionOccurrence_Condition(ConditionOccurrence, required context) {
   recordedDate:"";
   recorder:"";
   var Provider_ID: ConditionOccurrence.provider_id; 
-  if (Provider_ID) {
+  if (Provider_ID)  then {
     asserter : Reference("Practitioner", Provider_ID);
   }
   stage[]:"";
@@ -76,7 +78,7 @@ def ConditionOccurrence_Condition(ConditionOccurrence, required context) {
 // ***********************************************************************************
 def Condition_Code(co) {
   var coding[]: Coding(Code_System(co.condition_vocabulary_id), "", co.condition_concept_code, co.condition_concept_name);
-  if (co.condition_concept_code ~= co.condition_source_concept_code) {
+  if (co.condition_concept_code != co.condition_source_concept_code)  then {
     var coding[]: Coding(Code_System(co.condition_source_vocabulary_id), "", co.condition_source_concept_code, co.condition_source_concept_name)
   }
   $this: CodeableConcept(coding,co.condition_source_value)

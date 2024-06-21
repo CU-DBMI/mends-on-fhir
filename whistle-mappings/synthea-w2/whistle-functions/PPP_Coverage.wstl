@@ -1,3 +1,5 @@
+package main
+
 def PPP_Coverage(PPP, context) {
    $this: PPP_CoverageImpl(PPP, context)
 }

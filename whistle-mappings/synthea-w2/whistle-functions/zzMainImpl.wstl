@@ -1,6 +1,8 @@
+package main
+
 def MainImpl(input, context){
 
-  if context.config.input.model-name = "omop" and context.config.input.model-version = "5.3.1" {
+  if context.config.input.model\-name == "omop" and context.config.input.model\-version == "5.3.1"  then {
     $this: Omop531(input, context)
   }
 }
