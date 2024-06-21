@@ -5,7 +5,7 @@ package main
 // 2022-08-22: Moved Convert() to this file
 
 def HasValue(v) {
-  if $And($IsNotNil(v),v != " ", toLower(v) != "none", v != "")   then {
+  if $And(isNotNil(v),v != " ", toLower(v) != "none", v != "")   then {
     $this: true
   } else {
     $this: false

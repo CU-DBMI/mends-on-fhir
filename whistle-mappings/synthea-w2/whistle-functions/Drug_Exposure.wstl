@@ -171,7 +171,7 @@ def Drug_Exposure_MedicationRequest(Drug_Exposure, required context, required me
     }
 
     //OPTION B
-    //if($IsNotNil(Drug_Exposure.provider_id))  then {
+    //if(isNotNil(Drug_Exposure.provider_id))  then {
     //    requester: Reference("Practitioner", Drug_Exposure.provider_id)
     //} else {
     //    requester: Reference("Practitioner", "NULL")

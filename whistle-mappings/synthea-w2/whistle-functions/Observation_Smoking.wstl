@@ -34,7 +34,7 @@ def Observation_Smoking(Observation, required context) {
 }
 
 def Build_Data(Observation) {
-  id: $StrJoin("-", Observation.person_id, Observation.observation_date)
+  id: strJoin("-", Observation.person_id, Observation.observation_date)
 
   category.coding[0].system: "http://terminology.hl7.org/CodeSystem/observation-category"
   category.coding[0].code: "social-history"

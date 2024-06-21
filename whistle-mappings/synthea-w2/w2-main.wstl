@@ -1,5 +1,21 @@
 package main
 
+import "class://com.google.cloud.verticals.foundations.dataharmonization.plugins.harmonization.HarmonizationPlugin"
+
+import "concept-maps/ConditionOccurrence.category.conceptid.harmonization.json"
+import "concept-maps/ObsSmoking.panel-string--Observation.value.harmonization.json"
+import "concept-maps/PayerPlanPeriod.payer-conceptid--Coverage.type.harmonization.json"
+import "concept-maps/Person.birthsex.conceptid.harmonization.json"
+import "concept-maps/Person.ethnicity.conceptid.harmonization.json"
+import "concept-maps/Person.gender.conceptid.harmonization.json"
+import "concept-maps/Person.race.conceptid.harmonization.json"
+import "concept-maps/Person.race-concept-id--Patient.x.uscore-detailed.harmonization.json"
+import "concept-maps/Person.race-concept-id--Patient.x.uscore-omb.harmonization.json"
+import "concept-maps/PPP.payor-concept-id--Coverage.type.harmonization.json"
+import "concept-maps/VisitOccurrence.visit-concept-id--Encounter.class.harmonization.json"
+import "concept-maps/VisitOccurrence.visit-concept-id--Encounter.classHistory.harmonization.json"
+import "concept-maps/VisitOccurrence.visit-concept-id--Encounter.type.harmonization.json"
+
 import "whistle-functions/BundleEntry.wstl"
 import "whistle-functions/Bundle.wstl"
 import "whistle-functions/Code_Map.wstl"

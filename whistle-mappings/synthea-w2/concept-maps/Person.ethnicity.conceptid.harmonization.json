@@ -1,6 +1,7 @@
 {
     "resourceType": "ConceptMap",
     "id": "Person.ethnicity.conceptid",
+    "version": "0",
     "group": [
         {
             "source": "omop",

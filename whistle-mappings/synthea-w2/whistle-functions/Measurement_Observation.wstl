@@ -90,7 +90,7 @@ def meas_Profile(m) {
 
   var value_to_use: {}
   var type: {}
-  if $And($IsNotNil(m.value_as_number),m.value_as_number !=" ")  then {
+  if $And(isNotNil(m.value_as_number),m.value_as_number !=" ")  then {
     var value_to_use : m.value_as_number
     } else {
       var value_to_use: "None"
@@ -191,18 +191,20 @@ def meas_Profile(m) {
       
       if $MatchesRegex(value_source_value, "lb.*")  then {
         // convert lbs to kgs
-        var temp: $StrSplit(value_source_value, "lb");
+        // TODO: SE: check split logic
+        var temp: split(value_source_value, "lb");
         var value_to_use: $Trim(temp[0]);
-        if $IsNotNil(value_to_use)  then {
+        if isNotNil(value_to_use)  then {
           convert: Convert(value_to_use, m.range_low, m.range_high, "lb", "kg")
         }
       } 
 
       if $MatchesRegex(value_source_value, "kg.*")  then {
         // kg
-        var temp: $StrSplit(value_source_value, "kg");
+        // TODO: SE: check split logic
+        var temp: split(value_source_value, "kg");
         var value_to_use: $Trim(temp[0]);
-        if $IsNotNil(value_to_use)  then {
+        if isNotNil(value_to_use)  then {
           convert: Convert(value_to_use, m.range_low, m.range_high, "kg", "kg")
         }
       } 
@@ -255,7 +257,7 @@ def meas_Profile(m) {
     codesystem: Code_System("LOINC")
     codecode: m.measurement_concept_code
     codedisplay: m.measurement_concept_name
-    if $And(m.unit_concept_id == "0", $IsNotNil(m.unit_source_value))  then {
+    if $And(m.unit_concept_id == "0", isNotNil(m.unit_source_value))  then {
       unitcode: m.unit_source_value
       unitsystem: Code_System("HDC")
       } else {
@@ -321,7 +323,7 @@ def Meas_Lab_Value(profile_type,m) {
        if ( HasValue(m.value_as_number))  then {
       // We have a number --> valueQuantity?? SHAHIM?
       valueQuantity.value : profile_type.convert.value
-      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id != " ", m.operator_concept_id != "0"))  then {
+      if ($And(isNotNil(m.operator_concept_id),m.operator_concept_id != " ", m.operator_concept_id != "0"))  then {
         valueQuantity.comparator: m.operator_concept_name
       }
       valueQuantity.unit: profile_type.unit
@@ -336,14 +338,14 @@ def Meas_Lab_Value(profile_type,m) {
   // One of the subtypes that is allowed to have different types of value[x]
      if ( ConceptHasValue(m.value_as_concept_id))  then {
   // We have a mapped value --> valueCodeableConcept
-      var text: $StrFmt("%+s",m.value_as_concept_name)
+      var text: strFmt("%+s",m.value_as_concept_name)
       var coding: Coding(Code_System(m.value_as_concept_vocabulary_id), "", m.value_as_concept_code, text)
       valueCodeableConcept: CodeableConcept(coding,m.value_source_value)
   } else {
     if ( HasValue(m.value_as_number))  then {
       // We have a number --> valueQuantity?? SHAHIM?
       valueQuantity.value : profile_type.convert.value
-      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id !=" ",m.operator_concept_id != "0")) then  {
+      if ($And(isNotNil(m.operator_concept_id),m.operator_concept_id !=" ",m.operator_concept_id != "0")) then  {
         valueQuantity.comparator: m.operator_concept_name
       }
       valueQuantity.unit: profile_type.unit
