@@ -6,6 +6,15 @@ pgdump**
 *dump**
 *checkpoints*
 *checkpoints**
+**/.env
+.vscode
+.vscode/
+test/
+output/
+.venv/
+
+
+
 
 
 

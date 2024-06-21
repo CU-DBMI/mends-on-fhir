@@ -1,0 +1,32 @@
+# Variables in this file are always ALL CAPS
+# Variables set in command line are always lowercase
+
+NROWS=6
+CHUNKSIZE=5
+STDOUT=True
+DB_TYPE=postgresql
+SQLFILE=./test.sql
+LOCALDIR=./output
+
+# BigQuery parms
+BQ_PROJECTID=mySandbox
+BQ_DATASETID=mySynthea
+BQ_LOCATION=us
+
+# Postgresql parms
+PG_USER=postgres
+PG_PASSWORD=myPassword
+PG_HOST=localhost
+PG_PORT=5432
+PG_DATABASE=mySandbox
+PG_SCHEMA=mySynthea
+
+# MySQL parms
+# Not implemented
+
+# MS SQL Server parms
+SQLSERVER_USER=myUser
+SQLSERVER_PASSWORD=myPassword
+SQLSERVER_HOST=localhost
+SQLSERVER_DATABASE=mySandbox
+SQLSERVER_SCHEMA=mySynthea
