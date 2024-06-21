@@ -89,8 +89,8 @@ def OmopSource(source){
 
 // Reference: Creates a FHIR Reference datatype if id not null
 def Reference(resourceType, id) {
-    if $IsNotNil(id)  then {
-        reference: $StrCat(resourceType, "/", $StrFmt("%s",id));
+    if isNotNil(id)  then {
+        reference: $StrCat(resourceType, "/", strFmt("%s",id));
         //type: resourceType
         //identifier.system: Code_System("HDC")
         //identifier.value: id
@@ -102,9 +102,10 @@ def Reference(resourceType, id) {
 // ReformatDatetime: Creates a FHIR datetime from OMOP a single datetime or date
 // -07:00 is Denver TZ
 def ReformatDatetime(dateTime) {
-    if $IsNotNil(dateTime)  then {
-        var dt: $StrSplit(dateTime, " ")
-        if $IsNotNil(dt[1])  then { // HAS DATE AND TIME
+    if isNotNil(dateTime)  then {
+        // TODO: SE: check split logic
+        var dt: split(dateTime, " ")
+        if isNotNil(dt[1])  then { // HAS DATE AND TIME
             $this: $StrCat(dt[0],"T",dt[1],"-07:00")
         } else { // HAS DATE ONLY
             $this: $StrCat(dt[0],"T00:00:00","-07:00")
@@ -114,10 +115,10 @@ def ReformatDatetime(dateTime) {
 
 // ReformatDatetimeDate: Creates a FHIR datetime from either a either s datatime or date
 def  ReformatDatetimeDate(dateTime,date) {
-    if $IsNotNil(dateTime)  then {
+    if isNotNil(dateTime)  then {
         $this: ReformatDatetime(dateTime);
     } else {
-        if $IsNotNil(date)  then {
+        if isNotNil(date)  then {
             $this: ReformatDatetime(date);
         }
     }    

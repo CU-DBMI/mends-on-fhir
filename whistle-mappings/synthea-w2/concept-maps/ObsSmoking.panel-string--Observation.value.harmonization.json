@@ -293,10 +293,6 @@
           ]
         },
         {
-          "code": "Chew:No __ Cigarettes:Yes __ Cigars:No __ Pipes:No __ SmokelessTobaccoUse:Never Used __ SmokingTobaccoUse:Never Smoker __ Snuff:No __ TobaccoUse:Never",
-          "target": []
-        },
-        {
           "code": "Tobacco use",
           "target": [
             {
@@ -846,10 +842,6 @@
           ]
         },
         {
-          "code": "Chew:No __ Cigarettes:No __ Cigars:Yes __ Pipes:No __ SmokelessTobaccoUse:Never Used __ SmokingTobaccoUse:Never Smoker __ Snuff:No __ TobaccoUse:Never",
-          "target": []
-        },
-        {
           "code": "Chew:No __ Cigarettes:No __ Cigars:No __ Pipes:No __ SmokelessTobaccoUse:Never Used __ SmokingTobaccoUse:Unknown If Ever Smoked __ Snuff:No __ TobaccoUse:Not Asked",
           "target": [
             {
@@ -938,10 +930,6 @@
               "display": "Ex-cigarette smoker"
             }
           ]
-        },
-        {
-          "code": "Chew:Yes __ Cigarettes:Yes __ Cigars:No __ Pipes:No __ SmokelessTobaccoUse:Former User __ Snuff:No __ TobaccoUse:Quit __ TobaccoUseInYears:+",
-          "target": []
         },
         {
           "code": "Chew:Yes __ CigarettePacksPerDay:0 __ Cigarettes:No __ Cigars:No __ Pipes:No __ SmokelessTobaccoUse:Former User __ SmokingTobaccoUse:Never Smoker __ Snuff:No __ TobaccoUse:Quit __ TobaccoUseInYears:0",
@@ -1115,10 +1103,6 @@
           ]
         },
         {
-          "code": "Chew:Yes __ Cigarettes:No __ Cigars:No __ Pipes:No __ SmokelessTobaccoUse:Never Used __ SmokingTobaccoUse:Never Smoker __ Snuff:No __ TobaccoUse:Never",
-          "target": []
-        },
-        {
           "code": "Chew:No __ Cigarettes:No __ Cigars:No __ Pipes:No __ SmokelessTobaccoUse:Unknown __ Snuff:No __ TobaccoUse:Quit __ TobaccoUseInYears:+",
           "target": [
             {
@@ -1162,10 +1146,6 @@
               "display": "Cigar smoker"
             }
           ]
-        },
-        {
-          "code": "Chew:No __ Cigarettes:No __ Cigars:No __ Pipes:No __ SmokelessTobaccoUse:Never Used __ SmokingTobaccoUse:Never Smoker __ Snuff:No __ TobaccoUse:Never __ TobaccoUseInYears:+",
-          "target": []
         },
         {
           "code": "Chew:No __ Cigarettes:No __ Cigars:Yes __ Pipes:Yes __ SmokelessTobaccoUse:Never Used __ Snuff:No __ TobaccoUse:Quit",

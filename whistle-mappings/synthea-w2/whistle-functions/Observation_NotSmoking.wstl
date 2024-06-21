@@ -86,7 +86,7 @@ def Observation_NotSmoking(Observation, required context) {
 def observation_Profile(m) {
 
   var value_to_use: {}
-  if $And($IsNotNil(m.value_as_number),m.value_as_number !=" ")  then {
+  if $And(isNotNil(m.value_as_number),m.value_as_number !=" ")  then {
     value_to_use : m.value_as_number
     } else {
       value_to_use: "None"
@@ -152,14 +152,14 @@ def Observation_Value(profile_type,m) {
 
   if (ConceptHasValue(m.value_as_concept_id))  then {
   // We have a mapped value --> valueCodeableConcept
-      var text: $StrFmt("%+s",m.value_as_concept_name)
+      var text: strFmt("%+s",m.value_as_concept_name)
       var coding: Coding(Code_System(m.value_as_concept_vocabulary_id), "", m.value_as_concept_code, text)
       valueCodeableConcept: CodeableConcept(coding,m.value_source_value)
   } else {
     if (HasValue(m.value_as_number))  then {
       // We have a number --> valueQuantity?? SHAHIM?
       valueQuantity.value : profile_type.convert.value
-      if ($And($IsNotNil(m.operator_concept_id),m.operator_concept_id !=" ",m.operator_concept_id != "0"))  then {
+      if ($And(isNotNil(m.operator_concept_id),m.operator_concept_id !=" ",m.operator_concept_id != "0"))  then {
         valueQuantity.comparator: m.operator_concept_name
       }
       valueQuantity.unit: profile_type.unit
@@ -168,7 +168,7 @@ def Observation_Value(profile_type,m) {
     } else {
       if  (HasValue(m.observation_source_value))  then {
       // We only have a source_value and nothing else --> valueString
-      //valueString: $StrFmt("%s",m.observation_source_value)
+      //valueString: strFmt("%s",m.observation_source_value)
       valueString: m.observation_source_value
       } else{
         // We only get here if we have nothing useful in any OMOP value fields

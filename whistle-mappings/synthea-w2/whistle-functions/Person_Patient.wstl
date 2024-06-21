@@ -29,7 +29,7 @@ def Person_Patient(Person, required context) {
    gender: CodeMapDefault(Person.gender_concept_id, "Person.gender.conceptid");
 
    if context.config.output.phi == "yes"  then {
-      birthDate : $StrJoin("-", Person.year_of_birth, Person.month_of_birth, Person.day_of_birth);
+      birthDate : strJoin("-", Person.year_of_birth, Person.month_of_birth, Person.day_of_birth);
       var Death_DT: Person.death_date;
       if (Death_DT)  then {
          deceasedDateTime: Death_DT;

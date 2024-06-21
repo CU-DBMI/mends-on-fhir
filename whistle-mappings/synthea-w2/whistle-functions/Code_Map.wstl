@@ -21,7 +21,7 @@ package main
 
 // 
 def CodeMapDefault(code, mapId) {
-    var mappings : $HarmonizeCode("$Local", code, "omop", mapId)
+    var mappings : harmonization::harmonize("$Local", code, "omop", mapId)
     $this: mappings[0].code
 }
 
@@ -29,7 +29,7 @@ def CodeMapDefault(code, mapId) {
 
 // TODO:SE  change _MapOrNull()
 def CodeMapNull(code, mapId) {
-    var mappings : $HarmonizeCode("$Local", code, "omop", mapId)
+    var mappings : harmonization::harmonize("$Local", code, "omop", mapId)
     var unharmonized: $StrCat(mapId, "-unharmonized")
     if ( $Not( $Eq(mappings[0].system, unharmonized ))) then {
         $this: mappings[0].code
@@ -40,7 +40,7 @@ def CodeMapNull(code, mapId) {
 
 def CodeMapOverride(code, mapId) {
     var override: CodeMapNull(code, mapId)
-    if $IsNotNil(override)  then {
+    if isNotNil(override)  then {
         $this: override
     } else {
         $this: code
@@ -52,11 +52,14 @@ def CodeMapOverride(code, mapId) {
 // For now, it normalizes 1+ spaces to 1 space.
 
 def Code_CleanSpaces(code) {
-    $this: $StrJoin(" ", $StrSplit(code, " "))
+    // TODO: SE: check the splitting of W1 vs W2 in terms of trimming spaces, ignoring empty splits, etc.
+    // probably not the same behavior, and it might affect our logic
+    $this: strJoin(" ", split(code, " "))
 }
 
 def Id_Spaces_To_Dash(id) {
-    $this: $StrJoin(".", $StrSplit(id, " "))
+    // TODO: SE: check split logic
+    $this: strJoin(".", split(id, " "))
 }
 
 def Code_IsFHIRValid(code){
@@ -103,7 +106,7 @@ def CodingSelected(system, version, code, display, selected){
 
 // this returns the first found Coding even if no actual mapping
 def CodingMapDefault(code, mapId) {
-    var mappings : $HarmonizeCode("$Local", code, "omop", mapId)
+    var mappings : harmonization::harmonize("$Local", code, "omop", mapId)
     // TODO:SE temporary fix to remove when bug fixed.
     $this: _Coding_From_HCoding(mappings[0])
 }
@@ -112,7 +115,7 @@ def CodingMapDefault(code, mapId) {
 def CodingMapNull(code, mapId) {
     // Depends on having an actually mapped code
     var mapped: CodeMapNull(code, mapId)
-    if ( $IsNotNil( mapped))  then {
+    if ( isNotNil( mapped))  then {
         $this: CodingMapDefault(code, mapId)
     }
 }
@@ -121,7 +124,7 @@ def CodingMapNull(code, mapId) {
 def CodingMapOverride(system, version, code, display, selected, mapId){
     // Depends on having an actually mapped code
     var mapped: CodeMapNull(code, mapId)
-    if ( $IsNotNil(mapped))  then {
+    if ( isNotNil(mapped))  then {
         $this: CodingMapDefault(code, mapId)
         userSelected: selected
     } else {
@@ -131,14 +134,14 @@ def CodingMapOverride(system, version, code, display, selected, mapId){
 
 // this returns an array of found Codings even if no actual mapping
 def CodingsMapDefault(code, mapId){
-    var mappings : $HarmonizeCode("$Local", code, "omop", mapId)
+    var mappings : harmonization::harmonize("$Local", code, "omop", mapId)
     // TODO:SE remove this when bug fixed
     $this: _Coding_From_HCoding(mappings[])
 }
 
 // this returns an array of found Codings even if no actual mapping
 def CodingsMapNull(code, mapId){
-    if ( $IsNotNil(CodeMapNull(code, mapId)) ) then {
+    if ( isNotNil(CodeMapNull(code, mapId)) ) then {
         // we have at least one real mapped code.
         // we can safely return the default since there will be no "whistle default".
         $this: CodingsMapDefault(code, mapId)
@@ -150,7 +153,7 @@ def CodingsMapNull(code, mapId){
 // TODO: fix the whistle version bug
 //  https://github.com/GoogleCloudPlatform/healthcare-data-harmonization/issues/34
 def _Coding_From_HCoding(coding){
-    $this: Coding(coding.system, "", coding.code, coding.display, "")
+    $this: Coding(coding.system, "", coding.code, coding.display)
 }
 
 // ***************************************************************
