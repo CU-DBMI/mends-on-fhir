@@ -1,0 +1,3 @@
+def Omop531(input, context){
+  $this: Omop531Impl(input, context)
+}

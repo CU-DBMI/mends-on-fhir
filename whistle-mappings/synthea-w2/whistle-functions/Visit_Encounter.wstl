@@ -1,0 +1,107 @@
+// See comments/note at end, below the funtion
+
+def Visit_Encounter(Visit, required context) {
+    
+    resourceType: "Encounter"
+
+    // ESP .id -> Encounter.natural_key (varchar 128)
+    id: Visit.visit_occurrence_id
+
+    // USC S
+    identifier[]: Identifier(Identifier_System("omop-id"), Visit.visit_occurrence_id)
+
+    // USC S
+    status: "finished"
+
+    // USC S
+    class: CodingMapDefault(Visit.visit_concept_id, "VisitOccurrence.visit-concept-id--Encounter.class")
+
+    var classHistory: CodingMapNull(Visit.visit_concept_id, "VisitOccurrence.visit-concept-id--Encounter.classHistory")
+    if ( $IsNotNil(classHistory)) {
+        var ch.class: classHistory
+        var ch.period.id: "classHistory.period.hack.to.force.an.object.creation.TODO"
+        classHistory[]: ch
+
+    }
+
+    // R4 # Specific type of encounter (e.g. e-mail consultation, surgical day-care, skilled nursing, rehabilitation).
+    // USC S 1..*
+    // USC VS http://hl7.org/fhir/us/core/ValueSet-us-core-encounter-type.html#expansion
+    // USC VS # The type of encounter: a specific code indicating type of service provided. This value set includes codes from SNOMED CT decending from the concept 308335008 (Patient encounter procedure (procedure)) and codes from the Current Procedure and Terminology (CPT) found in the following CPT sections:
+    // OMOP Visit: https://ohdsi.github.io/CommonDataModel/cdm53.html#visit_occurrence
+    // OMOP visit_concept_id: This field contains a concept id representing the kind of visit, like inpatient or outpatient. All concepts in this field should be standard and belong to the Visit domain. 
+    // M # Denote Appointment Information (i.e APPT, LAB, RADIOLOGY, NO SHOW, HISTORY,  APPT CANCELLED, etc.)
+    // M .text -> Encounter.raw_encounter_type (varchar 100)
+
+    type[]: Encounter_Type(Visit)
+
+
+    // USC S 1..1
+    // M .identifier.value ->  Encounter.patient_id (varchar 128)
+    // M? Encounter.mrn (varchar 50)
+    subject: Reference("Patient", Visit.person_id)
+
+    // USC S
+    participant: ""
+
+    // USC S
+    // M .start -> Encounter.hosp_admit_dt (date)
+    // M .end -> Encounter.hosp_dschrg_dt (date)
+    // Make sure that there are datetimes for both start and end, else only use dates for both
+    if context.config.output.phi = "yes" {
+        if $And($IsNotNil(Visit.visit_start_datetime), $IsNotNil(Visit.visit_end_datetime)) {
+            period.start: ReformatDatetime(Visit.visit_start_datetime)
+            period.end: ReformatDatetime(Visit.visit_end_datetime)
+        } else {
+            // TODO: Changed by mgk to not do ReformatDatetime()
+            // TODO: Discuss with Andrey
+            period.start: Visit.visit_start_date
+            period.end: Visit.visit_end_date
+        }
+    } else {
+        if $And($IsNotNil(Visit.visit_start_datetime), $IsNotNil(Visit.visit_end_datetime)) {
+            period.start: ReformatDatetime("2030-01-01")
+            period.end: ReformatDatetime("2030-01-01")
+        } else {
+            period.start: "2030-01-01"
+            period.end: "2030-01-01"
+        }
+    }
+
+
+    // USC S
+    reasonCode: ""
+
+    // USC S 0..1
+    reasonReference: ""
+
+    // USC S
+    hospitalization: ""
+
+    // USC S
+    location: ""
+
+    // USC S
+    serviceProvider: ""
+
+}
+
+
+//
+// USC
+// # To search for an encounter diagnosis, query for Condition resources that reference the Encounter of interest and have a category of encounter-diagnosis. An example search is shown in the Condition Quick Start section.
+
+// *************************************************************************
+// *
+// *   All Encounter-specific function calls here.
+// *   Function calls useful accross resources are in DataTypes.wstl
+// *
+// *************************************************************************
+
+def Encounter_Type(Visit) {
+    $this: CodeableConceptMapNull(Visit.visit_concept_id, "VisitOccurrence.visit-concept-id--Encounter.type", Visit.visit_source_value)
+        if Visit.visit_concept_id ~= Visit.visit_source_concept_id {
+           coding[]: Coding(Code_System(Visit.visit_source_vocabulary_id), "", Visit.visit_source_concept_code, Visit.visit_source_concept_name)
+        }
+}
+

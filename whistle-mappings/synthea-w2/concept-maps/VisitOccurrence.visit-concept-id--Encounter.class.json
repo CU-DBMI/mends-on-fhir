@@ -1,0 +1,74 @@
+{
+    "resourceType": "ConceptMap",
+    "id": "VisitOccurrence.visit-concept-id--Encounter.class",
+    "group": [
+        {
+            "source": "omop",
+            "sourceVersion": "5.3",
+            "target": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+            "targetVersion": "01-Mar 2021",
+            "element": [
+                {
+                    "code": "8863",
+                    "display": "Skilled Nursing Facility",
+                    "target": [
+                        {
+                            "code": "AMB",
+                            "display": "ambulatory"
+                        }
+                    ]
+                },
+                {
+                    "code": "9202",
+                    "display": "Outpatient Visit",
+                    "target": [
+                        {
+                            "code": "AMB",
+                            "display": "ambulatory"
+                        }
+                    ]
+                },
+                {
+                    "code": "705159",
+                    "display": "Ambulatory long COVID clinic",
+                    "target": [
+                        {
+                            "code": "AMB",
+                            "display": "ambulatory"
+                        }
+                    ]
+                },
+                {
+                    "code": "9203",
+                    "display": "Emergency Room Visit",
+                    "target": [
+                        {
+                            "code": "EMER",
+                            "display": "emergency"
+                        }
+                    ]
+                },
+                {
+                    "code": "262",
+                    "display": "Emergency Room and Inpatient Visit",
+                    "target": [
+                        {
+                            "code": "IMP",
+                            "display": "inpatient encounter"
+                        }
+                    ]
+                },
+                {
+                    "code": "9201",
+                    "display": "Inpatient Visit",
+                    "target": [
+                        {
+                            "code": "IMP",
+                            "display": "inpatient encounter"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,54 @@
+{
+    "resourceType": "ConceptMap",
+    "id": "Person.birthsex.conceptid",
+    "version": "0",
+    "status": "draft",
+    "group": [
+        {
+            "source": "omop",
+            "sourceVersion": "5.3",
+            "target": "http://hl7.org/fhir/v3/AdministrativeGender",
+            "targetVersion": "4.0.0",
+            "element": [
+                {
+                    "code": "8507",
+                    "display": "M",
+                    "target": [
+                        {
+                            "code": "M",
+                            "display": "M"
+                        }
+                    ]
+                },
+                {
+                    "code": "8532",
+                    "display": "F",
+                    "target": [
+                        {
+                            "code": "F",
+                            "display": "F"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "source": "omop",
+            "sourceVersion": "5.3",
+            "target": "http://hl7.org/fhir/v3/NullFlavor",
+            "targetVersion": "4.0.0",
+            "element": [
+                {
+                    "code": "0",
+                    "display": "U",
+                    "target": [
+                        {
+                            "code": "UNK",
+                            "display": "unknown"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

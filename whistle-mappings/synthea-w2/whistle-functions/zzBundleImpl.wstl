@@ -1,0 +1,8 @@
+def BundleImpl(resources, context, bundleType, method, baseUrl ) {
+    var uniqueResources: $Unique(resources);
+
+    resourceType: "Bundle"
+    type: bundleType
+    entry[] : BundleEntry(uniqueResources[where $.resourceType][], method, baseUrl)
+}
+

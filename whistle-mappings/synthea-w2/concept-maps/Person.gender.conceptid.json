@@ -1,0 +1,45 @@
+{
+    "resourceType": "ConceptMap",
+    "id": "Person.gender.conceptid",
+    "version": "0",
+    "group": [
+        {
+            "source": "omop",
+            "sourceVersion": "5.3",
+            "target": "http://hl7.org/fhir/administrative-gender",
+            "targetVersion": "r4",
+            "element": [
+                {
+                    "code": "8507",
+                    "display": "M",
+                    "target": [
+                        {
+                            "code": "male",
+                            "display": "Male"
+                        }
+                    ]
+                },
+                {
+                    "code": "8532",
+                    "display": "F",
+                    "target": [
+                        {
+                            "code": "female",
+                            "display": "Female"
+                        }
+                    ]
+                },
+                {
+                    "code": "0",
+                    "display": "No matching concept",
+                    "target": [
+                        {
+                            "code": "unknown",
+                            "display": "Unknown"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

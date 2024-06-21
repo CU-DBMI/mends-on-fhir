@@ -1,0 +1,1825 @@
+{
+  "resourceType": "ConceptMap",
+  "id": "PPP.payor-concept-id--Coverage.type",
+  "url": "https://www.healthdatacompass.org/fhir/mends/ConceptMap/PPP.payor-concept-id--Coverage.type",
+  "version": "0.0.0",
+  "name": "PPP.payor-concept-id--Coverage.type",
+  "title": "PPP.payor-concept-id--Coverage.type",
+  "status": "draft",
+  "group": [
+    {
+      "source": "omop",
+      "sourceVersion": "0.0.1",
+      "target": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "targetVersion": "0.0.1",
+      "element": [
+        {
+          "code": "340",
+          "target": [
+            {
+              "code": "MCPOL",
+              "display": "Managed care policy"
+            }
+          ],
+          "display": "Managed Care, Unspecified"
+        },
+        {
+          "code": "289",
+          "target": [
+            {
+              "code": "SUBSUPP",
+              "display": "Subsidized supplemental health program"
+            }
+          ],
+          "display": "Medicaid"
+        },
+        {
+          "code": "280",
+          "target": [
+            {
+              "code": "SUBSUPP",
+              "display": "Subsidized supplemental health program"
+            }
+          ],
+          "display": "Medicare"
+        },
+        {
+          "code": "296",
+          "target": [
+            {
+              "code": "MILITARY",
+              "display": "Military health program"
+            }
+          ],
+          "display": "DoD TRICARE, Civilian Health and Medical Program of the Uniformed Services (CHAMPUS)"
+        },
+        {
+          "code": "281",
+          "target": [
+            {
+              "code": "SUBSIDMC",
+              "display": "Subsidized managed care program"
+            }
+          ],
+          "display": "Medicare Managed Care"
+        },
+        {
+          "code": "312",
+          "target": [
+            {
+              "code": "SUBSUPP",
+              "display": "Subsidized supplemental health program"
+            }
+          ],
+          "display": "State Government Program"
+        },
+        {
+          "code": "307",
+          "target": [
+            {
+              "code": "SAFNET",
+              "display": "Safety net clinic program"
+            }
+          ],
+          "display": "Health Resources and Services Administration (HRSA) Program"
+        },
+        {
+          "code": "290",
+          "target": [
+            {
+              "code": "SUBSIDMC",
+              "display": "Subsidized managed care program"
+            }
+          ],
+          "display": "Medicaid Managed Care"
+        },
+        {
+          "code": "447",
+          "target": [
+            {
+              "code": "WCBPOL",
+              "display": "Workers compensation"
+            }
+          ],
+          "display": "Worker's Compensation"
+        },
+        {
+          "code": "376",
+          "target": [
+            {
+              "code": "MILITARY",
+              "display": "Military health program"
+            }
+          ],
+          "display": "DoD TRICARE For Life - Medicare Supplement"
+        },
+        {
+          "code": "420",
+          "target": [
+            {
+              "code": "SUBSUPP",
+              "display": "Subsidized supplemental health program"
+            }
+          ],
+          "display": "Medicare supplemental policy (as second payer)"
+        },
+        {
+          "code": "302",
+          "target": [
+            {
+              "code": "VET",
+              "display": "Veteran health program"
+            }
+          ],
+          "display": "Veteran Care"
+        },
+        {
+          "code": "371",
+          "target": [
+            {
+              "code": "SUBSUPP",
+              "display": "Subsidized supplemental health program"
+            }
+          ],
+          "display": "Medicaid Out of State"
+        },
+        {
+          "code": "294",
+          "target": [
+            {
+              "code": "SUBSUPP",
+              "display": "Subsidized supplemental health program"
+            }
+          ],
+          "display": "Medicaid - Other"
+        },
+        {
+          "code": "438",
+          "target": [
+            {
+              "code": "CHAR",
+              "display": "Charity program"
+            }
+          ],
+          "display": "Charity"
+        },
+        {
+          "code": "451",
+          "target": [
+            {
+              "code": "HIP",
+              "display": "Health insurance plan policy"
+            }
+          ],
+          "display": "Liability Insurance"
+        }
+      ]
+    },
+    {
+      "source": "omop",
+      "sourceVersion": "0.0.1",
+      "target": "http://terminology.hl7.org/CodeSystem/coverage-selfpay",
+      "targetVersion": "0.0.1",
+      "element": [
+        {
+          "code": "436",
+          "target": [
+            {
+              "code": "pay",
+              "display": "Pay"
+            }
+          ],
+          "display": "Self-pay"
+        }
+      ]
+    },
+    {
+      "source": "omop",
+      "sourceVersion": "0.0.1",
+      "target": "http://ohdsi.org",
+      "targetVersion": "0.0.1",
+      "element": [
+        {
+          "code": "418",
+          "target": [
+            {
+              "code": "418",
+              "display": "Commercial Indemnity"
+            }
+          ],
+          "display": "Commercial Indemnity"
+        },
+        {
+          "code": "285",
+          "target": [
+            {
+              "code": "285",
+              "display": "Medicare Non-managed Care"
+            }
+          ],
+          "display": "Medicare Non-managed Care"
+        },
+        {
+          "code": "427",
+          "target": [
+            {
+              "code": "427",
+              "display": "Dental Other Private Insurance"
+            }
+          ],
+          "display": "Dental Other Private Insurance"
+        },
+        {
+          "code": "378",
+          "target": [
+            {
+              "code": "378",
+              "display": "Military Treatment Facility"
+            }
+          ],
+          "display": "Military Treatment Facility"
+        },
+        {
+          "code": "445",
+          "target": [
+            {
+              "code": "445",
+              "display": "Disability Insurance"
+            }
+          ],
+          "display": "Disability Insurance"
+        },
+        {
+          "code": "374",
+          "target": [
+            {
+              "code": "374",
+              "display": "Medicaid Dental"
+            }
+          ],
+          "display": "Medicaid Dental"
+        },
+        {
+          "code": "305",
+          "target": [
+            {
+              "code": "305",
+              "display": "VA Outside VA facilities - Vision"
+            }
+          ],
+          "display": "VA Outside VA facilities - Vision"
+        },
+        {
+          "code": "301",
+          "target": [
+            {
+              "code": "301",
+              "display": "Department of Defense (DoD) other"
+            }
+          ],
+          "display": "Department of Defense (DoD) other"
+        },
+        {
+          "code": "432",
+          "target": [
+            {
+              "code": "432",
+              "display": "Blue Cross Indemnity - Dental"
+            }
+          ],
+          "display": "Blue Cross Indemnity - Dental"
+        },
+        {
+          "code": "291",
+          "target": [
+            {
+              "code": "291",
+              "display": "Medicaid Health Management Organization (HMO)"
+            }
+          ],
+          "display": "Medicaid Health Management Organization (HMO)"
+        },
+        {
+          "code": "380",
+          "target": [
+            {
+              "code": "380",
+              "display": "Military Treatment Facility - Non-enrolled Space Available"
+            }
+          ],
+          "display": "Military Treatment Facility - Non-enrolled Space Available"
+        },
+        {
+          "code": "403",
+          "target": [
+            {
+              "code": "403",
+              "display": "Local Government Fee for Service (FFS) Indemnity"
+            }
+          ],
+          "display": "Local Government Fee for Service (FFS) Indemnity"
+        },
+        {
+          "code": "732310",
+          "target": [
+            {
+              "code": "732310",
+              "display": "Medicare Chronic Condition Special Needs Plan (C-SNP)"
+            }
+          ],
+          "display": "Medicare Chronic Condition Special Needs Plan (C-SNP)"
+        },
+        {
+          "code": "333",
+          "target": [
+            {
+              "code": "333",
+              "display": "Blue Cross Managed Care - Health Management Organization (HMO)"
+            }
+          ],
+          "display": "Blue Cross Managed Care - Health Management Organization (HMO)"
+        },
+        {
+          "code": "425",
+          "target": [
+            {
+              "code": "425",
+              "display": "Small Employer Purchasing Group"
+            }
+          ],
+          "display": "Small Employer Purchasing Group"
+        },
+        {
+          "code": "339",
+          "target": [
+            {
+              "code": "339",
+              "display": "Blue Cross Self-insured (ERISA) - Administrative Services Only (ASO)"
+            }
+          ],
+          "display": "Blue Cross Self-insured (ERISA) - Administrative Services Only (ASO)"
+        },
+        {
+          "code": "327",
+          "target": [
+            {
+              "code": "327",
+              "display": "Private Health Insurance"
+            }
+          ],
+          "display": "Private Health Insurance"
+        },
+        {
+          "code": "326",
+          "target": [
+            {
+              "code": "326",
+              "display": "Corrections Federal"
+            }
+          ],
+          "display": "Corrections Federal"
+        },
+        {
+          "code": "389",
+          "target": [
+            {
+              "code": "389",
+              "display": "VA Outside VA facilities - Sharing Agreements"
+            }
+          ],
+          "display": "VA Outside VA facilities - Sharing Agreements"
+        },
+        {
+          "code": "297",
+          "target": [
+            {
+              "code": "297",
+              "display": "DoD TRICARE Prime - Health Management Organization (HMO)"
+            }
+          ],
+          "display": "DoD TRICARE Prime - Health Management Organization (HMO)"
+        },
+        {
+          "code": "385",
+          "target": [
+            {
+              "code": "385",
+              "display": "VA Indirect Care - Care provided outside VA facilities"
+            }
+          ],
+          "display": "VA Indirect Care - Care provided outside VA facilities"
+        },
+        {
+          "code": "732314",
+          "target": [
+            {
+              "code": "732314",
+              "display": "HRSA Disaster-related (includes Covid-19) program"
+            }
+          ],
+          "display": "HRSA Disaster-related (includes Covid-19) program"
+        },
+        {
+          "code": "319",
+          "target": [
+            {
+              "code": "319",
+              "display": "Federal, State, Local not specified - Health Management Organization (HMO)"
+            }
+          ],
+          "display": "Federal, State, Local not specified - Health Management Organization (HMO)"
+        },
+        {
+          "code": "318",
+          "target": [
+            {
+              "code": "318",
+              "display": "Local Government Point of Service (POS)"
+            }
+          ],
+          "display": "Local Government Point of Service (POS)"
+        },
+        {
+          "code": "426",
+          "target": [
+            {
+              "code": "426",
+              "display": "Specialized Stand Alone Plan"
+            }
+          ],
+          "display": "Specialized Stand Alone Plan"
+        },
+        {
+          "code": "429",
+          "target": [
+            {
+              "code": "429",
+              "display": "Blue Cross Managed Care"
+            }
+          ],
+          "display": "Blue Cross Managed Care"
+        },
+        {
+          "code": "346",
+          "target": [
+            {
+              "code": "346",
+              "display": "HRSA Migrant Health Program"
+            }
+          ],
+          "display": "HRSA Migrant Health Program"
+        },
+        {
+          "code": "317",
+          "target": [
+            {
+              "code": "317",
+              "display": "Local Government Preferred Provider Organization (PPO)"
+            }
+          ],
+          "display": "Local Government Preferred Provider Organization (PPO)"
+        },
+        {
+          "code": "365",
+          "target": [
+            {
+              "code": "365",
+              "display": "Medicare Other"
+            }
+          ],
+          "display": "Medicare Other"
+        },
+        {
+          "code": "332",
+          "target": [
+            {
+              "code": "332",
+              "display": "Blue Cross/Blue Shield"
+            }
+          ],
+          "display": "Blue Cross/Blue Shield"
+        },
+        {
+          "code": "386",
+          "target": [
+            {
+              "code": "386",
+              "display": "VA Outside VA facilities - Foreign Fee/Foreign Medical Program (FMP)"
+            }
+          ],
+          "display": "VA Outside VA facilities - Foreign Fee/Foreign Medical Program (FMP)"
+        },
+        {
+          "code": "388",
+          "target": [
+            {
+              "code": "388",
+              "display": "VA Outside VA facilities - State Veterans Home"
+            }
+          ],
+          "display": "VA Outside VA facilities - State Veterans Home"
+        },
+        {
+          "code": "320",
+          "target": [
+            {
+              "code": "320",
+              "display": "Federal, State, Local not specified - Preferred Provider Organization (PPO)"
+            }
+          ],
+          "display": "Federal, State, Local not specified - Preferred Provider Organization (PPO)"
+        },
+        {
+          "code": "282",
+          "target": [
+            {
+              "code": "282",
+              "display": "Medicare Health Maintenance Organization (HMO)"
+            }
+          ],
+          "display": "Medicare Health Maintenance Organization (HMO)"
+        },
+        {
+          "code": "440",
+          "target": [
+            {
+              "code": "440",
+              "display": "Research/Clinical Trial"
+            }
+          ],
+          "display": "Research/Clinical Trial"
+        },
+        {
+          "code": "433",
+          "target": [
+            {
+              "code": "433",
+              "display": "Managed Care Point of Service (POS)"
+            }
+          ],
+          "display": "Managed Care Point of Service (POS)"
+        },
+        {
+          "code": "369",
+          "target": [
+            {
+              "code": "369",
+              "display": "Medicaid/State Children's Health Insurance Program (SCHIP)"
+            }
+          ],
+          "display": "Medicaid/State Children's Health Insurance Program (SCHIP)"
+        },
+        {
+          "code": "732313",
+          "target": [
+            {
+              "code": "732313",
+              "display": "Fully Integrated Dual Eligible Medicare / Medicaid Special Needs Plan (FIDE-SNP)"
+            }
+          ],
+          "display": "Fully Integrated Dual Eligible Medicare / Medicaid Special Needs Plan (FIDE-SNP)"
+        },
+        {
+          "code": "313",
+          "target": [
+            {
+              "code": "313",
+              "display": "State Children's Health Insurance Program (SCHIP) - individual state code"
+            }
+          ],
+          "display": "State Children's Health Insurance Program (SCHIP) - individual state code"
+        },
+        {
+          "code": "391",
+          "target": [
+            {
+              "code": "391",
+              "display": "VA Non-Veteran Care"
+            }
+          ],
+          "display": "VA Non-Veteran Care"
+        },
+        {
+          "code": "405",
+          "target": [
+            {
+              "code": "405",
+              "display": "Other Government (Federal, State, Local not specified)"
+            }
+          ],
+          "display": "Other Government (Federal, State, Local not specified)"
+        },
+        {
+          "code": "322",
+          "target": [
+            {
+              "code": "322",
+              "display": "Federal, State, Local not specified - Fee for Service (FFS)"
+            }
+          ],
+          "display": "Federal, State, Local not specified - Fee for Service (FFS)"
+        },
+        {
+          "code": "732312",
+          "target": [
+            {
+              "code": "732312",
+              "display": "Dual Eligible Medicare / Medicaid Special Needs Plan (D-SNP)"
+            }
+          ],
+          "display": "Dual Eligible Medicare / Medicaid Special Needs Plan (D-SNP)"
+        },
+        {
+          "code": "401",
+          "target": [
+            {
+              "code": "401",
+              "display": "Specific state program (list/local code)"
+            }
+          ],
+          "display": "Specific state program (list/local code)"
+        },
+        {
+          "code": "310",
+          "target": [
+            {
+              "code": "310",
+              "display": "HRSA Ryan White HIV/AIDS Program"
+            }
+          ],
+          "display": "HRSA Ryan White HIV/AIDS Program"
+        },
+        {
+          "code": "298",
+          "target": [
+            {
+              "code": "298",
+              "display": "DoD TRICARE Extra - Preferred Provider Organization (PPO)"
+            }
+          ],
+          "display": "DoD TRICARE Extra - Preferred Provider Organization (PPO)"
+        },
+        {
+          "code": "288",
+          "target": [
+            {
+              "code": "288",
+              "display": "Dual Eligibility Medicare/Medicaid"
+            }
+          ],
+          "display": "Dual Eligibility Medicare/Medicaid"
+        },
+        {
+          "code": "363",
+          "target": [
+            {
+              "code": "363",
+              "display": "Medicare Medical Savings Account (MSA)"
+            }
+          ],
+          "display": "Medicare Medical Savings Account (MSA)"
+        },
+        {
+          "code": "331",
+          "target": [
+            {
+              "code": "331",
+              "display": "Commercial Managed Care - Point of Service (POS)"
+            }
+          ],
+          "display": "Commercial Managed Care - Point of Service (POS)"
+        },
+        {
+          "code": "315",
+          "target": [
+            {
+              "code": "315",
+              "display": "Local Government Program"
+            }
+          ],
+          "display": "Local Government Program"
+        },
+        {
+          "code": "329",
+          "target": [
+            {
+              "code": "329",
+              "display": "Commercial Managed Care - Health Management Organization (HMO)"
+            }
+          ],
+          "display": "Commercial Managed Care - Health Management Organization (HMO)"
+        },
+        {
+          "code": "392",
+          "target": [
+            {
+              "code": "392",
+              "display": "VA Civilian Health and Medical Program for the VA (CHAMPVA)"
+            }
+          ],
+          "display": "VA Civilian Health and Medical Program for the VA (CHAMPVA)"
+        },
+        {
+          "code": "286",
+          "target": [
+            {
+              "code": "286",
+              "display": "Medicare Fee for Service (FFS)"
+            }
+          ],
+          "display": "Medicare Fee for Service (FFS)"
+        },
+        {
+          "code": "415",
+          "target": [
+            {
+              "code": "415",
+              "display": "Commercial Managed Care - Dental"
+            }
+          ],
+          "display": "Commercial Managed Care - Dental"
+        },
+        {
+          "code": "443",
+          "target": [
+            {
+              "code": "443",
+              "display": "No Payment - Other"
+            }
+          ],
+          "display": "No Payment - Other"
+        },
+        {
+          "code": "299",
+          "target": [
+            {
+              "code": "299",
+              "display": "DoD TRICARE Standard - Fee For Service (FFS)"
+            }
+          ],
+          "display": "DoD TRICARE Standard - Fee For Service (FFS)"
+        },
+        {
+          "code": "390",
+          "target": [
+            {
+              "code": "390",
+              "display": "VA Outside VA facilities - Other Federal Agency"
+            }
+          ],
+          "display": "VA Outside VA facilities - Other Federal Agency"
+        },
+        {
+          "code": "308",
+          "target": [
+            {
+              "code": "308",
+              "display": "Medicare Drug Benefit"
+            }
+          ],
+          "display": "Medicare Drug Benefit"
+        },
+        {
+          "code": "448",
+          "target": [
+            {
+              "code": "448",
+              "display": "Worker's Comp Other Managed Care"
+            }
+          ],
+          "display": "Worker's Comp Other Managed Care"
+        },
+        {
+          "code": "387",
+          "target": [
+            {
+              "code": "387",
+              "display": "VA Outside VA facilities - Contract Nursing Home/Community Nursing Home"
+            }
+          ],
+          "display": "VA Outside VA facilities - Contract Nursing Home/Community Nursing Home"
+        },
+        {
+          "code": "413",
+          "target": [
+            {
+              "code": "413",
+              "display": "Gatekeeper Preferred Provider Organization (GPPO)"
+            }
+          ],
+          "display": "Gatekeeper Preferred Provider Organization (GPPO)"
+        },
+        {
+          "code": "411",
+          "target": [
+            {
+              "code": "411",
+              "display": "Corrections Unknown Level"
+            }
+          ],
+          "display": "Corrections Unknown Level"
+        },
+        {
+          "code": "306",
+          "target": [
+            {
+              "code": "306",
+              "display": "Indian Health Service (IHS) Program"
+            }
+          ],
+          "display": "Indian Health Service (IHS) Program"
+        },
+        {
+          "code": "435",
+          "target": [
+            {
+              "code": "435",
+              "display": "No Payment from an Organization/Agency/Program/Private Payer Listed"
+            }
+          ],
+          "display": "No Payment from an Organization/Agency/Program/Private Payer Listed"
+        },
+        {
+          "code": "414",
+          "target": [
+            {
+              "code": "414",
+              "display": "Commercial Managed Care - Pharmacy Benefit Manager"
+            }
+          ],
+          "display": "Commercial Managed Care - Pharmacy Benefit Manager"
+        },
+        {
+          "code": "399",
+          "target": [
+            {
+              "code": "399",
+              "display": "Indian Tribe - Sponsored Coverage"
+            }
+          ],
+          "display": "Indian Tribe - Sponsored Coverage"
+        },
+        {
+          "code": "412",
+          "target": [
+            {
+              "code": "412",
+              "display": "Exclusive Provider Organization"
+            }
+          ],
+          "display": "Exclusive Provider Organization"
+        },
+        {
+          "code": "316",
+          "target": [
+            {
+              "code": "316",
+              "display": "Local Government Health Management Organization (HMO)"
+            }
+          ],
+          "display": "Local Government Health Management Organization (HMO)"
+        },
+        {
+          "code": "292",
+          "target": [
+            {
+              "code": "292",
+              "display": "Medicaid Preferred Provider Organization (PPO)"
+            }
+          ],
+          "display": "Medicaid Preferred Provider Organization (PPO)"
+        },
+        {
+          "code": "449",
+          "target": [
+            {
+              "code": "449",
+              "display": "Worker's Comp, Other unspecified"
+            }
+          ],
+          "display": "Worker's Comp, Other unspecified"
+        },
+        {
+          "code": "408",
+          "target": [
+            {
+              "code": "408",
+              "display": "Federal, State, Local not specified - Other"
+            }
+          ],
+          "display": "Federal, State, Local not specified - Other"
+        },
+        {
+          "code": "304",
+          "target": [
+            {
+              "code": "304",
+              "display": "VA Outside VA facilities - Dental"
+            }
+          ],
+          "display": "VA Outside VA facilities - Dental"
+        },
+        {
+          "code": "407",
+          "target": [
+            {
+              "code": "407",
+              "display": "Federal, State, Local not specified - not specified managed care"
+            }
+          ],
+          "display": "Federal, State, Local not specified - not specified managed care"
+        },
+        {
+          "code": "437",
+          "target": [
+            {
+              "code": "437",
+              "display": "No Charge"
+            }
+          ],
+          "display": "No Charge"
+        },
+        {
+          "code": "300",
+          "target": [
+            {
+              "code": "300",
+              "display": "DoD Uniformed Services Family Health Plan (USFHP) - Health Management Organization (HMO)"
+            }
+          ],
+          "display": "DoD Uniformed Services Family Health Plan (USFHP) - Health Management Organization (HMO)"
+        },
+        {
+          "code": "335",
+          "target": [
+            {
+              "code": "335",
+              "display": "Blue Cross Managed Care - Point of Service (POS)"
+            }
+          ],
+          "display": "Blue Cross Managed Care - Point of Service (POS)"
+        },
+        {
+          "code": "404",
+          "target": [
+            {
+              "code": "404",
+              "display": "Local Government FFS/Indemnity not otherwise specified (other local, county)"
+            }
+          ],
+          "display": "Local Government FFS/Indemnity not otherwise specified (other local, county)"
+        },
+        {
+          "code": "400",
+          "target": [
+            {
+              "code": "400",
+              "display": "Division of Coal Mine Workers' Compensation (DCMWC) - Black Lung"
+            }
+          ],
+          "display": "Division of Coal Mine Workers' Compensation (DCMWC) - Black Lung"
+        },
+        {
+          "code": "439",
+          "target": [
+            {
+              "code": "439",
+              "display": "Professional Courtesy"
+            }
+          ],
+          "display": "Professional Courtesy"
+        },
+        {
+          "code": "328",
+          "target": [
+            {
+              "code": "328",
+              "display": "Private Health Insurance - Managed Care"
+            }
+          ],
+          "display": "Private Health Insurance - Managed Care"
+        },
+        {
+          "code": "379",
+          "target": [
+            {
+              "code": "379",
+              "display": "Military Treatment Facility - Enrolled Prime - HMO"
+            }
+          ],
+          "display": "Military Treatment Facility - Enrolled Prime - HMO"
+        },
+        {
+          "code": "430",
+          "target": [
+            {
+              "code": "430",
+              "display": "Blue Cross Managed Care - Other"
+            }
+          ],
+          "display": "Blue Cross Managed Care - Other"
+        },
+        {
+          "code": "362",
+          "target": [
+            {
+              "code": "362",
+              "display": "Medicare Managed Care Other"
+            }
+          ],
+          "display": "Medicare Managed Care Other"
+        },
+        {
+          "code": "446",
+          "target": [
+            {
+              "code": "446",
+              "display": "Long-term Care Insurance"
+            }
+          ],
+          "display": "Long-term Care Insurance"
+        },
+        {
+          "code": "423",
+          "target": [
+            {
+              "code": "423",
+              "display": "Managed Care (private) or private health insurance (indemnity), not otherwise specified"
+            }
+          ],
+          "display": "Managed Care (private) or private health insurance (indemnity), not otherwise specified"
+        },
+        {
+          "code": "375",
+          "target": [
+            {
+              "code": "375",
+              "display": "Department of Defense"
+            }
+          ],
+          "display": "Department of Defense"
+        },
+        {
+          "code": "396",
+          "target": [
+            {
+              "code": "396",
+              "display": "Indian Health Service - Regular"
+            }
+          ],
+          "display": "Indian Health Service - Regular"
+        },
+        {
+          "code": "419",
+          "target": [
+            {
+              "code": "419",
+              "display": "Self-insured (ERISA) Administrative Services Only (ASO) plan"
+            }
+          ],
+          "display": "Self-insured (ERISA) Administrative Services Only (ASO) plan"
+        },
+        {
+          "code": "314",
+          "target": [
+            {
+              "code": "314",
+              "display": "State program - not otherwise specified (other state)"
+            }
+          ],
+          "display": "State program - not otherwise specified (other state)"
+        },
+        {
+          "code": "337",
+          "target": [
+            {
+              "code": "337",
+              "display": "Blue Cross Insurance Indemnity"
+            }
+          ],
+          "display": "Blue Cross Insurance Indemnity"
+        },
+        {
+          "code": "342",
+          "target": [
+            {
+              "code": "342",
+              "display": "Managed Care Preferred Provider Organization (PPO)"
+            }
+          ],
+          "display": "Managed Care Preferred Provider Organization (PPO)"
+        },
+        {
+          "code": "330",
+          "target": [
+            {
+              "code": "330",
+              "display": "Commercial Managed Care - Preferred Provider Organization (PPO)"
+            }
+          ],
+          "display": "Commercial Managed Care - Preferred Provider Organization (PPO)"
+        },
+        {
+          "code": "394",
+          "target": [
+            {
+              "code": "394",
+              "display": "VA Children of Women Vietnam Veterans (CWVV)"
+            }
+          ],
+          "display": "VA Children of Women Vietnam Veterans (CWVV)"
+        },
+        {
+          "code": "334",
+          "target": [
+            {
+              "code": "334",
+              "display": "Blue Cross Managed Care - Preferred Provider Organization (PPO)"
+            }
+          ],
+          "display": "Blue Cross Managed Care - Preferred Provider Organization (PPO)"
+        },
+        {
+          "code": "384",
+          "target": [
+            {
+              "code": "384",
+              "display": "VA Direct Care - Care provided in VA facilities"
+            }
+          ],
+          "display": "VA Direct Care - Care provided in VA facilities"
+        },
+        {
+          "code": "431",
+          "target": [
+            {
+              "code": "431",
+              "display": "Blue Cross Medicare Supplemental Plan"
+            }
+          ],
+          "display": "Blue Cross Medicare Supplemental Plan"
+        },
+        {
+          "code": "377",
+          "target": [
+            {
+              "code": "377",
+              "display": "DoD TRICARE Reserve Select"
+            }
+          ],
+          "display": "DoD TRICARE Reserve Select"
+        },
+        {
+          "code": "287",
+          "target": [
+            {
+              "code": "287",
+              "display": "Medicare Non-managed Care - Other"
+            }
+          ],
+          "display": "Medicare Non-managed Care - Other"
+        },
+        {
+          "code": "373",
+          "target": [
+            {
+              "code": "373",
+              "display": "Medicaid Pharmacy Benefit Manager"
+            }
+          ],
+          "display": "Medicaid Pharmacy Benefit Manager"
+        },
+        {
+          "code": "295",
+          "target": [
+            {
+              "code": "295",
+              "display": "Other Government Federal/State/Local, excluding Department of Corrections"
+            }
+          ],
+          "display": "Other Government Federal/State/Local, excluding Department of Corrections"
+        },
+        {
+          "code": "283",
+          "target": [
+            {
+              "code": "283",
+              "display": "Medicare Preferred Provider Organization (PPO)"
+            }
+          ],
+          "display": "Medicare Preferred Provider Organization (PPO)"
+        },
+        {
+          "code": "406",
+          "target": [
+            {
+              "code": "406",
+              "display": "Federal, State, Local not specified Managed Care"
+            }
+          ],
+          "display": "Federal, State, Local not specified Managed Care"
+        },
+        {
+          "code": "311",
+          "target": [
+            {
+              "code": "311",
+              "display": "HSRA - Other"
+            }
+          ],
+          "display": "HSRA - Other"
+        },
+        {
+          "code": "368",
+          "target": [
+            {
+              "code": "368",
+              "display": "Medicaid Managed Care - Other"
+            }
+          ],
+          "display": "Medicaid Managed Care - Other"
+        },
+        {
+          "code": "417",
+          "target": [
+            {
+              "code": "417",
+              "display": "Private Health Insurance - Indemnity"
+            }
+          ],
+          "display": "Private Health Insurance - Indemnity"
+        },
+        {
+          "code": "402",
+          "target": [
+            {
+              "code": "402",
+              "display": "Local Government Managed Care"
+            }
+          ],
+          "display": "Local Government Managed Care"
+        },
+        {
+          "code": "450",
+          "target": [
+            {
+              "code": "450",
+              "display": "Auto Insurance"
+            }
+          ],
+          "display": "Auto Insurance"
+        },
+        {
+          "code": "382",
+          "target": [
+            {
+              "code": "382",
+              "display": "DoD Dental - Stand Alone"
+            }
+          ],
+          "display": "DoD Dental - Stand Alone"
+        },
+        {
+          "code": "442",
+          "target": [
+            {
+              "code": "442",
+              "display": "Research/Donor"
+            }
+          ],
+          "display": "Research/Donor"
+        },
+        {
+          "code": "367",
+          "target": [
+            {
+              "code": "367",
+              "display": "Medicaid Primary Care Case Management (PCCM)"
+            }
+          ],
+          "display": "Medicaid Primary Care Case Management (PCCM)"
+        },
+        {
+          "code": "366",
+          "target": [
+            {
+              "code": "366",
+              "display": "Medicare Pharmacy Benefit Manager"
+            }
+          ],
+          "display": "Medicare Pharmacy Benefit Manager"
+        },
+        {
+          "code": "381",
+          "target": [
+            {
+              "code": "381",
+              "display": "Military Treatment Facility - TRICARE For Life (TFL)"
+            }
+          ],
+          "display": "Military Treatment Facility - TRICARE For Life (TFL)"
+        },
+        {
+          "code": "410",
+          "target": [
+            {
+              "code": "410",
+              "display": "Corrections Local"
+            }
+          ],
+          "display": "Corrections Local"
+        },
+        {
+          "code": "343",
+          "target": [
+            {
+              "code": "343",
+              "display": "Hill-Burton Free and Reduced-Cost Health Care"
+            }
+          ],
+          "display": "Hill-Burton Free and Reduced-Cost Health Care"
+        },
+        {
+          "code": "416",
+          "target": [
+            {
+              "code": "416",
+              "display": "Managed Care, Other (non HMO)"
+            }
+          ],
+          "display": "Managed Care, Other (non HMO)"
+        },
+        {
+          "code": "321",
+          "target": [
+            {
+              "code": "321",
+              "display": "Federal, State, Local not specified - Point of Service (POS)"
+            }
+          ],
+          "display": "Federal, State, Local not specified - Point of Service (POS)"
+        },
+        {
+          "code": "303",
+          "target": [
+            {
+              "code": "303",
+              "display": "VA Outside VA facilities - Fee Basis"
+            }
+          ],
+          "display": "VA Outside VA facilities - Fee Basis"
+        },
+        {
+          "code": "395",
+          "target": [
+            {
+              "code": "395",
+              "display": "VA Other Non-Veteran Care"
+            }
+          ],
+          "display": "VA Other Non-Veteran Care"
+        },
+        {
+          "code": "293",
+          "target": [
+            {
+              "code": "293",
+              "display": "Medicaid Non-managed Care"
+            }
+          ],
+          "display": "Medicaid Non-managed Care"
+        },
+        {
+          "code": "323",
+          "target": [
+            {
+              "code": "323",
+              "display": "Other Federal Program"
+            }
+          ],
+          "display": "Other Federal Program"
+        },
+        {
+          "code": "347",
+          "target": [
+            {
+              "code": "347",
+              "display": "Worker's Compensation Health Management Organization (HMO)"
+            }
+          ],
+          "display": "Worker's Compensation Health Management Organization (HMO)"
+        },
+        {
+          "code": "348",
+          "target": [
+            {
+              "code": "348",
+              "display": "Worker's Comp Fee-for-Service (FFS)"
+            }
+          ],
+          "display": "Worker's Comp Fee-for-Service (FFS)"
+        },
+        {
+          "code": "372",
+          "target": [
+            {
+              "code": "372",
+              "display": "Medicaid Long Term Care"
+            }
+          ],
+          "display": "Medicaid Long Term Care"
+        },
+        {
+          "code": "434",
+          "target": [
+            {
+              "code": "434",
+              "display": "Other Managed Care"
+            }
+          ],
+          "display": "Other Managed Care"
+        },
+        {
+          "code": "336",
+          "target": [
+            {
+              "code": "336",
+              "display": "Blue Cross Managed Care - Dental"
+            }
+          ],
+          "display": "Blue Cross Managed Care - Dental"
+        },
+        {
+          "code": "732311",
+          "target": [
+            {
+              "code": "732311",
+              "display": "Medicare Institutional Special Needs Plan (I-SNP)"
+            }
+          ],
+          "display": "Medicare Institutional Special Needs Plan (I-SNP)"
+        },
+        {
+          "code": "393",
+          "target": [
+            {
+              "code": "393",
+              "display": "VA Spina Bifida Health Care Program (SB)"
+            }
+          ],
+          "display": "VA Spina Bifida Health Care Program (SB)"
+        },
+        {
+          "code": "341",
+          "target": [
+            {
+              "code": "341",
+              "display": "Managed Care Health Management Organization (HMO)"
+            }
+          ],
+          "display": "Managed Care Health Management Organization (HMO)"
+        },
+        {
+          "code": "409",
+          "target": [
+            {
+              "code": "409",
+              "display": "Corrections State"
+            }
+          ],
+          "display": "Corrections State"
+        },
+        {
+          "code": "325",
+          "target": [
+            {
+              "code": "325",
+              "display": "Department of Corrections"
+            }
+          ],
+          "display": "Department of Corrections"
+        },
+        {
+          "code": "309",
+          "target": [
+            {
+              "code": "309",
+              "display": "Title V Maternal and Child Health (MSH) Services Block Grant Program"
+            }
+          ],
+          "display": "Title V Maternal and Child Health (MSH) Services Block Grant Program"
+        },
+        {
+          "code": "422",
+          "target": [
+            {
+              "code": "422",
+              "display": "Private health insurance - other commercial Indemnity"
+            }
+          ],
+          "display": "Private health insurance - other commercial Indemnity"
+        },
+        {
+          "code": "383",
+          "target": [
+            {
+              "code": "383",
+              "display": "Department of Veterans Affairs"
+            }
+          ],
+          "display": "Department of Veterans Affairs"
+        },
+        {
+          "code": "397",
+          "target": [
+            {
+              "code": "397",
+              "display": "Indian Health Service - Contract"
+            }
+          ],
+          "display": "Indian Health Service - Contract"
+        },
+        {
+          "code": "444",
+          "target": [
+            {
+              "code": "444",
+              "display": "Foreign National"
+            }
+          ],
+          "display": "Foreign National"
+        },
+        {
+          "code": "344",
+          "target": [
+            {
+              "code": "344",
+              "display": "Miscellaneous Program"
+            }
+          ],
+          "display": "Miscellaneous Program"
+        },
+        {
+          "code": "324",
+          "target": [
+            {
+              "code": "324",
+              "display": "Federal Employee Health Plan"
+            }
+          ],
+          "display": "Federal Employee Health Plan"
+        },
+        {
+          "code": "284",
+          "target": [
+            {
+              "code": "284",
+              "display": "Medicare Point of Service (POS)"
+            }
+          ],
+          "display": "Medicare Point of Service (POS)"
+        },
+        {
+          "code": "428",
+          "target": [
+            {
+              "code": "428",
+              "display": "Vision Other Private Insurance"
+            }
+          ],
+          "display": "Vision Other Private Insurance"
+        },
+        {
+          "code": "398",
+          "target": [
+            {
+              "code": "398",
+              "display": "Indian Health Service - Managed Care"
+            }
+          ],
+          "display": "Indian Health Service - Managed Care"
+        },
+        {
+          "code": "364",
+          "target": [
+            {
+              "code": "364",
+              "display": "Medicare Hospice"
+            }
+          ],
+          "display": "Medicare Hospice"
+        },
+        {
+          "code": "421",
+          "target": [
+            {
+              "code": "421",
+              "display": "Indemnity Insurance - Dental"
+            }
+          ],
+          "display": "Indemnity Insurance - Dental"
+        },
+        {
+          "code": "424",
+          "target": [
+            {
+              "code": "424",
+              "display": "Organized Delivery System"
+            }
+          ],
+          "display": "Organized Delivery System"
+        },
+        {
+          "code": "338",
+          "target": [
+            {
+              "code": "338",
+              "display": "Blue Cross Indemnity"
+            }
+          ],
+          "display": "Blue Cross Indemnity"
+        },
+        {
+          "code": "441",
+          "target": [
+            {
+              "code": "441",
+              "display": "Refusal to Pay/Bad Debt"
+            }
+          ],
+          "display": "Refusal to Pay/Bad Debt"
+        },
+        {
+          "code": "340",
+          "target": [
+            {
+              "code": "340",
+              "display": "Managed Care, Unspecified"
+            }
+          ],
+          "display": "Managed Care, Unspecified"
+        },
+        {
+          "code": "289",
+          "target": [
+            {
+              "code": "289",
+              "display": "Medicaid"
+            }
+          ],
+          "display": "Medicaid"
+        },
+        {
+          "code": "280",
+          "target": [
+            {
+              "code": "280",
+              "display": "Medicare"
+            }
+          ],
+          "display": "Medicare"
+        },
+        {
+          "code": "296",
+          "target": [
+            {
+              "code": "296",
+              "display": "DoD TRICARE, Civilian Health and Medical Program of the Uniformed Services (CHAMPUS)"
+            }
+          ],
+          "display": "DoD TRICARE, Civilian Health and Medical Program of the Uniformed Services (CHAMPUS)"
+        },
+        {
+          "code": "281",
+          "target": [
+            {
+              "code": "281",
+              "display": "Medicare Managed Care"
+            }
+          ],
+          "display": "Medicare Managed Care"
+        },
+        {
+          "code": "436",
+          "target": [
+            {
+              "code": "436",
+              "display": "Self-pay"
+            }
+          ],
+          "display": "Self-pay"
+        },
+        {
+          "code": "312",
+          "target": [
+            {
+              "code": "312",
+              "display": "State Government Program"
+            }
+          ],
+          "display": "State Government Program"
+        },
+        {
+          "code": "307",
+          "target": [
+            {
+              "code": "307",
+              "display": "Health Resources and Services Administration (HRSA) Program"
+            }
+          ],
+          "display": "Health Resources and Services Administration (HRSA) Program"
+        },
+        {
+          "code": "290",
+          "target": [
+            {
+              "code": "290",
+              "display": "Medicaid Managed Care"
+            }
+          ],
+          "display": "Medicaid Managed Care"
+        },
+        {
+          "code": "447",
+          "target": [
+            {
+              "code": "447",
+              "display": "Worker's Compensation"
+            }
+          ],
+          "display": "Worker's Compensation"
+        },
+        {
+          "code": "376",
+          "target": [
+            {
+              "code": "376",
+              "display": "DoD TRICARE For Life - Medicare Supplement"
+            }
+          ],
+          "display": "DoD TRICARE For Life - Medicare Supplement"
+        },
+        {
+          "code": "420",
+          "target": [
+            {
+              "code": "420",
+              "display": "Medicare supplemental policy (as second payer)"
+            }
+          ],
+          "display": "Medicare supplemental policy (as second payer)"
+        },
+        {
+          "code": "302",
+          "target": [
+            {
+              "code": "302",
+              "display": "Veteran Care"
+            }
+          ],
+          "display": "Veteran Care"
+        },
+        {
+          "code": "371",
+          "target": [
+            {
+              "code": "371",
+              "display": "Medicaid Out of State"
+            }
+          ],
+          "display": "Medicaid Out of State"
+        },
+        {
+          "code": "294",
+          "target": [
+            {
+              "code": "294",
+              "display": "Medicaid - Other"
+            }
+          ],
+          "display": "Medicaid - Other"
+        },
+        {
+          "code": "438",
+          "target": [
+            {
+              "code": "438",
+              "display": "Charity"
+            }
+          ],
+          "display": "Charity"
+        },
+        {
+          "code": "451",
+          "target": [
+            {
+              "code": "451",
+              "display": "Liability Insurance"
+            }
+          ],
+          "display": "Liability Insurance"
+        }
+      ]
+    }
+  ]
+}
