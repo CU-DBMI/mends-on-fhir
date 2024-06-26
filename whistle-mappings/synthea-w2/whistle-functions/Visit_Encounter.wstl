@@ -51,7 +51,7 @@ def Visit_Encounter(Visit, required context) {
     // M .end -> Encounter.hosp_dschrg_dt (date)
     // Make sure that there are datetimes for both start and end, else only use dates for both
     if context.config.output.phi == "yes"  then {
-        if $And(isNotNil(Visit.visit_start_datetime), isNotNil(Visit.visit_end_datetime))  then {
+        if isNotNil(Visit.visit_start_datetime) and isNotNil(Visit.visit_end_datetime) then {
             period.start: ReformatDatetime(Visit.visit_start_datetime)
             period.end: ReformatDatetime(Visit.visit_end_datetime)
         } else {
@@ -61,7 +61,7 @@ def Visit_Encounter(Visit, required context) {
             period.end: Visit.visit_end_date
         }
     } else {
-        if $And(isNotNil(Visit.visit_start_datetime), isNotNil(Visit.visit_end_datetime))  then {
+        if isNotNil(Visit.visit_start_datetime) and isNotNil(Visit.visit_end_datetime) then {
             period.start: ReformatDatetime("2030-01-01")
             period.end: ReformatDatetime("2030-01-01")
         } else {

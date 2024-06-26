@@ -1,0 +1,37 @@
+package main
+
+//def myTrim(s) {
+//    String.trim(s)
+//}
+
+// $this: "Hello World"; 
+Simple: "Hello World";
+StrFmt: strFmt("%s%s%s","Hello", " ", "World");
+
+// mytrim: myTrim("    This is a string with spaces     ")
+
+MyParseFloat: tryParseNum("123.456");
+
+def myIf() {
+    if eq(1,1) then {
+        if1: "yes" 
+    }
+
+    if eq(2,2) then {
+        if2: "yes" 
+    }
+
+    if eq(1,1) and eq(2,2) then {
+        if_and: "yes"
+    }
+
+    if eq(1,1) and eq(2,2) and eq(3,3) then {
+        if_two_ands: "yes"
+    }
+
+    if eq(1,2) or eq(1,1) then {
+        if_or: "yes"
+    }
+}
+
+myIF: myIf() ;

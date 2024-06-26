@@ -30,8 +30,8 @@ def CodeMapDefault(code, mapId) {
 // TODO:SE  change _MapOrNull()
 def CodeMapNull(code, mapId) {
     var mappings : harmonization::harmonize("$Local", code, "omop", mapId)
-    var unharmonized: $StrCat(mapId, "-unharmonized")
-    if ( $Not( $Eq(mappings[0].system, unharmonized ))) then {
+    var unharmonized: strFmt("%s%s",mapId, "-unharmonized")
+    if ( not( eq(mappings[0].system, unharmonized ))) then {
         $this: mappings[0].code
     }
 }
@@ -54,17 +54,17 @@ def CodeMapOverride(code, mapId) {
 def Code_CleanSpaces(code) {
     // TODO: SE: check the splitting of W1 vs W2 in terms of trimming spaces, ignoring empty splits, etc.
     // probably not the same behavior, and it might affect our logic
-    $this: strJoin(" ", split(code, " "))
+    $this: strFmt("%s%s"," ", split(code, " "))
 }
 
 def Id_Spaces_To_Dash(id) {
     // TODO: SE: check split logic
-    $this: strJoin(".", split(id, " "))
+    $this: strFmt("%s%s",".", split(id, " "))
 }
 
 def Code_IsFHIRValid(code){
 
-    $this: $MatchesRegex(code,"[^\\s]+(\\s[^\\s]+)*");
+    $this: matchesRegex(code,"[^\\s]+(\\s[^\\s]+)*");
 }
 
 // ***************************************************************

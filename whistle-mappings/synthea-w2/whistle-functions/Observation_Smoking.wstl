@@ -34,7 +34,7 @@ def Observation_Smoking(Observation, required context) {
 }
 
 def Build_Data(Observation) {
-  id: strJoin("-", Observation.person_id, Observation.observation_date)
+  id: strFmt("%s%s%s","-", Observation.person_id, Observation.observation_date)
 
   category.coding[0].system: "http://terminology.hl7.org/CodeSystem/observation-category"
   category.coding[0].code: "social-history"
@@ -58,20 +58,20 @@ def GetCCNew(Observation){
 
   // see https://docs.google.com/spreadsheets/d/15JwgQPyoeNvFTfv7JsuVFvjpNSkrtLFVL9Za6YUhOOo/edit#gid=485331358
 
-  if $MatchesRegex(Observation.panel, "\\(TobaccoUse:Not Asked\\)")  then {
+  if matchesRegex(Observation.panel, "\\(TobaccoUse:Not Asked\\)")  then {
     coding[]: Coding("http://snomed.info/sct", "", "266927001", "Tobacco smoking consumption unknown (finding)")
   }
   
-  if $MatchesRegex(Observation.panel, "\\(TobaccoUse:Never\\)")  then {
+  if matchesRegex(Observation.panel, "\\(TobaccoUse:Never\\)")  then {
     coding[]: Coding("http://snomed.info/sct", "", "266919005", "Never smoked tobacco (finding)")
   }
 
-  if $MatchesRegex(Observation.panel, "\\(TobaccoUse:Quit\\)")  then {
+  if matchesRegex(Observation.panel, "\\(TobaccoUse:Quit\\)")  then {
     coding[]: Coding("http://snomed.info/sct", "", "8517006", "Ex-smoker (finding)")
 
   }
 
-  if $MatchesRegex(Observation.panel, "\\(TobaccoUse:Yes\\)")  then {
+  if matchesRegex(Observation.panel, "\\(TobaccoUse:Yes\\)")  then {
     coding[]: Coding("http://snomed.info/sct", "", "77176002", "Smoker (finding)")
     
     // add a second more specific code. Jeff will only pick the first one anyway.
@@ -82,23 +82,23 @@ def GetCCNew(Observation){
 def GetHeaviness(Observation){
 
   var codings[]: []
-  if $MatchesRegex(Observation.panel, "\\(CigarettePacksPerDay:<1\\)")  then {
+  if matchesRegex(Observation.panel, "\\(CigarettePacksPerDay:<1\\)")  then {
     var codings[]: Coding("http://snomed.info/sct", "", "428041000124106", "Occasional tobacco smoker (finding)")
   }
 
-  if $MatchesRegex(Observation.panel, "\\(CigarettePacksPerDay:<10\\)")  then {
+  if matchesRegex(Observation.panel, "\\(CigarettePacksPerDay:<10\\)")  then {
     var codings[]: Coding("http://snomed.info/sct", "", "428061000124105", "Light tobacco smoker (finding)")
   }
 
-  if $MatchesRegex(Observation.panel, "\\(CigarettePacksPerDay:<20\\)")  then {
+  if matchesRegex(Observation.panel, "\\(CigarettePacksPerDay:<20\\)")  then {
     var codings[]: Coding("http://snomed.info/sct", "", "56578002", "Moderate smoker (20 or less per day) (finding)")
   }
 
-  if $MatchesRegex(Observation.panel, "\\(CigarettePacksPerDay:<30\\)|\\(CigarettePacksPerDay:<40\\)")  then {
+  if matchesRegex(Observation.panel, "\\(CigarettePacksPerDay:<30\\)|\\(CigarettePacksPerDay:<40\\)")  then {
     var codings[]: Coding("http://snomed.info/sct", "", "428071000124103", "Heavy tobacco smoker (finding)")
   }
 
-  if $MatchesRegex(Observation.panel, "\\(CigarettePacksPerDay:>=40\\)")  then {
+  if matchesRegex(Observation.panel, "\\(CigarettePacksPerDay:>=40\\)")  then {
     var codings[]: Coding("http://snomed.info/sct", "", "230064005", "Very heavy cigarette smoker (finding)")
   }
   

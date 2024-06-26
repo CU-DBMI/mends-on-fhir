@@ -13,7 +13,7 @@ def Omop531Impl(input, context){
   var resources[]: if input.Measurement2?  then Measurement_Observation(input.Measurement2[], context)
   var resources[]: if input.Measurement3?  then Measurement_Observation(input.Measurement3[], context)
   var resources[]: if input.ObservationNotSmoking?  then Observation_NotSmoking(input.ObservationNotSmoking[], context)
-  var resources[]: if input.Metadata.omop_source?  then OmopSource(input.Metadata.omop_source, context)
+//  var resources[]: if input.Metadata.omop_source?  then OmopSource(input.Metadata.omop_source, context)
   var resources[]: if input.Payer_Plan_Period?  then PPP_Coverage(input.Payer_Plan_Period[], context)
 
   // Smoking filtered POC

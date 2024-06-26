@@ -86,14 +86,14 @@ def Observation_NotSmoking(Observation, required context) {
 def observation_Profile(m) {
 
   var value_to_use: {}
-  if $And(isNotNil(m.value_as_number),m.value_as_number !=" ")  then {
+  if isNotNil(m.value_as_number) and m.value_as_number !=" "  then {
     value_to_use : m.value_as_number
     } else {
       value_to_use: "None"
   }
 
 
-  if $MatchesRegex(m.observation_concept_id,"4060705|4060985|4135421|4147565|4256640")  then {
+  if matchesRegex(m.observation_concept_id,"4060705|4060985|4135421|4147565|4256640")  then {
     // BMI records have NULL units. Assume default fixed vaue from US Core.
     // BMI concept_ids in 4xxxxxx range are from OMOP Observations. These record do not have BMI values
     type: "VS"
@@ -159,7 +159,7 @@ def Observation_Value(profile_type,m) {
     if (HasValue(m.value_as_number))  then {
       // We have a number --> valueQuantity?? SHAHIM?
       valueQuantity.value : profile_type.convert.value
-      if ($And(isNotNil(m.operator_concept_id),m.operator_concept_id !=" ",m.operator_concept_id != "0"))  then {
+      if isNotNil(m.operator_concept_id) and m.operator_concept_id !=" " and m.operator_concept_id != "0"  then {
         valueQuantity.comparator: m.operator_concept_name
       }
       valueQuantity.unit: profile_type.unit
