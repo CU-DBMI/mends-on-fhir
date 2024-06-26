@@ -9,15 +9,9 @@ done
 DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 cd "$DIR"/..
 
-for f in ../input-examples/omop-fhir-data/synthea-cohort-010/*; do
-  f=$(realpath $f)
-  if [[ -d $f ]]; then continue; fi
-  distribution/bin/distribution \
-    -i $f \
-    -m ../whistle-mappings/synthea-w2/w2-main.wstl \
-    -o output
-#  break
-done
+distribution/bin/distribution \
+    -m ../whistle-mappings/synthea-w2/w2-helloworld.wstl 
+
 
 
 

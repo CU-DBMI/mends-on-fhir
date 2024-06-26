@@ -30,7 +30,7 @@ def Period(start,end) {
 
 // FullURL: Create a complete URL to FHIRStore
 def FullURL(baseUrl, resourceType, id) {
-    $this: $StrCat(baseUrl, "/", resourceType, "/", id)
+    $this: strFmt("%s%s%s%s%s",baseUrl, "/", resourceType, "/", id)
 }
 
 
@@ -90,7 +90,7 @@ def OmopSource(source){
 // Reference: Creates a FHIR Reference datatype if id not null
 def Reference(resourceType, id) {
     if isNotNil(id)  then {
-        reference: $StrCat(resourceType, "/", strFmt("%s",id));
+        reference: strFmt("%s%s%s",resourceType, "/", strFmt("%s",id));
         //type: resourceType
         //identifier.system: Code_System("HDC")
         //identifier.value: id
@@ -106,9 +106,9 @@ def ReformatDatetime(dateTime) {
         // TODO: SE: check split logic
         var dt: split(dateTime, " ")
         if isNotNil(dt[1])  then { // HAS DATE AND TIME
-            $this: $StrCat(dt[0],"T",dt[1],"-07:00")
+            $this: strFmt("%s%s%s%s",dt[0],"T",dt[1],"-07:00")
         } else { // HAS DATE ONLY
-            $this: $StrCat(dt[0],"T00:00:00","-07:00")
+            $this: strFmt("%s%s%s",dt[0],"T00:00:00","-07:00")
         }
     }
 }

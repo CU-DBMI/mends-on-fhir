@@ -4,5 +4,5 @@ def BundleEntryImpl(entryResource, method, baseUrl) {
     resource: entryResource
     fullUrl: FullURL(baseUrl, entryResource.resourceType, entryResource.id)
     request.method: method
-    request.url: $StrCat(entryResource.resourceType, "/", entryResource.id)
+    request.url: strFmt("%s%s%s",entryResource.resourceType, "/", entryResource.id)
 }

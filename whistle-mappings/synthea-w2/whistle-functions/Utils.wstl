@@ -5,7 +5,7 @@ package main
 // 2022-08-22: Moved Convert() to this file
 
 def HasValue(v) {
-  if $And(isNotNil(v),v != " ", toLower(v) != "none", v != "")   then {
+  if isNotNil(v) and v != " " and toLower(v) != "none" and v != "" then {
     $this: true
   } else {
     $this: false
@@ -13,7 +13,7 @@ def HasValue(v) {
 }
 
 def ConceptHasValue(c) {
-  if ($And(HasValue(c), c != "0") )  then {
+  if HasValue(c) and c != "0"  then {
     $this: true
   } else {
     $this: false
@@ -47,24 +47,32 @@ def Convert_Value(v,from, to) {
     var lfrom: toLower(from);
     var lto: toLower(to);
 
-    if $Eq(lfrom, lto)  then {
+    if eq(lfrom, lto)  then {
         // No conversion required
-        $this: $ParseFloat(v)
+        $this: tryParseNum(v)
     }
-    if ($MatchesRegex(lfrom,"far") and $MatchesRegex(lto, "cel"))  then {
+    if (matchesRegex(lfrom,"far") and matchesRegex(lto, "cel"))  then {
         // Farhenheit --> Celsius
-        $this: ($ParseFloat(v) - 32) * (5/9)
+        $this: (tryParseNum(v) - 32) * (5/9)
     }
-    if $MatchesRegex(lfrom,"lb|pound") and $MatchesRegex(lto,"kg")  then {
+    if matchesRegex(lfrom,"lb|pound") and matchesRegex(lto,"kg")  then {
         // Pounds --> kgs
-        $this: $ParseFloat(v) * 0.45359
+        $this: tryParseNum(v) * 0.45359
     }
-    if $MatchesRegex(lfrom,"oz|ounces") and $MatchesRegex(lto,"kg")  then {
+    if matchesRegex(lfrom,"oz|ounces") and matchesRegex(lto,"kg")  then {
         // Ounces --> kgs
-        $this: $ParseFloat(v) * 0.02834952
+        $this: tryParseNum(v) * 0.02834952
     }
-    if $MatchesRegex(lfrom,"inch") and $MatchesRegex(lto,"cm")  then {
+    if matchesRegex(lfrom,"inch") and matchesRegex(lto,"cm")  then {
         // Inches --> Centimeters
-        $this: $ParseFloat(v) * 2.54
+        $this: tryParseNum(v) * 2.54
     }
+}
+
+def $Trim(str) {
+  str
+}
+
+def $Flatten(obj) {
+  obj
 }

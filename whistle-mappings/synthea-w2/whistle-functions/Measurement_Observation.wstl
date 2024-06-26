@@ -88,18 +88,19 @@ def Measurement_Observation(Measurement, required context) {
 
 def meas_Profile(m) {
 
-  var value_to_use: {}
-  var type: {}
-  if $And(isNotNil(m.value_as_number),m.value_as_number !=" ")  then {
+  var value_to_use: {} ;
+  var type: {} ;
+
+  if isNotNil(m.value_as_number) and m.value_as_number !=" " then {
     var value_to_use : m.value_as_number
     } else {
       var value_to_use: "None"
     }
   
-  value_to_use: value_to_use
+  value_to_use: value_to_use ;
 
 
-  if $MatchesRegex(m.measurement_concept_id,"3038553")  then {
+  if matchesRegex(m.measurement_concept_id,"3038553")  then {
     // BMI code from Measurement domain. Other BMI codes are in Observation domain.
     // BMI records have NULL units. Assume default fixed vaue from US Core.
     // BMI concept_ids in 4xxxxxx range are from OMOP Observations. These record do not have BMI values
@@ -113,24 +114,24 @@ def meas_Profile(m) {
     unitsystem: Code_System("UCUM")
     convert: Convert(value_to_use, m.range_low, m.range_high, "kg/m2", "kg/m2")
     profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-bmi"
-    }
-
-  if $MatchesRegex(m.measurement_concept_id,"3019171|3036277")  then {
-    // All heights are in inches. No NULL records
-    // UCUM code = [in_i]; display = in_i
-    type: "VS"
-    subtype: "hgt"
-    codesystem: Code_System("LOINC")
-    codecode: "8302-2"
-    codedisplay: "Body height"
-    unit: "in_i"
-    unitcode: "[in_i]"
-    unitsystem: Code_System("UCUM")
-    convert: Convert(value_to_use, m.range_low, m.range_high, "inches", "inches")
-    profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-height"
   }
 
-  if $MatchesRegex(m.measurement_concept_id, "3004249|4152194|4353843")  then {
+  if matchesRegex(m.measurement_concept_id,"3019171|3036277") then {
+    // All heights are in inches. No NULL records
+    // UCUM code = [in_i]; display = in_i
+    type: "VS" ;
+    subtype: "hgt" ;
+    codesystem: Code_System("LOINC") ;
+    codecode: "8302-2" ;
+    codedisplay: "Body height" ;
+    unit: "in_i" ;
+    unitcode: "[in_i]" ;
+    unitsystem: Code_System("UCUM") ;
+    convert: Convert(value_to_use, m.range_low, m.range_high, "inches", "inches") ;
+    profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-height" ;
+  }
+
+  if matchesRegex(m.measurement_concept_id, "3004249|4152194|4353843")  then {
     type: "VS"
     subtype: "sbp"
     codesystem: Code_System("LOINC")
@@ -143,7 +144,7 @@ def meas_Profile(m) {
     profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-vital-signs"
   }
     
-  if $MatchesRegex(m.measurement_concept_id, "3012888|4154790|4354253")  then {
+  if matchesRegex(m.measurement_concept_id, "3012888|4154790|4354253")  then {
     type: "VS"
     subtype: "dbp"
     codesystem: Code_System("LOINC")
@@ -156,7 +157,7 @@ def meas_Profile(m) {
     profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-vital-signs"
   }
 
-  if $MatchesRegex(m.measurement_concept_id, "3013762|3023166|3025315|3026600")  then {
+  if matchesRegex(m.measurement_concept_id, "3013762|3023166|3025315|3026600")  then {
     // US Core allows units as kg, lb_av, g. We normalize all weights to KG.
     type: "VS"
     subtype: "wgt"
@@ -189,7 +190,7 @@ def meas_Profile(m) {
       
       var value_source_value: toLower(m.value_source_value);
       
-      if $MatchesRegex(value_source_value, "lb.*")  then {
+      if matchesRegex(value_source_value, "lb.*")  then {
         // convert lbs to kgs
         // TODO: SE: check split logic
         var temp: split(value_source_value, "lb");
@@ -199,7 +200,7 @@ def meas_Profile(m) {
         }
       } 
 
-      if $MatchesRegex(value_source_value, "kg.*")  then {
+      if matchesRegex(value_source_value, "kg.*")  then {
         // kg
         // TODO: SE: check split logic
         var temp: split(value_source_value, "kg");
@@ -213,7 +214,7 @@ def meas_Profile(m) {
     profileurl: "http://hl7.org/fhir/us/core/StructureDefinition/us-core-body-weight"
   }
 
-  if $MatchesRegex(m.measurement_concept_id, "3020891")  then {
+  if matchesRegex(m.measurement_concept_id, "3020891")  then {
     type: "VS"
     subtype: "temp"
     codesystem: Code_System("LOINC")
@@ -222,7 +223,7 @@ def meas_Profile(m) {
     unit: "Cel"
     unitcode: "Cel"
     unitsystem: Code_System("UCUM")
-    if $MatchesRegex(m.unit_concept_id,"586323|9471")  then {
+    if matchesRegex(m.unit_concept_id,"586323|9471")  then {
       // Celcius
       convert: Convert(value_to_use, m.range_low, m.range_high, "Cel", "Cel")
     }
@@ -231,12 +232,12 @@ def meas_Profile(m) {
       //Convert Farhenheit to Celsius
       convert: Convert(value_to_use, m.range_low, m.range_high, "Farhenheit", "Cel")
     }
-    if ($Or(m.unit_concept_id  == "0", m.unit_concept_id == ""))  then {
+    if m.unit_concept_id  == "0" or m.unit_concept_id == ""  then {
       // No units to distingush Farhenheit from Celcius.
       // Arbitrary cutoff = 50 to separate Celcius from Fahrenheit
       if ( HasValue(value_to_use))  then {
-        var vnum: $ParseFloat(value_to_use);
-        if $Gt(vnum,50)  then {
+        var vnum: tryParseNum(value_to_use);
+        if gt(vnum,50)  then {
         // treat as Fahrenheit
           convert: Convert(value_to_use, m.range_low, m.range_high, "Farhenheit", "Cel")
         } else {
@@ -257,7 +258,7 @@ def meas_Profile(m) {
     codesystem: Code_System("LOINC")
     codecode: m.measurement_concept_code
     codedisplay: m.measurement_concept_name
-    if $And(m.unit_concept_id == "0", isNotNil(m.unit_source_value))  then {
+    if m.unit_concept_id == "0" and isNotNil(m.unit_source_value)  then {
       unitcode: m.unit_source_value
       unitsystem: Code_System("HDC")
       } else {
@@ -310,7 +311,7 @@ def Meas_Lab_Value(profile_type,m) {
  
   // For blood pressure, we use separate Vital Signs rather than combined USCore Blood pressure
 
-  var isValueQuantity: $MatchesRegex(profile_type.subtype, "bmi|hgt|wgt|temp");
+  var isValueQuantity: matchesRegex(profile_type.subtype, "bmi|hgt|wgt|temp");
 
   // Priority for selecting value[x] if not constrained:
   //       value_as_concept_id exists and is not 0  --> valueCodeableConcept
@@ -323,7 +324,7 @@ def Meas_Lab_Value(profile_type,m) {
        if ( HasValue(m.value_as_number))  then {
       // We have a number --> valueQuantity?? SHAHIM?
       valueQuantity.value : profile_type.convert.value
-      if ($And(isNotNil(m.operator_concept_id),m.operator_concept_id != " ", m.operator_concept_id != "0"))  then {
+      if isNotNil(m.operator_concept_id) and m.operator_concept_id != " " and m.operator_concept_id != "0" then {
         valueQuantity.comparator: m.operator_concept_name
       }
       valueQuantity.unit: profile_type.unit
@@ -345,7 +346,7 @@ def Meas_Lab_Value(profile_type,m) {
     if ( HasValue(m.value_as_number))  then {
       // We have a number --> valueQuantity?? SHAHIM?
       valueQuantity.value : profile_type.convert.value
-      if ($And(isNotNil(m.operator_concept_id),m.operator_concept_id !=" ",m.operator_concept_id != "0")) then  {
+      if isNotNil(m.operator_concept_id) and m.operator_concept_id !=" " and m.operator_concept_id != "0" then  {
         valueQuantity.comparator: m.operator_concept_name
       }
       valueQuantity.unit: profile_type.unit

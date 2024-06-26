@@ -1,0 +1,13 @@
+Constructs to convert
+
+
+Unable to determine equivalent. Created NO-OP functions for now
+1. $Flatten (zzOmop531Impl.wstl)
+2. $Trim (Measurement_Observation.wstl) -- how to call java String.Trim() methods in W2?
+
+
+Wierd findings:
+Documentation says: and(arg,arg,...) but this bombs. Need to use 'arg and arg and ...' as shown in example. Same with "or"
+But: EQ is eq(a,b) not a eq b
+
+No OmopSource() function -- referenced in zzOmop53Impl.wstl

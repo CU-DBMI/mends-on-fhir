@@ -9,7 +9,7 @@ package main
 def Drug_Exposure(Drug_Exposure, required context) {
 
     // Define Medication ID to be used as medicationReference and as id for the Medication resource
-    var medicationID: Id_Spaces_To_Dash($StrCat("med-", Drug_Exposure.drug_concept_id, "-",Drug_Exposure.drug_source_concept_id, "-", $Hash(Drug_Exposure.lot_number)))
+    var medicationID: Id_Spaces_To_Dash(strFmt("%s%s%s%s%s%s","med-", Drug_Exposure.drug_concept_id, "-",Drug_Exposure.drug_source_concept_id, "-", hash(Drug_Exposure.lot_number)))
     // Shahim: Whistle 2 has variable scoping rules and a declaration is needed. See: https://github.com/GoogleCloudPlatform/healthcare-data-harmonization/blob/master/doc/spec.md#user-content-scope-scope
     var resources[]: []
     // 32818 = EHR administration record
@@ -226,15 +226,15 @@ def Drug_Exposure_MedicationRequest(Drug_Exposure, required context, required me
     }
 
     if(Drug_Exposure.refills)  then {
-        dispenseRequest.numberOfRepeatsAllowed: $ParseFloat(Drug_Exposure.refills)
+        dispenseRequest.numberOfRepeatsAllowed: tryParseNum(Drug_Exposure.refills)
     }
 
     if(Drug_Exposure.quantity)  then {
-        dispenseRequest.quantity.value: $ParseFloat(Drug_Exposure.quantity)
+        dispenseRequest.quantity.value: tryParseNum(Drug_Exposure.quantity)
     }
     
     if(Drug_Exposure.days_supply)  then {
-        dispenseRequest.expectedSupplyDuration.value: $ParseFloat(Drug_Exposure.days_supply)
+        dispenseRequest.expectedSupplyDuration.value: tryParseNum(Drug_Exposure.days_supply)
         dispenseRequest.expectedSupplyDuration.code: "d"
         dispenseRequest.expectedSupplyDuration.system: "http://unitsofmeasure.org"
     }
@@ -334,7 +334,7 @@ def Drug_Exposure_Immunization(Drug_Exposure, required context) {
 
     // doseQuantity, 0..1, SimpleQuantity
     if(Drug_Exposure.quantity)  then {
-        doseQuantity.value: $ParseFloat(Drug_Exposure.quantity)
+        doseQuantity.value: tryParseNum(Drug_Exposure.quantity)
     }
     doseQuantity.unit: Drug_Exposure.dose_unit_source_value
 
@@ -455,7 +455,7 @@ def Drug_Exposure_MedicationAdministration(Drug_Exposure, required context, requ
 
     // dose, 0..1, SimpleQuantity
     if(Drug_Exposure.quantity)  then {
-        dosage.dose.value: $ParseFloat(Drug_Exposure.quantity)
+        dosage.dose.value: tryParseNum(Drug_Exposure.quantity)
     }
 
     if Drug_Exposure.dose_unit_source_value  then {
@@ -535,12 +535,12 @@ def Drug_Exposure_MedicationDispense(Drug_Exposure, required context, required m
 
     // quantity 0..1, SimpleQuantity
     if(Drug_Exposure.quantity)  then {
-        quantity.value: $ParseFloat(Drug_Exposure.quantity)
+        quantity.value: tryParseNum(Drug_Exposure.quantity)
     }
 
     // daysSupply, 0..1, SimpleQuantity
     if(Drug_Exposure.days_supply)  then {
-        daysSupply.value: $ParseFloat(Drug_Exposure.days_supply)
+        daysSupply.value: tryParseNum(Drug_Exposure.days_supply)
         daysSupply.code: "d"
         daysSupply.system: "http://unitsofmeasure.org"
     }

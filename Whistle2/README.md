@@ -41,3 +41,8 @@ I think the above list covers all the changes in the first commit of mapping cha
   - Then remove the break like to run all 10 files
 - Try a larger cohort when things look good.
 - The string splitting built-in might behave a little different from W1 in terms of trimming extra spaces, ignoring empty splits, etc. I left a TODO: note at each site to make sure we get back to this to make sure the intended splitting is still working. 
+
+# NOTE
+To attach diretory of pre-generated OMOP JSON data sets, execute at project root directory:   
+`git submodule update --init ../input-examples/omop-fhir-data`
+
