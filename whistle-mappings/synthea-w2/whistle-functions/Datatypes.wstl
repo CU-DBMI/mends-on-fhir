@@ -44,7 +44,7 @@ def Identifier(system, value){
 
 
 // OmopSource:  Creates a FHIR resource that holds OMOP meta data values
-def OmopSource(source){
+def OmopSource(source, required context){
   resourceType: "Basic"
 
   id: "omop-source"

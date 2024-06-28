@@ -11,7 +11,7 @@ def Drug_Exposure(Drug_Exposure, required context) {
     // Define Medication ID to be used as medicationReference and as id for the Medication resource
     var medicationID: Id_Spaces_To_Dash(strFmt("%s%s%s%s%s%s","med-", Drug_Exposure.drug_concept_id, "-",Drug_Exposure.drug_source_concept_id, "-", hash(Drug_Exposure.lot_number)))
     // Shahim: Whistle 2 has variable scoping rules and a declaration is needed. See: https://github.com/GoogleCloudPlatform/healthcare-data-harmonization/blob/master/doc/spec.md#user-content-scope-scope
-    var resources[]: []
+    var resources: []
     // 32818 = EHR administration record
     if (Drug_Exposure.drug_type_concept_id == "32818")  then {
         // CVX = Vaccine Administered
@@ -34,7 +34,8 @@ def Drug_Exposure(Drug_Exposure, required context) {
     //} 
 
     // 32825 = EHR dispensing record
-    if (Drug_Exposure.drug_type_concept_id == "32825")  then {
+    // MGK: Adding 32869 = Pharmacy dispensing record (for Synthea)
+    if (Drug_Exposure.drug_type_concept_id == "32825") or (Drug_Exposure.drug_type_concept_id == "32869") then {
         var resources[]: Drug_Exposure_MedicationDispense(Drug_Exposure, context, medicationID)
     }
 

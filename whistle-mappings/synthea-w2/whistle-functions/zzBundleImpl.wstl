@@ -5,6 +5,7 @@ def BundleImpl(resources, context, bundleType, method, baseUrl ) {
 
     resourceType: "Bundle"
     type: bundleType
-    entry[] : BundleEntry(uniqueResources[where $.resourceType][], method, baseUrl)
+//    entry[] : BundleEntry(uniqueResources[where $.resourceType][], method, baseUrl)
+    entry[] : BundleEntry(uniqueResources[], method, baseUrl)
 }
 

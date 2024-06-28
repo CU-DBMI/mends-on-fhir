@@ -1,13 +1,25 @@
-Constructs to convert
-
-
 Unable to determine equivalent. Created NO-OP functions for now
 1. $Flatten (zzOmop531Impl.wstl)
 2. $Trim (Measurement_Observation.wstl) -- how to call java String.Trim() methods in W2?
 
 
-Wierd findings:
-Documentation says: and(arg,arg,...) but this bombs. Need to use 'arg and arg and ...' as shown in example. Same with "or"
-But: EQ is eq(a,b) not a eq b
+Output:
+FHIR output in input OMOP counts = output FHIR counts: condition_occurrence, measurement(all), observationNotSmoking (empty OMOP input)
+                                                   payer_plan_period, person, visit_occurrence
+FHIR output with issues:
+1. Empty Drug_Exposure output
 
-No OmopSource() function -- referenced in zzOmop53Impl.wstl
+
+Wierd findings:
+Documentation shows functional notation: and(arg,arg,...) but this bombs. Need to use infix notation: 'arg and arg and ...' as shown in example. Same with "or"
+But: EQ is eq(a,b) not a eq b. There is infix equivalent: a == b
+
+
+Demo for Shahim:
+0. Describe input
+1. Original drug_exposure.wstl --> minimal output
+2. Show values for drug_type_concept_id in Synthea data: grep drug_type_concept_id Drug_Exposure*.json|sort|uniq
+3. Add or Drug_Exposure.drug_type_concept_id == "32869"
+4. Add or "1" == "1"
+5. Comment out if
+6. Focus on zzBundleImpl.wstl

@@ -1,5 +1,9 @@
 package main
 
+// import "class://com.google.cloud.verticals.foundations.dataharmonization.plugins.harmonization.HarmonizationPlugin"
+import "class://java.lang.String"
+
+
 //def myTrim(s) {
 //    String.trim(s)
 //}
@@ -8,7 +12,8 @@ package main
 Simple: "Hello World";
 StrFmt: strFmt("%s%s%s","Hello", " ", "World");
 
-// mytrim: myTrim("    This is a string with spaces     ")
+var mytrim: "    This is a string with spaces     "
+myTrim: mytrim.trim ;
 
 MyParseFloat: tryParseNum("123.456");
 

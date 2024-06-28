@@ -6,6 +6,9 @@ def BundleEntry(entryResource, method, baseUrl) {
 
     var ref.url: "http://compass.org/fhir/r4/extension/mends-metadata-ref"
     var ref.valueReference: Reference("Basic", "mends-metadata")
+
+ // TODO: Figure out why next line bombs only for drug_exposure 
     resource.meta.extension[]: ref
+
 }
 
