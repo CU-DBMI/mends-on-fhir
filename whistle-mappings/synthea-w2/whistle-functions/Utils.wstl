@@ -1,4 +1,5 @@
 package main
+option "experiment/merge_modes"
 
 // 2022-03-22: Removed Visit_Datetime. Replaced by ReformatDatetime() in datatypes.wstl
 // 2022-03-22: Moved MendsMetaData to datatypes.wstl
@@ -73,6 +74,7 @@ def $Trim(str) {
   str
 }
 
-def $Flatten(obj) {
-  obj
+def $Flatten(obj,accum) {
+  merge var accum: obj
+  $this: accum[]
 }
