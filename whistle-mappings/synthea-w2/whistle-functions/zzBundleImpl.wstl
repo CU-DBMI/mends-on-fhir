@@ -1,11 +1,11 @@
 package main
 
 def BundleImpl(resources, context, bundleType, method, baseUrl ) {
-    var uniqueResources: unique(resources);
+//    var uniqueResources: unique(resources);
+    var uniqueResources: resources;
 
     resourceType: "Bundle"
     type: bundleType
-//    entry[] : BundleEntry(uniqueResources[where $.resourceType][], method, baseUrl)
-    entry[] : BundleEntry(uniqueResources[], method, baseUrl)
+    entry[] : BundleEntry(uniqueResources[where $.resourceType][], method, baseUrl)
 }
 
