@@ -1,42 +1,10 @@
 package main
 
-// import "class://com.google.cloud.verticals.foundations.dataharmonization.plugins.harmonization.HarmonizationPlugin"
-import "class://java.lang.String"
+var teststr: "   1   "
+
+var pattern: "[!-~][ -~]*[!-~]|[!-~]"
 
 
-//def myTrim(s) {
-//    String.trim(s)
-//}
+var out: extractRegex(teststr, pattern,$.0)
 
-// $this: "Hello World"; 
-Simple: "Hello World";
-StrFmt: strFmt("%s%s%s","Hello", " ", "World");
-
-var mytrim: "    This is a string with spaces     "
-myTrim: mytrim.trim ;
-
-MyParseFloat: tryParseNum("123.456");
-
-def myIf() {
-    if eq(1,1) then {
-        if1: "yes" 
-    }
-
-    if eq(2,2) then {
-        if2: "yes" 
-    }
-
-    if eq(1,1) and eq(2,2) then {
-        if_and: "yes"
-    }
-
-    if eq(1,1) and eq(2,2) and eq(3,3) then {
-        if_two_ands: "yes"
-    }
-
-    if eq(1,2) or eq(1,1) then {
-        if_or: "yes"
-    }
-}
-
-myIF: myIf() ;
+$this: out[0]

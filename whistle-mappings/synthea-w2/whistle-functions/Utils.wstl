@@ -70,8 +70,16 @@ def Convert_Value(v,from, to) {
     }
 }
 
-def $Trim(str) {
-  str
+def $Trim(str_to_trim) {
+  // Pattern [!-~] matches all printable characters except space
+  // Pattern [ -~] matches all printable characters including space
+  // The second regex matches a single non-space printable character (eg "a")
+  // From https://catonmat.net/my-favorite-regex
+
+  var pattern: "[!-~][ -~]*[!-~]|[!-~]"
+  var out: extractRegex(str_to_trim, pattern,$.0)
+  
+  $this: out[0]
 }
 
 
