@@ -3,21 +3,22 @@ package main
 // returns an array of resources
 def Omop531Impl(input, context){
   
-  // accum is a global accumulator variable used by $Flatten to roll up 
+  // accum is a global accumulator variable used by $Merge to roll up 
   // Drug_Exposure arrays into parent (accum) array
   var accum: {}
 
   var resources[]: if input.Person? then Person_Patient(input.Person[], context)
   var resources[]: if input.Visit_Occurrence? then Visit_Encounter(input.Visit_Occurrence[], context)
-
-  // accum is a global accumulator variable used by $Flatten to roll up 
+  
+  // $Merge() is MENDS replacement for Whistle1 $Flatten() function
+  // accum is a global accumulator variable used by $Merge to roll up 
   // Drug_Exposure arrays into parent (accum) array
   var accum: {}
-  var resources[]: if input.Drug_Exposure? then $Flatten(Drug_Exposure(input.Drug_Exposure[], context),accum)
+  var resources[]: if input.Drug_Exposure? then $Merge(Drug_Exposure(input.Drug_Exposure[], context),accum)
   var accum: {}
-  var resources[]: if input.Drug_Exposure2? then $Flatten(Drug_Exposure(input.Drug_Exposure2[], context),accum)
+  var resources[]: if input.Drug_Exposure2? then $Merge(Drug_Exposure(input.Drug_Exposure2[], context),accum)
   var accum: {}
-  var resources[]: if input.Drug_Exposure3? then $Flatten(Drug_Exposure(input.Drug_Exposure3[], context),accum)
+  var resources[]: if input.Drug_Exposure3? then $Merge(Drug_Exposure(input.Drug_Exposure3[], context),accum)
   
   var resources[]: if input.Condition_Occurrence? then ConditionOccurrence_Condition(input.Condition_Occurrence[], context)
   var resources[]: if input.Measurement? then Measurement_Observation(input.Measurement[], context)
