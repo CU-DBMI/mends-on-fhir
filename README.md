@@ -1,7 +1,7 @@
 # MENDS-on-FHIR
 The Multi-State EHR-Based Network for Disease Surveillance (MENDS) is a CDC-funded pilot of an electronic health record (EHR)-based chronic disease surveillance system coordinated by the National Association of Chronic Disease Directors (NACDD). See [https://chronicdisease.org/page/mendsinfo/](https://chronicdisease.org/page/mendsinfo/)).
 
-This repository is a specialized version of a pipeline that converts a limited number of tables in the OMOP Version 5.3 Common Data Model into a limited set of HL7 R4/US Core compliant FHIR resources that can populate the back-end database for the MENDS project using a single standard-based [FHIR Bulk FHIR API](https://hl7.org/fhir/uv/bulkdata/) . This active reposistory at Health Data Compass implements the pipeline described in the [technical publication] (https://www.medrxiv.org/content/10.1101/2023.08.09.23293900v2). 
+This repository is a specialized version of a pipeline that converts a limited number of tables in the OMOP Version 5.3 Common Data Model into a limited set of HL7 R4/US Core compliant FHIR resources that can populate the back-end database for the MENDS project using a single standard-based [FHIR Bulk FHIR API](https://hl7.org/fhir/uv/bulkdata/) . This active reposistory at Health Data Compass implements the pipeline described in the [open access JAMIA Open publication](https://academic.oup.com/jamiaopen/article/7/2/ooae045/7685048). 
 
 This repository is a limited version of the transformation rules used in the production system, but the demo pipeline exercises all components used in MENDS. Synthetic data produced by the [Synthea system](https://synthea.mitre.org) has less complete vocabulary mappings than we see in our EHR-based production OMOP instance.
 
