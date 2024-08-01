@@ -1,8 +1,8 @@
 package main
 
 def BundleImpl(resources, context, bundleType, method, baseUrl ) {
-//    var uniqueResources: unique(resources);
-    var uniqueResources: resources;
+    var uniqueResources: unique(resources);
+//    var uniqueResources: resources;
 
     resourceType: "Bundle"
     type: bundleType
