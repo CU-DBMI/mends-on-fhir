@@ -11,14 +11,9 @@ def Omop531Impl(input, context){
   var resources[]: if input.Visit_Occurrence? then Visit_Encounter(input.Visit_Occurrence[], context)
   
   // $Merge() is MENDS replacement for Whistle1 $Flatten() function
-  // accum is a global accumulator variable used by $Merge to roll up 
-  // Drug_Exposure arrays into parent (accum) array
-  var accum: {}
-  var resources[]: if input.Drug_Exposure? then $Merge(Drug_Exposure(input.Drug_Exposure[], context),accum)
-  var accum: {}
-  var resources[]: if input.Drug_Exposure2? then $Merge(Drug_Exposure(input.Drug_Exposure2[], context),accum)
-  var accum: {}
-  var resources[]: if input.Drug_Exposure3? then $Merge(Drug_Exposure(input.Drug_Exposure3[], context),accum)
+  var resources[]: if input.Drug_Exposure? then $Merge(Drug_Exposure(input.Drug_Exposure[], context))
+  var resources[]: if input.Drug_Exposure2? then $Merge(Drug_Exposure(input.Drug_Exposure2[]))
+  var resources[]: if input.Drug_Exposure3? then $Merge(Drug_Exposure(input.Drug_Exposure3[], context))
   
   var resources[]: if input.Condition_Occurrence? then ConditionOccurrence_Condition(input.Condition_Occurrence[], context)
   var resources[]: if input.Measurement? then Measurement_Observation(input.Measurement[], context)

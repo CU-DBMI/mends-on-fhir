@@ -8,7 +8,3 @@ def BundleEntryImpl(entryResource, method, baseUrl) {
 }
 
 
-//def BundleEntryImpl(entryResource, method, baseUrl) {
-//    $this: entryResource
-//}
-

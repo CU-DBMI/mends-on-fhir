@@ -82,10 +82,8 @@ def $Trim(str_to_trim) {
   $this: out[0]
 }
 
-
 // $Merge() is MENDS replacement for Whistle1 $Flatten() function
-// Adds JSON objects (containers) in obj[] to accum[]
-def $Merge(obj,accum) {
-  merge var accum: obj
-  $this: accum[]
+def $Merge(obj) {
+  merge var result : obj[] ;
+  $this: result
 }

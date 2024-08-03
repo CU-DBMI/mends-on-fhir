@@ -12,7 +12,7 @@ cd "$DIR"/..
 for f in ../input-examples/omop-fhir-data/synthea-cohort-010/*; do
   f=$(realpath $f)
   if [[ -d $f ]]; then continue; fi
-  distribution/bin/distribution \
+  distribution/bin/whistle-cli \
     -i $f \
     -m ../whistle-mappings/synthea-w2/w2-main.wstl \
     -o output

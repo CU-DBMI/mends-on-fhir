@@ -9,10 +9,10 @@ done
 DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 cd "$DIR"/..
 
-for f in ../input-examples/omop-fhir-data/synthea-cohort-010/Drug_Exposure_0000000000.json; do
+for f in ../input-examples/omop-fhir-data/synthea-drug-exposure/Drug_Exposure_*.json; do
   f=$(realpath $f)
   if [[ -d $f ]]; then continue; fi
-  distribution/bin/distribution \
+  distribution/bin/whistle-cli \
     -i $f \
     -m ../whistle-mappings/synthea-w2/w2-main.wstl \
     -o output

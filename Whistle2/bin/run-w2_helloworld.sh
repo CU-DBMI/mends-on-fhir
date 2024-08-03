@@ -9,7 +9,7 @@ done
 DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
 cd "$DIR"/..
 
-distribution/bin/distribution \
+distribution/bin/whistle-cli \
     -m ../whistle-mappings/synthea-w2/w2-helloworld.wstl 
 
 
