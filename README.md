@@ -5,7 +5,7 @@ This repository is a specialized version of a pipeline that converts a limited n
 
 This repository is a limited version of the transformation rules used in the production system, but the demo pipeline exercises all components used in MENDS. Synthetic data produced by the [Synthea system](https://synthea.mitre.org) has less complete vocabulary mappings than we see in our EHR-based production OMOP instance.
 
-**This repository is not intended to support additional community contributions to build out a more complete set of OMOP-FHIR transformation.** A refactored repo that is more modular that accepts alternative transformations (different versions of the OMOP CDM, core FHIR, Implementation Guides) is being created and a link will be added when available.
+**This repository is not intended to support additional community contributions to build out a more complete set of OMOP-FHIR transformation.** If/when a refactored repo that is more modular that accepts alternative transformations (different versions of the OMOP CDM, core FHIR, Implementation Guides) becomes available, a link to this repo will be added.”
 
 ## Overall design
 
