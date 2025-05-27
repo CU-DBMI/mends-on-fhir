@@ -9,7 +9,7 @@ This repository is a limited version of the transformation rules used in the pro
 
 ## Overall design
 
-The figure is an expanded pipeline compared to the pipeline described in the tehcnical publication.
+The figure is an expanded pipeline compared to the pipeline described in the technical publication.
 
 ![High level processing flow](/assets/images/MENDS-generalized.png)
 
