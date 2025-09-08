@@ -12,9 +12,6 @@ pgdump**
 test/
 output/
 .venv/
-
-
-
-
-
+log.json
+**/log.json
 

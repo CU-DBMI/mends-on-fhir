@@ -84,6 +84,9 @@ def $Trim(str_to_trim) {
 
 // $Merge() is MENDS replacement for Whistle1 $Flatten() function
 def $Merge(obj) {
+//  logging::logInfo(): serializeJson(obj) ;
+
   merge var result : obj[] ;
+//  logging::logInfo(): serializeJson(result) ;
   $this: result
 }
